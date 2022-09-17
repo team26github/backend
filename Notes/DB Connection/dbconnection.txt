@@ -1,0 +1,3 @@
+Pythont to Vue: https://blog.reverielabs.com/python-vue-components/
+Python Backend & Database: https://realpython.com/python-mysql/
+Python: https://realpython.com/tutorials/databases/
