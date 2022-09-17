@@ -11,4 +11,6 @@ Azure: https://docs.microsoft.com/en-us/azure/devops/repos/git/share-your-code-i
 DB Triggers: https://docs.oracle.com/cd/A57673_01/DOC/server/doc/SCN73/ch15.htm
 MFA: DUO / Microsoft Authenticator
      https://digitalcommons.usf.edu/cgi/viewcontent.cgi?article=8963&context=etd
-     
+Javascript: https://tms-dev-blog.com/python-backend-with-javascript-frontend-how-to/
+Pythont to Vue: https://blog.reverielabs.com/python-vue-components/
+API: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-catalog-connections.html
