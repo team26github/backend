@@ -6,4 +6,4 @@ List of Git Commands: https://confluence.atlassian.com/bitbucketserver/basic-git
 
 Git Cheatsheet (Commands List Pt 2): https://training.github.com/downloads/github-git-cheat-sheet.pdf
 
-Video Explaining Git/Commands: https://www.youtube.com/watch?v=HkdAHXoRtos&t=154s
+https://docs.github.com/en/get-started/quickstart/hello-world
