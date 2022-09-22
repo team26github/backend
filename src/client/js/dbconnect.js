@@ -1,19 +1,19 @@
-const test_connection = document.querySelector('#test-connection');
+const express = require('express');
+const app = express();
+const mysql = require('mysql');
+const port = 5000;
 
-test_connection.addEventListener("click", () => {
-    const mysql = require('mysql');
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'user',
-        password: 'password'
-    });
+app.get('/', (req, res) => {
+    const config = {
+        user: '',
+        password: '',
+        server: '',
+        database: ''
+    };
 
-    connection.connect((error) => {
-        if (error) throw error;
-        window.alert('Connection established successfully');
-    });
+    mysql.createConnection(config);
+})
 
-    connection.end((error) => {
-        if (error) throw error;
-    });
+let server = app.listen(port, () => {
+    console.log('Server is listening on port 5000');
 });
