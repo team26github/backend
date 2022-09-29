@@ -4,7 +4,7 @@ export default {
     template: `
         <!-- Shorthand for "v-bind:..." -> :... -->
         <!-- Shorthand for "v-on:..." -> @... -->
-        <button :class="button_class" :disabled="clicked" @click="button_click">
+        <button :class="button_class" :disabled="clicked" @click="button_click" @click="test_connection">
             <slot />
         </button>
     `,
@@ -21,6 +21,20 @@ export default {
             this.button_class = 'clicked';
             this.clicked = true;
             test.connect();
+        },
+
+        test_connection(){
+            axios({
+              url: 'http://localhost:5000/',
+              method: 'get'
+            })
+            .then(res => {
+              console.log(res)
+              this.records = res.data.catalog_list
+            })
+            .catch(err => {
+              console.log(err)
+            })
         }
     }
 }
