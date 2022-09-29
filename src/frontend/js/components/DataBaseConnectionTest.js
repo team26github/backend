@@ -1,10 +1,8 @@
-import * as test from "../dbconnect.js"
-
 export default {
     template: `
         <!-- Shorthand for "v-bind:..." -> :... -->
         <!-- Shorthand for "v-on:..." -> @... -->
-        <button :class="button_class" :disabled="clicked" @click="button_click" @click="test_connection">
+        <button :class="button_class" :disabled="clicked" @click="button_click">
             <slot />
         </button>
     `,
@@ -20,12 +18,12 @@ export default {
         button_click() {
             this.button_class = 'clicked';
             this.clicked = true;
-            test.connect();
+            this.test_connection()
         },
 
         test_connection(){
             axios({
-              url: 'http://localhost:5000/',
+              url: 'http://localhost:8080/',
               method: 'get'
             })
             .then(res => {
