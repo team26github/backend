@@ -4,11 +4,26 @@
         <meta charset="UTF-8">
         <title>Database Connection Test</title>
         <link rel="stylesheet" href="css/styles.css">
+        <script src="https://unpkg.com/vue@3"></script>
     </head>
     <body>
-        <div class="container">
-            <button id="test-connection">Click to Connect</button>
+
+        <!--
+        <div id="app">
+            <test-connection>Test Connection</test-connection>
         </div>
-        <script src="js/dbconnect.js"></script>
+
+        <script type="module">
+            import DataBaseConnectionTest from "./js/components/DataBaseConnectionTest.js";
+            let app = {
+                components: {
+                    'test-connection': DataBaseConnectionTest
+                }
+            }
+
+            Vue.createApp(app).mount('#app');
+        </script>
+        -->
+    <script src="js/dbconnect.js"></script>
     </body>
 </html>
