@@ -2,18 +2,20 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Database Connection Test</title>
+        <title>Trucker Incentive Program</title>
         <link rel="stylesheet" href="css/styles.css">
         <script src="https://unpkg.com/vue@3"></script>
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body>
 
+        <div id="app">
+            <login-form></login-form>
+        </div>
 
+        <script type="module">
+            import App from "./js/components/App.js"
 
-    <script>
-
-        Vue.createApp(app).mount('#app');
-    </script>
+            Vue.createApp(App).mount('#app');
+        </script>
     </body>
 </html>
