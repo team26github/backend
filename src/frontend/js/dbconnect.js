@@ -46,7 +46,7 @@ export let server = dbapp.listen(port, () => {
 express = require('express');
 mysql = require('mysql');
 const dbapp = express();
-const port = 5000;
+const port = 8080;
 
 dbapp.get('/', (req, res) => {
     const config = {
@@ -68,5 +68,5 @@ dbapp.get('/', (req, res) => {
 })
 
 let server = dbapp.listen(port, () => {
-    console.log('Server is listening on port 5000');
+    console.log('Server is listening on port 8080');
 });

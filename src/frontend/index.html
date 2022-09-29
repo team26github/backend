@@ -5,22 +5,15 @@
         <title>Database Connection Test</title>
         <link rel="stylesheet" href="css/styles.css">
         <script src="https://unpkg.com/vue@3"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body>
-        <div id="app">
-            <test-connection>Test Connection</test-connection>
-        </div>
 
-        <script type="module">
-            import DataBaseConnectionTest from "./js/components/DataBaseConnectionTest.js";
-            let app = {
-                components: {
-                    'test-connection': DataBaseConnectionTest
-                }
-            }
 
-            Vue.createApp(app).mount('#app');
-        </script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+
+        Vue.createApp(app).mount('#app');
+    </script>
     </body>
 </html>
