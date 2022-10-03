@@ -6,13 +6,13 @@ import SponsorDashboard from '../components/SponsorDashboard.vue';
 
 const routes = [
     {
-        path: '/login',
+        path: 'https://spacebarcowboysbackend.herokuapp.com/login',
         name: 'login',
         component: loginForm
     },
     {
-        path: '/',
-        redirect: '/login'
+        path: 'https://spacebarcowboysbackend.herokuapp.com/',
+        redirect: 'https://spacebarcowboysbackend.herokuapp.com/login'
     },
     {
         path: '/driver',
