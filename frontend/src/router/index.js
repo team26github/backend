@@ -6,26 +6,26 @@ import SponsorDashboard from '../components/SponsorDashboard.vue';
 
 const routes = [
     {
-        path: 'https://spacebarcowboysbackend.herokuapp.com/login',
+        path: '/login',
         name: 'login',
         component: loginForm
     },
     {
-        path: 'https://spacebarcowboysbackend.herokuapp.com/',
-        redirect: 'https://spacebarcowboysbackend.herokuapp.com/login'
+        path: '/',
+        redirect: '/login'
     },
     {
-        path: 'https://spacebarcowboysbackend.herokuapp.com/driver',
+        path: '/driver',
         name: 'driver-dashboard',
         component: DriverDashboard
     },
     {
-        path: 'https://spacebarcowboysbackend.herokuapp.com/admin',
+        path: '/admin',
         name: 'admin-dashboard',
         component: AdminDashboard
     },
     {
-        path: 'https://spacebarcowboysbackend.herokuapp.com/sponsor',
+        path: '/sponsor',
         name: 'sponsor-dashboard',
         component: SponsorDashboard
     }
