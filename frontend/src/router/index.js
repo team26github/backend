@@ -1,17 +1,39 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import { loginForm } from '../components/loginForm.js';
+import { createWebHistory, createRouter } from 'vue-router';
+import loginForm from '../components/loginForm.vue';
+import DriverDashboard from '../components/DriverDashboard.vue';
+import AdminDashboard from '../components/AdminDashboard.vue';
+import SponsorDashboard from '../components/SponsorDashboard.vue';
 
-Vue.use(Router);
+const routes = [
+    {
+        path: '/login',
+        name: 'login',
+        component: loginForm
+    },
+    {
+        path: '/',
+        redirect: '/login'
+    },
+    {
+        path: '/driver',
+        name: 'driver-dashboard',
+        component: DriverDashboard
+    },
+    {
+        path: '/admin',
+        name: 'admin-dashboard',
+        component: AdminDashboard
+    },
+    {
+        path: '/sponsor',
+        name: 'sponsor-dashboard',
+        component: SponsorDashboard
+    }
+];
 
-export default new Router({
-    mode: 'history',
-    base: process.env.BASE_URL,
-    routes: [
-        {
-            path: '/login',
-            name: 'login',
-            components: loginForm
-        }
-    ]
-});
+const router = createRouter({
+    history: createWebHistory(),
+    routes
+})
+
+export default router;

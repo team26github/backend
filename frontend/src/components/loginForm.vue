@@ -8,6 +8,7 @@
       <input type="password" id="password" name="password" v-model="password" required><br><br>
       <button type="submit" id="login-button" @click.prevent="get_username_password">Login</button>
     </form>
+    <p>{{status}}</p>
   </div>
 </template>
 
@@ -19,7 +20,10 @@
 
     data() {
       return {
-        login_info: []
+        status: null,
+        username: '',
+        password: '',
+        user_type: ''
       };
     },
 
@@ -28,7 +32,16 @@
         const path = 'http://localhost:5000/login';
         axios.get(path, {params: {username: this.username, password: this.password}})
           .then((res) => {
-            this.login_info = res.data.login;
+            if (res.data.status === 'failure'){
+              this.status = 'Incorrect Credentials'
+            }
+            else {
+              this.status = 'Success'
+              this.username = res.data.results[0][4];
+              this.password = res.data.results[0][1];
+              this.user_type = res.data.results[0][2];
+              this.$router.push(`/${this.user_type.toLowerCase()}`);
+            }
           })
           .catch((error) => {
             // esling-disable-next-line
@@ -40,6 +53,15 @@
 </script>
 
 <style>
+html, body {
+  height: 100%;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
 .login {
   display: grid;
   place-items: center;
