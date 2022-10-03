@@ -29,7 +29,7 @@
 
     methods: {
       get_username_password() {
-        const path = 'http://localhost:5000/login';
+        const path = 'https://spacebarcowboys.netlify.app/login';
         axios.get(path, {params: {username: this.username, password: this.password}})
           .then((res) => {
             if (res.data.status === 'failure'){
