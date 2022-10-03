@@ -33,7 +33,7 @@
 
     methods: {
       get_login() {
-        const path = 'http://localhost:5000/login';
+        const path = 'https://space-bar-cowboys-proxy.herokuapp.com/login';
 
         if (this.username === '') {
           this.status = 'Username cannot be blank.'
