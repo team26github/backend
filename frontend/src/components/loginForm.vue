@@ -29,7 +29,7 @@
 
     methods: {
       get_username_password() {
-        const path = 'https://cors-anywhere.herokuapp.com/https://spacebarcowboysbackend.herokuapp.com/login';
+        const path = 'https://spacebarcowboysbackend.herokuapp.com/login';
         axios.get(path, {params: {username: this.username, password: this.password}})
           .then((res) => {
             if (res.data.status === 'failure'){
