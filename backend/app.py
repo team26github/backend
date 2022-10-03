@@ -12,7 +12,7 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 login_info = {'username': '', 'password': ''}
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('https://spacebarcowboysbackend.herokuapp.com/login', methods=['GET', 'POST'])
 def login():
 
 
