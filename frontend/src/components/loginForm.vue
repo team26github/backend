@@ -29,7 +29,7 @@
 
     methods: {
       get_username_password() {
-        const path = 'https://spacebarcowboysbackend.herokuapp.com/login';
+        const path = 'https://space-bar-cowboys-proxy.herokuapp.com/';
         axios.get(path, {params: {username: this.username, password: this.password}})
           .then((res) => {
             if (res.data.status === 'failure'){
