@@ -6,9 +6,9 @@
       <input type="text" id="username" name="username" v-model="username" required><br><br>
       <label for="password">Password: &emsp;</label>
       <input type="password" id="password" name="password" v-model="password" required><br><br>
-      <button type="submit" id="login-button" @click.prevent="get_username_password">Login</button>
+      <button type="submit" id="login-button" @click.prevent="get_login" :disabled="disabled">Login</button>
     </form>
-    <p>{{status}}</p>
+    <p>{{ status }}</p>
   </div>
 </template>
 
@@ -23,17 +23,63 @@
         status: null,
         username: '',
         password: '',
-        user_type: ''
+        user_type: '',
+        login_counter: 0,
+        disabled: false,
+        time_to_wait: 0,
+        time: 0
       };
     },
 
     methods: {
-      get_username_password() {
-        const path = 'https://spacebarcowboys.netlify.app/login';
+      get_login() {
+        const path = 'https://space-bar-cowboys-proxy.herokuapp.com/login';
+
+        if (this.username === '') {
+          this.status = 'Username cannot be blank.'
+          return;
+        }
+        else if (this.password === '') {
+          this.status = 'Password cannot be blank.'
+          return;
+        }
+
         axios.get(path, {params: {username: this.username, password: this.password}})
           .then((res) => {
             if (res.data.status === 'failure'){
-              this.status = 'Incorrect Credentials'
+              this.status = 'Incorrect Credentials';
+              this.login_counter++;
+
+              if (this.login_counter > 4) {
+                this.disabled = true;
+
+                if (this.time_to_wait !== 0) {
+                  this.time_to_wait *= 2;
+                }
+                else {
+                  this.time_to_wait += 30000;
+                }
+
+                if (this.time_to_wait < 60000) {
+                  this.time = this.time_to_wait / 1000;
+                  this.status = `Too many login attempts, please wait ${this.time} seconds to login again.`;
+                }
+                else if (this.time_to_wait === 60000) {
+                  this.time = this.time_to_wait / 60000;
+                  this.status = `Too many login attempts, please wait ${this.time} minute to login again.`
+                }
+                else {
+                  this.time = this.time_to_wait / 60000;
+                  this.status = `Too many login attempts, please wait ${this.time} minutes to login again.`;
+                }
+
+                setTimeout(() => {
+                  this.login_counter = 4;
+                  this.disabled = false;
+                  this.status = null;
+                }, this.time_to_wait);
+                
+              }
             }
             else {
               this.status = 'Success'
