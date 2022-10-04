@@ -13,7 +13,7 @@ const routes = [
     },
     {
         path: '/',
-        redirect: '/navbar'
+        redirect: '/login'
     },
     {
         path: '/driver',

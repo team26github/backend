@@ -103,10 +103,10 @@
     height: 100%;
   }
 
-  /* body {
+  body {
     display: grid;
     place-items: center;
-  } */
+  } 
 
   .login {
     display: grid;
