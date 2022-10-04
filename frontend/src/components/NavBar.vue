@@ -20,11 +20,10 @@
     }
 </script>
 
-<style>
-    body {font-family: Arial, Helvetica, sans-serif; display: grid; place-items: top;}
-    
+<style scoped>
     .nav {
         width: 100%;
+        height: 45px;
         background-color: #555;
         overflow: auto;
     }
