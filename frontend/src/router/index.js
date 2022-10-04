@@ -3,6 +3,7 @@ import loginForm from '../components/loginForm.vue';
 import DriverDashboard from '../components/DriverDashboard.vue';
 import AdminDashboard from '../components/AdminDashboard.vue';
 import SponsorDashboard from '../components/SponsorDashboard.vue';
+import NavBar from '../components/NavBar.vue';
 
 const routes = [
     {
@@ -12,7 +13,7 @@ const routes = [
     },
     {
         path: '/',
-        redirect: '/login'
+        redirect: '/navbar'
     },
     {
         path: '/driver',
@@ -28,6 +29,11 @@ const routes = [
         path: '/sponsor',
         name: 'sponsor-dashboard',
         component: SponsorDashboard
+    },
+    {
+        path: '/navbar',
+        name: 'navbar',
+        component: NavBar
     }
 ];
 

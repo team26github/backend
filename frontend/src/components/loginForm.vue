@@ -33,7 +33,7 @@
 
     methods: {
       get_login() {
-        const path = 'https://space-bar-cowboys-proxy.herokuapp.com/login';
+        const path = 'http://localhost:5000/login';
 
         if (this.username === '') {
           this.status = 'Username cannot be blank.'
@@ -99,24 +99,24 @@
 </script>
 
 <style>
-html, body {
-  height: 100%;
-}
+  html, body {
+    height: 100%;
+  }
 
-body {
-  display: grid;
-  place-items: center;
-}
+  /* body {
+    display: grid;
+    place-items: center;
+  } */
 
-.login {
-  display: grid;
-  place-items: center;
-  padding: 0 10px 10px;
-  border-style: solid;
-  border-color: black;
-}
+  .login {
+    display: grid;
+    place-items: center;
+    padding: 0 10px 10px;
+    border-style: solid;
+    border-color: black;
+  }
 
-#login-button {
-  width: 100%;
-}
+  #login-button {
+    width: 100%;
+  }
 </style>
