@@ -98,22 +98,21 @@
   }
 </script>
 
-<style>
-  html, body {
-    height: 100%;
-  }
-
-  body {
-    display: grid;
-    place-items: center;
-  } 
-
+<style scoped>
   .login {
     display: grid;
     place-items: center;
+    width: 250px;
+    height: 210px;
+    margin-top: 18%;
+    margin-left: 45%;
     padding: 0 10px 10px;
     border-style: solid;
     border-color: black;
+  }
+
+  p {
+    text-align: center;
   }
 
   #login-button {
