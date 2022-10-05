@@ -1,15 +1,17 @@
 <template>
     <div class = "nav">
-        <a @click="Home" href="/driver"><i class="fa fa-fw fa-home"></i> Home</a>
-        <a @click="Profile" href="/driver/profile">Profile</a>
+        <a @click="Home" :href="'/' + usertype"><i class="fa fa-fw fa-home"></i> Home</a>
+        <a @click="Profile" :href="'/' + usertype + '/profile'">Profile</a>
         <a href="#" target="blank">Settings</a>
         <a v-on:click="Logout" href = "/login">Logout</a>
+
     </div>
 </template>
 
 <script>
     export default {
         name:'NavBar',
+        props: ['usertype'],
         methods:{
             logout()
             {

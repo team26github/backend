@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar></NavBar>
+        <NavBar :usertype="user_type"></NavBar>
         <div class="row">
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
@@ -32,42 +32,43 @@
     import NavBar from './NavBar.vue';
 
     export default {
-    name: "driver-profile",
-    data() {
-        return {
-            user_id: 1,
-            username: "Driver1",
-            password: "Password1",
-            password_text: "***********************",
-            email: "Driver1@email.com",
-            user_type: "Driver",
-            button_text: "Show Password",
-            password_active: false
-        };
-    },
-    methods: {
-        show_password() {
-            if (this.password_active) {
-                this.password_text = "***********************";
-                this.password_active = false;
-                this.button_text = "Show Password";
+        name: 'driver-profile',
+        
+        data() {
+            return {
+                user_id: 1,
+                username: "Driver1",
+                password: "Password2",
+                password_text: "***********************",
+                email: "driver1@email.com",
+                user_type: "driver",
+                button_text: "Show Password",
+                password_active: false
+            };
+        },
+        methods: {
+            show_password() {
+                if (this.password_active) {
+                    this.password_text = "***********************";
+                    this.password_active = false;
+                    this.button_text = "Show Password";
+                }
+                else {
+                    this.password_text = this.password;
+                    this.password_active = true;
+                    this.button_text = "Hide Password";
+                }
             }
-            else {
-                this.password_text = this.password;
-                this.password_active = true;
-                this.button_text = "Hide Password";
-            }
-        }
-    },
-    
-    components: { NavBar }
-}
+        },
+
+        components: { NavBar }
+    }
 </script>
 
 <style scoped>
     .profile-container {
         display: grid;
-        place-items: center;
+        place-items: start;
         width: 98.5vw;
         height: 97.5vh;
         border-style: solid;
