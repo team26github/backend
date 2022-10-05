@@ -1,25 +1,32 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type"></NavBar>
+        <NavBar :usertype="user_type" :userid="username"></NavBar>
         <div class="row">
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
             </div>
             <div class="username-container">
-                <p><strong>Username: </strong>{{ username }}</p>
+                <div class="username">
+                    <p><strong>Username: </strong>{{ username }}</p>
+                    <button>Edit Username</button>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
-                    <button @click="show_password">{{ button_text }}</button>
+                    <button>Edit Password</button>
+                    <button class="show-password" @click="show_password">{{ button_text }}</button>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="email-container">
-                <p><strong>Email: </strong>{{ email }}</p>
+                <div class="email">
+                    <p><strong>Email: </strong>{{ email }}</p>
+                    <button>Edit Email</button>
+                </div>
             </div>
             <div class="user-type-container">
                 <p><strong>UserType: </strong>{{ user_type }}</p>
@@ -33,7 +40,7 @@
 
     export default {
         name: 'driver-profile',
-        
+
         data() {
             return {
                 user_id: 1,
@@ -58,6 +65,18 @@
                     this.password_active = true;
                     this.button_text = "Hide Password";
                 }
+            },
+
+            edit_username() {
+
+            },
+
+            edit_password() {
+
+            },
+
+            edit_email() {
+
             }
         },
 
@@ -74,17 +93,14 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
+        background-color: darkseagreen;
     }
 
-    .password {
+    .password, .username, .email {
         width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
-    }
-
-    .password button {
-        margin-left: auto;
     }
 
     .row {
@@ -96,10 +112,6 @@
         gap: 1rem;
     }
 
-    button {
-        height: 50%;
-        margin-right: 5px;
-    }
     .user-id-container, .username-container, .password-container, .email-container, .user-type-container {
         display: flex;
         width: 49%;
@@ -109,7 +121,16 @@
         align-items: center;
     }
 
-    .password-container p {
+    button {
+        margin-right: 5px;
+        margin-left: auto;
+    }
+
+    .password-container .password .show-password {
+        margin-left: 0;
+    }
+
+    p {
         margin-left: 5px;
     }
 </style>

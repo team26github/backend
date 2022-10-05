@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type"></NavBar>
+        <NavBar :usertype="user_type" :userid="username"></NavBar>
         <div class="row">
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
@@ -74,6 +74,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
+        background-color: darkorange;
     }
 
     .password {

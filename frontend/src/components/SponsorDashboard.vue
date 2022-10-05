@@ -1,5 +1,5 @@
 <template>
-    <nav-bar></nav-bar>
+    <nav-bar :usertype="user_type" :userid="username"></nav-bar>
 </template>
 
 <script>
@@ -10,6 +10,8 @@
         data() {
             return {
                 dashboard_name: 'Sponsor Dashboard',
+                username: 'Sponsor1',
+                user_type: 'sponsor',
                 active: false
             }
         },
