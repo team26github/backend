@@ -4,6 +4,9 @@ import DriverDashboard from '../components/DriverDashboard.vue';
 import AdminDashboard from '../components/AdminDashboard.vue';
 import SponsorDashboard from '../components/SponsorDashboard.vue';
 import NavBar from '../components/NavBar.vue';
+import DriverProfile from '../components/DriverProfile.vue';
+import AdminProfile from '../components/AdminProfile.vue';
+import SponsorProfile from '../components/SponsorProfile.vue';
 
 const routes = [
     {
@@ -34,6 +37,21 @@ const routes = [
         path: '/navbar',
         name: 'navbar',
         component: NavBar
+    },
+    {
+        path: '/driver/profile',
+        name: 'driver-profile',
+        component: DriverProfile
+    },
+    {
+        path: '/admin/profile',
+        name: 'admin-profile',
+        component: AdminProfile
+    },
+    {
+        path: '/sponsor/profile',
+        name: 'sponsor-profile',
+        component: SponsorProfile
     }
 ];
 

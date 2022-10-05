@@ -14,8 +14,6 @@ login_info = {'username': '', 'password': ''}
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
-
     login_info['username'] = request.args['username']
     login_info['password'] = request.args['password']
 
