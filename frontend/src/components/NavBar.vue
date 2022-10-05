@@ -1,7 +1,7 @@
 <template>
     <div class = "nav">
-        <a href="#"><i class="fa fa-fw fa-home"></i> Home</a>
-        <a href="#" target="blank">Profile</a>
+        <a @click="Home" href="/driver"><i class="fa fa-fw fa-home"></i> Home</a>
+        <a @click="Profile" href="/driver/profile">Profile</a>
         <a href="#" target="blank">Settings</a>
         <a v-on:click="Logout" href = "/login">Logout</a>
     </div>
