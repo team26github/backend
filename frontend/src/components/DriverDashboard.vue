@@ -1,8 +1,9 @@
 <template>
-    <h1>{{ dashboard_name }}</h1>
+    <nav-bar></nav-bar>
 </template>
 
 <script>
+    import NavBar from '../components/NavBar.vue';
     export default {
         name: 'driver-dashboard',
 
@@ -11,6 +12,9 @@
                 dashboard_name: 'Driver Dashboard',
                 active: false
             }
+        },
+        components: {
+            "nav-bar": NavBar
         }
     }
 </script>
