@@ -67,12 +67,13 @@
 
 <style scoped>
     .profile-container {
-        display: grid;
-        place-items: start;
+        display: flex;
+        flex-direction: column;
         width: 98.5vw;
         height: 97.5vh;
         border-style: solid;
         border-color: black;
+        gap: 1rem;
     }
 
     .password {
@@ -88,9 +89,11 @@
 
     .row {
         width: 100%;
+        height: 45px;
         display: flex;
         flex-direction: row;
         justify-content: center;
+        gap: 1rem;
     }
 
     button {
@@ -98,10 +101,15 @@
         margin-right: 5px;
     }
     .user-id-container, .username-container, .password-container, .email-container, .user-type-container {
+        display: flex;
         width: 49%;
         border-style: solid;
         border-color: black;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .password-container p {
         margin-left: 5px;
-        text-align: center;
     }
 </style>
