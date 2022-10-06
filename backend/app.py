@@ -34,28 +34,26 @@ def login():
 def edit():
     cursor = db.cursor()
     if request.method == 'GET':
-        if request.args['request'] == 'email':
-            email = request.args['email']
+        if request.args.get('request', '') == 'email':
+            email = request.args.get('email', '')
             query = f'SELECT Email from UserInfo where Email = "{email}"'
             cursor.execute(query)
             results = cursor.fetchall()
             if len(results) > 0:
-                return {'status': 'failure'}
+                return jsonify({'status': 'failure'})
             else:
-                return {'status': 'success'}
-        elif request.args['request'] == 'username':
-            username = request.args['username']
+                return jsonify({'status': 'success'})
+        elif request.args.get('request', '') == 'username':
+            username = request.args.get('username', '')
             query = f'SELECT Username from UserInfo where Username = "{username}"'
             cursor.execute(query)
             results = cursor.fetchall()
-            print(results)
             if len(results) > 0:
-                return {'status': 'failure'}
+                return jsonify({'status': 'failure'})
             else:
-                return {'status': 'success'}
+                return jsonify({'status': 'success'})
+        return jsonify({'status', 'failure'})
     elif request.method == 'POST':
-        print(request)
-        print(request.args)
         status = 'failure'
 
         if request.args.get('request', '') == 'email':

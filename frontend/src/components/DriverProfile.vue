@@ -46,7 +46,7 @@
             return {
                 user_id: 1,
                 username: "Driver1",
-                password: "Password2",
+                password: "Password1",
                 password_text: "***********************",
                 email: "driver1@email.com",
                 user_type: "driver",
@@ -76,8 +76,8 @@
                 let new_username = window.prompt("Enter new username");
                 axios.get(path, {params: {request: 'username', username: new_username}})
                     .then((res) => {
-                        if (res.data.status === 'success') {
-                            axios.post(path, {params: {request: 'username', username: new_username, userid: 1}})
+                        if (res.data.status === 'success') {       
+                            axios.post(path, null, {params: {request: 'username', username: new_username, userid: 1}})
                                 .then((res) => {
                                     if (res.data.status === "success") {
                                         this.username = new_username;
@@ -104,12 +104,48 @@
 
             edit_password() {
                 let new_password = window.prompt("Enter new password");
-                console.log(new_password)
+                let path = 'http://localhost:5000/edit';
+                axios.post(path, null, {params: {request: 'password', password: new_password, userid: 1}})
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            this.password = new_password;
+                            window.alert("Password change successful");
+                        }
+                        else {
+                            window.alert("Password change unsuccessful");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
             },
 
             edit_email() {
+                let path = 'http://localhost:5000/edit';
                 let new_email = window.prompt("Enter new email");
-                console.log(new_email);
+                axios.get(path, {params: {request: 'email', email: new_email}})
+                .then((res) => {
+                    if (res.data.status === "success") {
+                        axios.post(path, null, {params: {request: 'email', email: new_email, userid: 1}})
+                        .then((res) => {
+                            if (res.data.status === "success") {
+                                this.email = new_email;
+                                window.alert("Email change successful");
+                            }
+                            else {
+                                window.alert("Email change unsuccessful");
+                            }
+                        })
+                        .catch((error) => {
+                            // esling-disable-next-line
+                            console.log(error);
+                        })
+                    }
+                    else {
+                        window.alert("That email is unavailable.");
+                    }
+                })
             }
         },
 

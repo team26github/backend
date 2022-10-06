@@ -6,20 +6,27 @@
                 <p><strong>UserID: </strong>{{ user_id }}</p>
             </div>
             <div class="username-container">
-                <p><strong>Username: </strong>{{ username }}</p>
+                <div class="username">
+                    <p><strong>Username: </strong>{{ username }}</p>
+                    <button @click="edit_username">Edit Username</button>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
-                    <button @click="show_password">{{ button_text }}</button>
+                    <button @click="edit_password">Edit Password</button>
+                    <button class="show-password" @click="show_password">{{ button_text }}</button>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="email-container">
-                <p><strong>Email: </strong>{{ email }}</p>
+                <div class="email">
+                    <p><strong>Email: </strong>{{ email }}</p>
+                    <button @click="edit_email">Edit Email</button>
+                </div>
             </div>
             <div class="user-type-container">
                 <p><strong>UserType: </strong>{{ user_type }}</p>
@@ -29,21 +36,25 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import NavBar from './NavBar.vue';
 
     export default {
-        name: 'admin-profile',
+        name: 'driver-profile',
 
         data() {
             return {
-                user_id: 2,
+                user_id: 1,
                 username: "Admin1",
                 password: "Password2",
                 password_text: "***********************",
-                email: "admin1@email.com",
+                email: "driver1@email.com",
                 user_type: "admin",
                 button_text: "Show Password",
-                password_active: false
+                password_active: false,
+                edit_username_active: false,
+                edit_password_active: false,
+                edit_email_active: false
             };
         },
         methods: {
@@ -58,6 +69,83 @@
                     this.password_active = true;
                     this.button_text = "Hide Password";
                 }
+            },
+
+            edit_username() {
+                let path = 'http://localhost:5000/edit'
+                let new_username = window.prompt("Enter new username");
+                axios.get(path, {params: {request: 'username', username: new_username}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {       
+                            axios.post(path, null, {params: {request: 'username', username: new_username, userid: 2}})
+                                .then((res) => {
+                                    if (res.data.status === "success") {
+                                        this.username = new_username;
+                                        console.log("success");
+                                    }
+                                    else {
+                                        window.alert("Username change unsuccessful");
+                                    }
+                                })
+                                .catch((error) => {
+                                    // esling-disable-next-line
+                                    console.log(error);
+                                })
+                        }
+                        else {
+                            window.alert("That username is unavailable.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
+            },
+
+            edit_password() {
+                let new_password = window.prompt("Enter new password");
+                let path = 'http://localhost:5000/edit';
+                axios.post(path, null, {params: {request: 'password', password: new_password, userid: 2}})
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            this.password = new_password;
+                            window.alert("Password change successful");
+                        }
+                        else {
+                            window.alert("Password change unsuccessful");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
+            },
+
+            edit_email() {
+                let path = 'http://localhost:5000/edit';
+                let new_email = window.prompt("Enter new email");
+                axios.get(path, {params: {request: 'email', email: new_email}})
+                .then((res) => {
+                    if (res.data.status === "success") {
+                        axios.post(path, null, {params: {request: 'email', email: new_email, userid: 2}})
+                        .then((res) => {
+                            if (res.data.status === "success") {
+                                this.email = new_email;
+                                window.alert("Email change successful");
+                            }
+                            else {
+                                window.alert("Email change unsuccessful");
+                            }
+                        })
+                        .catch((error) => {
+                            // esling-disable-next-line
+                            console.log(error);
+                        })
+                    }
+                    else {
+                        window.alert("That email is unavailable.");
+                    }
+                })
             }
         },
 
@@ -77,15 +165,11 @@
         background-color: darkorange;
     }
 
-    .password {
+    .password, .username, .email {
         width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
-    }
-
-    .password button {
-        margin-left: auto;
     }
 
     .row {
@@ -97,10 +181,6 @@
         gap: 1rem;
     }
 
-    button {
-        height: 50%;
-        margin-right: 5px;
-    }
     .user-id-container, .username-container, .password-container, .email-container, .user-type-container {
         display: flex;
         width: 49%;
@@ -110,7 +190,16 @@
         align-items: center;
     }
 
-    .password-container p {
+    button {
+        margin-right: 5px;
+        margin-left: auto;
+    }
+
+    .password-container .password .show-password {
+        margin-left: 0;
+    }
+
+    p {
         margin-left: 5px;
     }
 </style>
