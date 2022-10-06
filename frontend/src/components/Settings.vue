@@ -1,17 +1,16 @@
 <template>
-    <nav-bar :usertype="user_type" :userid="username"></nav-bar>
+    <nav-bar></nav-bar>
 </template>
 
 <script>
     import NavBar from '../components/NavBar.vue';
+
     export default {
-        name: 'driver-dashboard',
+        name: 'settings',
 
         data() {
             return {
-                dashboard_name: 'Driver Dashboard',
-                username: 'Driver1',
-                user_type: 'driver',
+                dashboard_name: 'Settings',
                 active: false
             }
         },

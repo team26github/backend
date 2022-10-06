@@ -1,14 +1,16 @@
 <template>
-  <div class="login">
-    <h2>LOGIN</h2>
-    <form>
-      <label for="username">Username:&emsp;</label>
-      <input type="text" id="username" name="username" v-model="username" required><br><br>
-      <label for="password">Password: &emsp;</label>
-      <input type="password" id="password" name="password" v-model="password" required><br><br>
-      <button type="submit" id="login-button" @click.prevent="get_login" :disabled="disabled">Login</button>
-    </form>
-    <p>{{ status }}</p>
+  <div class="login-container">
+    <div class="login">
+      <h2>LOGIN</h2>
+      <form>
+        <label for="username">Username:&emsp;</label>
+        <input type="text" id="username" name="username" v-model="username" required><br><br>
+        <label for="password">Password: &emsp;</label>
+        <input type="password" id="password" name="password" v-model="password" required><br><br>
+        <button type="submit" id="login-button" @click.prevent="get_login" :disabled="disabled">Login</button>
+      </form>
+      <p>{{ status }}</p>
+    </div>
   </div>
 </template>
 
@@ -86,7 +88,7 @@
               this.username = res.data.results[0][4];
               this.password = res.data.results[0][1];
               this.user_type = res.data.results[0][2];
-              this.$router.push(`/${this.user_type.toLowerCase()}`);
+              this.$router.push(`/${this.user_type.toLowerCase()}/${this.username}`);
             }
           })
           .catch((error) => {
@@ -99,13 +101,16 @@
 </script>
 
 <style scoped>
+  .login-container {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+  }
+
   .login {
     display: grid;
     place-items: center;
-    width: 250px;
-    height: 210px;
-    margin-top: 18%;
-    margin-left: 45%;
     padding: 0 10px 10px;
     border-style: solid;
     border-color: black;
