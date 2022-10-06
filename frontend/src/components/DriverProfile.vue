@@ -8,7 +8,7 @@
             <div class="username-container">
                 <div class="username">
                     <p><strong>Username: </strong>{{ username }}</p>
-                    <button>Edit Username</button>
+                    <button @click="edit_username">Edit Username</button>
                 </div>
             </div>
         </div>
@@ -16,7 +16,7 @@
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
-                    <button>Edit Password</button>
+                    <button @click="edit_password">Edit Password</button>
                     <button class="show-password" @click="show_password">{{ button_text }}</button>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="email-container">
                 <div class="email">
                     <p><strong>Email: </strong>{{ email }}</p>
-                    <button>Edit Email</button>
+                    <button @click="edit_email">Edit Email</button>
                 </div>
             </div>
             <div class="user-type-container">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import NavBar from './NavBar.vue';
 
     export default {
@@ -50,7 +51,10 @@
                 email: "driver1@email.com",
                 user_type: "driver",
                 button_text: "Show Password",
-                password_active: false
+                password_active: false,
+                edit_username_active: false,
+                edit_password_active: false,
+                edit_email_active: false
             };
         },
         methods: {
@@ -68,15 +72,44 @@
             },
 
             edit_username() {
-
+                let path = 'http://localhost:5000/edit'
+                let new_username = window.prompt("Enter new username");
+                axios.get(path, {params: {request: 'username', username: new_username}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            axios.post(path, {params: {request: 'username', username: new_username, userid: 1}})
+                                .then((res) => {
+                                    if (res.data.status === "success") {
+                                        this.username = new_username;
+                                        console.log("success");
+                                    }
+                                    else {
+                                        window.alert("Username change unsuccessful");
+                                    }
+                                })
+                                .catch((error) => {
+                                    // esling-disable-next-line
+                                    console.log(error);
+                                })
+                        }
+                        else {
+                            window.alert("That username is unavailable.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
             },
 
             edit_password() {
-
+                let new_password = window.prompt("Enter new password");
+                console.log(new_password)
             },
 
             edit_email() {
-
+                let new_email = window.prompt("Enter new email");
+                console.log(new_email);
             }
         },
 

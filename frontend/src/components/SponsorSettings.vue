@@ -1,5 +1,5 @@
 <template>
-    <NavBar :usertype="user_type"></NavBar>
+    <NavBar :usertype="user_type" :userid="username"></NavBar>
 </template>
 
 <script>
@@ -9,7 +9,8 @@
     name: "sponsor-settings",
     data() {
         return {
-            user_type: "sponsor"
+            user_type: "sponsor",
+            username: "Sponsor1"
         };
     },
 
