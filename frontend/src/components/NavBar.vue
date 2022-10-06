@@ -1,8 +1,8 @@
 <template>
     <div class = "nav">
-        <a @click="Home" :href="'/' + usertype"><i class="fa fa-fw fa-home"></i> Home</a>
-        <a @click="Profile" :href="'/' + usertype + '/profile'">Profile</a>
-        <a href="#" target="blank">Settings</a>
+        <a @click="Home" :href="'/' + usertype + '/' + userid"><i class="fa fa-fw fa-home"></i> Home</a>
+        <a @click="Profile" :href="'/' + usertype + '/' + userid + '/profile'">Profile</a>
+        <a @click="Settings" :href="'/' + usertype + '/' + userid + '/settings'">Settings</a>
         <a v-on:click="Logout" href = "/login">Logout</a>
 
     </div>
@@ -11,7 +11,7 @@
 <script>
     export default {
         name:'NavBar',
-        props: ['usertype'],
+        props: ['usertype', 'userid'],
         methods:{
             logout()
             {

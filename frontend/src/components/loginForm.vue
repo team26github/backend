@@ -88,7 +88,7 @@
               this.username = res.data.results[0][4];
               this.password = res.data.results[0][1];
               this.user_type = res.data.results[0][2];
-              this.$router.push(`/${this.user_type.toLowerCase()}`);
+              this.$router.push(`/${this.user_type.toLowerCase()}/${this.username}`);
             }
           })
           .catch((error) => {
