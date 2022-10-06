@@ -1,5 +1,5 @@
 <template>
-    <nav-bar></nav-bar>
+    <nav-bar :usertype="user_type" :userid="username"></nav-bar>
 </template>
 
 <script>
@@ -10,6 +10,8 @@
         data() {
             return {
                 dashboard_name: 'Driver Dashboard',
+                username: 'Driver1',
+                user_type: 'driver',
                 active: false
             }
         },
