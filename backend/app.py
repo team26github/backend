@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
+from datetime import datetime
 import pymysql
 
 app = Flask(__name__)
@@ -13,11 +14,21 @@ def login():
     username = request.args['username']
     password = request.args['password']
 
-    cursor = db.cursor()
-    query = f'SELECT * FROM UserInfo where (Username = "{username}" AND Passwd = "{password}");'
-    cursor.execute(query)
-    results = cursor.fetchall()
+    if request.method == 'GET':
+        cursor = db.cursor()
+        query = f'SELECT * FROM UserInfo where (Username = "{username}" AND Passwd = "{password}");'
+        cursor.execute(query)
+        results = cursor.fetchall()
 
+        mycursor = db.cursor()
+
+        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
+        val = [
+            ({username}, {password}, '{status}', datetime.now())
+        ]
+        mycursor.executemany(sql, val)
+        db.commit()
+        
     if len(results) > 0:
         return jsonify({
             'status': 'success',
