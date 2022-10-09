@@ -90,12 +90,12 @@
               this.user_type = res.data.results[0][2];
               this.$router.push(`/${this.user_type.toLowerCase()}/${this.username}`);
             }
-          })
+          },)
           .catch((error) => {
             // esling-disable-next-line
             console.log(error);
           })
-      }
+      },
     }
   }
 </script>
