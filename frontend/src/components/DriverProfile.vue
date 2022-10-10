@@ -105,6 +105,31 @@
             edit_password() {
                 let new_password = window.prompt("Enter new password");
                 let path = 'http://localhost:5000/edit';
+                if(new_password.search(/[A-Z]/)===-1){
+                    window.alert("Your password needs an Uppercase letter.");
+                }
+                else if(new_password.search(/[a-z]/)===-1){
+                    window.alert("Your password needs a lowercase letter.");
+                }
+                else if(new_password.length<8){
+                    window.alert("Your password needs to have at least 8 characters.");
+                }
+                else if(new_password.search(/[0-9]/)===-1){
+                    window.alert("Your password needs a number in it.");
+                }
+                else if(new_password.search(/[!-/]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[:-@]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[[-`]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[{-~]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else{
                 axios.post(path, null, {params: {request: 'password', password: new_password, userid: 1}})
                     .then((res) => {
                         if (res.data.status === "success") {
@@ -119,6 +144,7 @@
                         // esling-disable-next-line
                         console.log(error);
                     })
+                }
             },
 
             edit_email() {
