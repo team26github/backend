@@ -117,8 +117,16 @@
                 else if(new_password.search(/[0-9]/)===-1){
                     window.alert("Your password needs a number in it.");
                 }
-                else if((new_password.search(/[!-/]/)===-1 || !(new_password.search(/[:-@]/)===-1)) || (!(new_password.search(/[!-/]/)===-1) || (new_password.search(/[:-@]/)===-1)))
-                {
+                else if(new_password.search(/[!-/]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[:-@]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[[-`]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[{-~]/)===-1){
                     window.alert("Your password needs a special character.");
                 }
                 else{
