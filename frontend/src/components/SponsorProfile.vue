@@ -40,7 +40,7 @@
     import NavBar from './NavBar.vue';
 
     export default {
-        name: 'driver-profile',
+        name: 'sponsor-profile',
 
         data() {
             return {
@@ -48,7 +48,7 @@
                 username: "Sponsor1",
                 password: "Password3",
                 password_text: "***********************",
-                email: "driver1@email.com",
+                email: "sponsor@email.com",
                 user_type: "sponsor",
                 button_text: "Show Password",
                 password_active: false,
@@ -117,8 +117,16 @@
                 else if(new_password.search(/[0-9]/)===-1){
                     window.alert("Your password needs a number in it.");
                 }
-                else if((new_password.search(/[!-/]/)===-1 || !(new_password.search(/[:-@]/)===-1)) || (!(new_password.search(/[!-/]/)===-1) || (new_password.search(/[:-@]/)===-1)))
-                {
+                else if(new_password.search(/[!-/]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[:-@]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[[-`]/)===-1){
+                    window.alert("Your password needs a special character.");
+                }
+                else if(new_password.search(/[{-~]/)===-1){
                     window.alert("Your password needs a special character.");
                 }
                 else{
