@@ -40,7 +40,7 @@
     import NavBar from './NavBar.vue';
 
     export default {
-        name: 'driver-profile',
+        name: 'sponsor-profile',
 
         data() {
             return {
@@ -48,7 +48,7 @@
                 username: "Sponsor1",
                 password: "Password3",
                 password_text: "***********************",
-                email: "driver1@email.com",
+                email: "sponsor@email.com",
                 user_type: "sponsor",
                 button_text: "Show Password",
                 password_active: false,
@@ -105,38 +105,36 @@
             edit_password() {
                 let new_password = window.prompt("Enter new password");
                 let path = 'http://localhost:5000/edit';
-                if(new_password.search(/[A-Z]/)===-1){
-                    window.alert("Your password needs an Uppercase letter.");
-                }
-                else if(new_password.search(/[a-z]/)===-1){
-                    window.alert("Your password needs a lowercase letter.");
-                }
-                else if(new_password.length<8){
-                    window.alert("Your password needs to have at least 8 characters.");
-                }
-                else if(new_password.search(/[0-9]/)===-1){
-                    window.alert("Your password needs a number in it.");
-                }
-                else if((new_password.search(/[!-/]/)===-1 || !(new_password.search(/[:-@]/)===-1)) || (!(new_password.search(/[!-/]/)===-1) || (new_password.search(/[:-@]/)===-1)))
-                {
-                    window.alert("Your password needs a special character.");
-                }
-                else{
+                var minNumOfChars = 8;
+                var maxNumOfChars = 20;
+                var regExpression = /^[a-zA-Z0-9!@#$%^&*]{8,20}$/;
                 axios.post(path, null, {params: {request: 'password', password: new_password, userid: 3}})
                     .then((res) => {
+                        if (new_password.length < minNumOfChars){
+                                window.alert("Password must be at least 8 characters");
+                                res.data.status = "failure";
+                        }
+                        if (new_password.length > maxNumOfChars){
+                                window.alert("Password must be less than 20 characters");
+                                res.data.status = "failure";
+                        }
+                        if (!regExpression.test(new_password)){
+                                window.alert("Password should contain at least one lowercase and uppercase letter, and at least one special character");
+                                res.data.status = "failure";
+                        }
+                        if(new_password === this.password){
+                            window.alert("New password must be different than old password")
+                            res.data.status = "failure"
+                        }
                         if (res.data.status === "success") {
                             this.password = new_password;
                             window.alert("Password change successful");
-                        }
-                        else {
-                            window.alert("Password change unsuccessful");
                         }
                     })
                     .catch((error) => {
                         // esling-disable-next-line
                         console.log(error);
                     })
-                }
             },
 
             edit_email() {

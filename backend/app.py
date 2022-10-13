@@ -89,7 +89,7 @@ def edit():
             password = request.args.get('password', '')
             userid = request.args.get('userid', '')
             query = f'''UPDATE UserInfo
-                        SET Email = "{password}"
+                        SET Passwd = "{password}"
                         WHERE UserID = {userid}'''
             cursor.execute(query)
             status = 'success'
