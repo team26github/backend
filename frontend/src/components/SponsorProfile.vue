@@ -32,6 +32,26 @@
                 <p><strong>UserType: </strong>{{ user_type }}</p>
             </div>
         </div>
+        <div class="row">
+            <div class="drivers-container">
+                <div class="drivers">
+                    <p><strong>Drivers: </strong>{{ drivers }}
+                    <button @click="view_drivers">View Drivers</button></p>
+                </div>
+                <!-- <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                    </tr>
+                    <tr v-for="rs in records" v-bind:key="rs.id">
+                        <td>{{ rs.FIRST_NAME }}</td>
+                        <td>{{ rs.LAST_NAME }}</td>
+                        !-- <td><button type="button" name="edit" class="btn btn-primary btn-xs edit">Edit</button></td>
+                        <td><button type="button" name="delete" class="btn btn-danger btn-xs delete">Delete</button></td> --
+                    </tr>
+                </table> -->
+            </div>
+        </div>
     </div>
 </template>
 
@@ -44,7 +64,7 @@
 
         data() {
             return {
-                user_id: 1,
+                user_id: 3,
                 username: "Sponsor1",
                 password: "Password3",
                 password_text: "***********************",
@@ -54,10 +74,20 @@
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
-                edit_email_active: false
+                edit_email_active: false,
+                drivers: 'Driver1, Driver 2',
+                records: '',
             };
         },
         methods: {
+            fetchAllData:function(){ //show records
+                axios.get('http://localhost:5000/', {params: {request: 'username'}})
+                .then(function(response){
+                        console.log(response);
+                        this.allData = response.data.members;
+                });
+            },
+            
             show_password() {
                 if (this.password_active) {
                     this.password_text = "***********************";
@@ -162,7 +192,22 @@
                         window.alert("That email is unavailable.");
                     }
                 })
-            }
+            },
+
+            view_drivers() {
+                let path = 'http://localhost:5000/edit';
+                axios.get(path, {params: {request: 'username1', userid: 3}})
+                .then((res) => {
+                    console.log(res)
+                    this.records = res.data;
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            },
+        },
+        created:function(){
+            this.fetchAllData();
         },
 
         components: { NavBar }
@@ -197,7 +242,7 @@
         gap: 1rem;
     }
 
-    .user-id-container, .username-container, .password-container, .email-container, .user-type-container {
+    .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
         display: flex;
         width: 49%;
         border-style: solid;
@@ -211,7 +256,7 @@
         margin-left: auto;
     }
 
-    .password-container .password .show-password {
+    .password-container .password .show-password .show-drivers{
         margin-left: 0;
     }
 
