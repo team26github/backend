@@ -45,6 +45,7 @@ def login():
 def edit():
     cursor = db.cursor()
     if request.method == 'GET':
+        
         if request.args.get('request', '') == 'email':
             email = request.args.get('email', '')
             query = f'SELECT Email from UserInfo where Email = "{email}"'
@@ -54,6 +55,7 @@ def edit():
                 return jsonify({'status': 'failure'})
             else:
                 return jsonify({'status': 'success'})
+       
         elif request.args.get('request', '') == 'username':
             username = request.args.get('username', '')
             query = f'SELECT Username from UserInfo where Username = "{username}"'
@@ -63,7 +65,23 @@ def edit():
                 return jsonify({'status': 'failure'})
             else:
                 return jsonify({'status': 'success'})
+        
+        elif request.args.get('request', '') == 'username1':
+            username = request.args.get('username1', '')
+            query = f'SELECT UserID from UserInfo where Username = "{username}"'
+            sponsor_id = cursor.execute(query)
+            mycursor = db.cursor()
+            query2= f'SELECT FIRST_NAME, LAST_NAME FROM DriverApplication WHERE (SPONSOR_ID = "{sponsor_id}");'
+            mycursor.execute(query2)
+            results = mycursor.fetchall()
+
+            if len(results) > 0:
+                return jsonify({'status': 'failure'})
+            else:
+                return jsonify({'status': 'success'})
+
         return jsonify({'status', 'failure'})
+
     elif request.method == 'POST':
         status = 'failure'
 
@@ -93,9 +111,26 @@ def edit():
                         WHERE UserID = {userid}'''
             cursor.execute(query)
             status = 'success'
+            
+        elif request.args.get('request', '') == 'max_points':
+            max_points = request.args.get('max_points', '')
+            userid = request.args.get('userid', '')
+            query = f'''UPDATE UserInfo
+                        SET PointsLimit = "{max_points}"
+                        WHERE UserID = {userid}'''
+            cursor.execute(query)
+            status = 'success'
+
+        elif request.args.get('request', '') == 'expiration_period':
+            expiration_period = request.args.get('expiration_period', '')
+            userid = request.args.get('userid', '')
+            query = f'''UPDATE UserInfo
+                        SET ExpirationPeriod = "{expiration_period}"
+                        WHERE UserID = {userid}'''
+            cursor.execute(query)
+            status = 'success'
 
         return jsonify({'status': status})
-
 
 if __name__ == '__main__':
     app.run(debug=True)
