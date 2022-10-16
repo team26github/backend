@@ -10,6 +10,7 @@ import SponsorProfile from '../components/SponsorProfile.vue';
 import DriverSettings from '../components/DriverSettings.vue';
 import AdminSettings from '../components/AdminSettings.vue';
 import SponsorSettings from '../components/SponsorSettings.vue';
+import Catalog from '../components/Catalog.vue';
 
 const routes = [
     {
@@ -70,6 +71,11 @@ const routes = [
         path: '/sponsor/:id/settings',
         name: 'sponsor-settings',
         component: SponsorSettings
+    },
+    {
+        path: '/catalog',
+        name: 'catalog',
+        component: Catalog
     }
 ];
 
