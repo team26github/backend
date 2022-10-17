@@ -43,16 +43,13 @@ def login():
         
     if len(results) > 0:
         status = 1
-    if len(results) > 0:
-        status='success'
-        mycursor1 = db.cursor()
-        mycursor2 = db.cursor()
+        mycursor = db.cursor()
 
         sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
         val = [
             ({username}, {password}, '{status}', datetime.now())
         ]
-        mycursor2.executemany(sql2, val2)
+        mycursor.executemany(sql, val)
         db.commit()
         
     if len(results) > 0:
