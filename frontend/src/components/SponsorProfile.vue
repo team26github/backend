@@ -77,6 +77,7 @@
                 edit_email_active: false,
                 drivers: 'Driver1, Driver 2',
                 records: '',
+                points: 0,
             };
         },
         methods: {
