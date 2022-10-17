@@ -1,6 +1,7 @@
 <template>
     <div class = "nav">
         <a @click="Home" :href="'/' + usertype + '/' + userid"><i class="fa fa-fw fa-home"></i> Home</a>
+        <a @click="Catalog" href="/catalog">Catalog</a>
         <a @click="Profile" :href="'/' + usertype + '/' + userid + '/profile'">Profile</a>
         <a @click="Settings" :href="'/' + usertype + '/' + userid + '/settings'">Settings</a>
         <a v-on:click="Logout" href = "/login">Logout</a>
