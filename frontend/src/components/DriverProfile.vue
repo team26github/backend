@@ -54,8 +54,7 @@
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
-                edit_email_active: false,
-                points:0
+                edit_email_active: false
             };
         },
         methods: {
