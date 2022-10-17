@@ -2,12 +2,33 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import pymysql
+import requests
+import json
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 db = pymysql.connect(host='team26-db.cpin0o6jvads.us-east-2.rds.amazonaws.com', user='admin', password='p83YoUoffEo0xChEq9kG', database='Team26Database')
 
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+'''
+def get_new_token():
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ...'
+    }
+
+    body = {
+        'grant_type': 'client_credentials',
+        'scope': 'https://api.ebay.com/oauth/api_scope'
+    }
+
+    res = requests.post(TOKEN_URL, headers=headers, data=body)
+    data = json.loads(res.content)
+    global EBAY_TOKEN
+    EBAY_TOKEN = data['access_token']
+    global EXPIRES
+    EXPIRES = datetime.datetime.now() + datetime.timedelta(seconds=7200)
+'''
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -19,7 +40,24 @@ def login():
         query = f'SELECT * FROM UserInfo where (Username = "{username}" AND Passwd = "{password}");'
         cursor.execute(query)
         results = cursor.fetchall()
+        
+    if len(results) > 0:
+        status = 1
+        mycursor = db.cursor()
 
+        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
+        val = [
+            ({username}, {password}, f'{status}', datetime.now())
+        ]
+        mycursor.executemany(sql, val)
+        db.commit()
+
+        return jsonify({
+            'status': status,
+            'results': results
+        })
+    else:
+        status = 0
         mycursor = db.cursor()
 
         sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
@@ -28,15 +66,9 @@ def login():
         ]
         mycursor.executemany(sql, val)
         db.commit()
-        
-    if len(results) > 0:
+
         return jsonify({
-            'status': 'success',
-            'results': results
-        })
-    else:
-        return jsonify({
-            'status': 'failure',
+            'status': status,
             'results': results
         })
 
@@ -45,6 +77,7 @@ def login():
 def edit():
     cursor = db.cursor()
     if request.method == 'GET':
+        
         if request.args.get('request', '') == 'email':
             email = request.args.get('email', '')
             query = f'SELECT Email from UserInfo where Email = "{email}"'
@@ -54,6 +87,7 @@ def edit():
                 return jsonify({'status': 'failure'})
             else:
                 return jsonify({'status': 'success'})
+       
         elif request.args.get('request', '') == 'username':
             username = request.args.get('username', '')
             query = f'SELECT Username from UserInfo where Username = "{username}"'
@@ -63,7 +97,23 @@ def edit():
                 return jsonify({'status': 'failure'})
             else:
                 return jsonify({'status': 'success'})
+        
+        elif request.args.get('request', '') == 'username1':
+            username = request.args.get('username1', '')
+            query = f'SELECT UserID from UserInfo where Username = "{username}"'
+            sponsor_id = cursor.execute(query)
+            mycursor = db.cursor()
+            query2= f'SELECT FIRST_NAME, LAST_NAME FROM DriverApplication WHERE (SPONSOR_ID = "{sponsor_id}");'
+            mycursor.execute(query2)
+            results = mycursor.fetchall()
+
+            if len(results) > 0:
+                return jsonify({'status': 'failure'})
+            else:
+                return jsonify({'status': 'success'})
+
         return jsonify({'status', 'failure'})
+
     elif request.method == 'POST':
         status = 'failure'
 
@@ -93,9 +143,26 @@ def edit():
                         WHERE UserID = {userid}'''
             cursor.execute(query)
             status = 'success'
+            
+        elif request.args.get('request', '') == 'max_points':
+            max_points = request.args.get('max_points', '')
+            userid = request.args.get('userid', '')
+            query = f'''UPDATE UserInfo
+                        SET PointsLimit = "{max_points}"
+                        WHERE UserID = {userid}'''
+            cursor.execute(query)
+            status = 'success'
+
+        elif request.args.get('request', '') == 'expiration_period':
+            expiration_period = request.args.get('expiration_period', '')
+            userid = request.args.get('userid', '')
+            query = f'''UPDATE UserInfo
+                        SET ExpirationPeriod = "{expiration_period}"
+                        WHERE UserID = {userid}'''
+            cursor.execute(query)
+            status = 'success'
 
         return jsonify({'status': status})
-
 
 if __name__ == '__main__':
     app.run(debug=True)
