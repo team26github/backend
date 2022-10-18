@@ -54,7 +54,7 @@
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
-                edit_email_active: false
+                edit_email_active: false,
             };
         },
         methods: {
@@ -103,25 +103,25 @@
             },
 
             edit_password() {
+                window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
                 let path = 'http://localhost:5000/edit';
-                var minNumOfChars = 8;
-                var maxNumOfChars = 20;
-                var regExpression = /^[a-zA-Z0-9!@#$%^&*]{8,20}$/;
+                
+                var minMaxLength = /^[\s\S]{8,20}$/,
+                    upper = /[A-Z]/,
+                    lower  = /[a-z]/,
+                    number = /[0-9]/,
+                    special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
                 axios.post(path, null, {params: {request: 'password', password: new_password, userid: 3}})
                     .then((res) => {
-                        if (new_password.length < minNumOfChars){
-                                window.alert("Password must be at least 8 characters");
-                                res.data.status = "failure";
+                        window.print("Password must contain: at least one lower and upper case letter, at least one number, and at least one special character")
+                        if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
+                            res.data.status = "success";
                         }
-                        if (new_password.length > maxNumOfChars){
-                                window.alert("Password must be less than 20 characters");
-                                res.data.status = "failure";
+                        else {
+                            res.data.status = "false";
                         }
-                        if (!regExpression.test(new_password)){
-                                window.alert("Password should contain at least one lowercase and uppercase letter, and at least one special character");
-                                res.data.status = "failure";
-                        }
+
                         if(new_password === this.password){
                             window.alert("New password must be different than old password")
                             res.data.status = "failure"
@@ -130,6 +130,10 @@
                             this.password = new_password;
                             window.alert("Password change successful");
                         }
+                        if (res.data.status === "failure") {
+                            window.alert("New password must be at least 8 characters and no more than 20. Contain at least one upper and lower case letter, at least one number, and at least one special character.");
+                        }
+                        
                     })
                     .catch((error) => {
                         // esling-disable-next-line
@@ -212,6 +216,14 @@
     }
 
     .password-container .password .show-password {
+        margin-left: 0;
+    }
+
+    p {
+        margin-left: 5px;
+    }
+
+    .points-container {
         margin-left: 0;
     }
 

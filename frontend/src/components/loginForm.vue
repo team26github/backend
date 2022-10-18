@@ -34,7 +34,7 @@
     },
 
     methods: {
-      get_login() {
+      get_login() { 
         const path = 'http://localhost:5000/login';
 
         if (this.username === '') {
@@ -48,6 +48,7 @@
 
         axios.get(path, {params: {username: this.username, password: this.password}})
           .then((res) => {
+           
             if (res.data.status === 'failure'){
               this.status = 'Incorrect Credentials';
               this.login_counter++;

@@ -2,12 +2,32 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import pymysql
+import json
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 db = pymysql.connect(host='team26-db.cpin0o6jvads.us-east-2.rds.amazonaws.com', user='admin', password='p83YoUoffEo0xChEq9kG', database='Team26Database')
 
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+'''
+def get_new_token():
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ...'
+    }
+
+    body = {
+        'grant_type': 'client_credentials',
+        'scope': 'https://api.ebay.com/oauth/api_scope'
+    }
+
+    res = requests.post(TOKEN_URL, headers=headers, data=body)
+    data = json.loads(res.content)
+    global EBAY_TOKEN
+    EBAY_TOKEN = data['access_token']
+    global EXPIRES
+    EXPIRES = datetime.datetime.now() + datetime.timedelta(seconds=7200)
+'''
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -20,23 +40,37 @@ def login():
         cursor.execute(query)
         results = cursor.fetchall()
 
-        mycursor = db.cursor()
+    if len(results) > 0:
+        status='success'
+        mycursor1 = db.cursor()
+        mycursor2 = db.cursor()
 
-        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
-        val = [
-            ({username}, {password}, '{status}', datetime.now())
+        sql1 = f'SELECT UserID from UserInfo where Username ="{username}"'
+        mycursor1.execute(sql1)
+        result = mycursor1.fetchall()
+        sql2 = "INSERT INTO Login (UserID, UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s, %s)"
+        val2 = [
+            ({result},{username}, {password}, f'{status}', datetime.now())
         ]
-        mycursor.executemany(sql, val)
+        mycursor2.executemany(sql2, val2)
         db.commit()
         
-    if len(results) > 0:
         return jsonify({
-            'status': 'success',
+            'status': status,
             'results': results
         })
     else:
+        status='failure'
+        mycursor=db.cursor()
+
+        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
+        val = [
+            ({username}, {password}, f'{status}', datetime.now())
+        ]
+        mycursor.executemany(sql, val)
+        db.commit()
         return jsonify({
-            'status': 'failure',
+            'status': status,
             'results': results
         })
 
