@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import pymysql
-import requests
 import json
 
 app = Flask(__name__)
@@ -40,10 +39,29 @@ def login():
         query = f'SELECT * FROM UserInfo where (Username = "{username}" AND Passwd = "{password}");'
         cursor.execute(query)
         results = cursor.fetchall()
-        
+
     if len(results) > 0:
-        status = 1
-        mycursor = db.cursor()
+        status='success'
+        mycursor1 = db.cursor()
+        mycursor2 = db.cursor()
+
+        sql1 = f'SELECT UserID from UserInfo where Username ="{username}"'
+        mycursor1.execute(sql1)
+        result = mycursor1.fetchall()
+        sql2 = "INSERT INTO Login (UserID, UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s, %s)"
+        val2 = [
+            ({result},{username}, {password}, f'{status}', datetime.now())
+        ]
+        mycursor2.executemany(sql2, val2)
+        db.commit()
+        
+        return jsonify({
+            'status': status,
+            'results': results
+        })
+    else:
+        status='failure'
+        mycursor=db.cursor()
 
         sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
         val = [
@@ -51,22 +69,6 @@ def login():
         ]
         mycursor.executemany(sql, val)
         db.commit()
-
-        return jsonify({
-            'status': status,
-            'results': results
-        })
-    else:
-        status = 0
-        mycursor = db.cursor()
-
-        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
-        val = [
-            ({username}, {password}, '{status}', datetime.now())
-        ]
-        mycursor.executemany(sql, val)
-        db.commit()
-
         return jsonify({
             'status': status,
             'results': results
