@@ -133,6 +133,7 @@
             },
 
             edit_password() {
+                window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
                 let path = 'http://localhost:5000/edit';
                 var minMaxLength = /^[\s\S]{8,20}$/,
@@ -146,7 +147,7 @@
                             res.data.status = "success";
                         }
                         else {
-                            res.data.status = "false";
+                            res.data.status = "failure";
                         }
 
                         if(new_password === this.password){

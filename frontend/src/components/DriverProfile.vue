@@ -54,7 +54,7 @@
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
-                edit_email_active: false
+                edit_email_active: false,
             };
         },
         methods: {
@@ -103,8 +103,10 @@
             },
 
             edit_password() {
+                window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
                 let path = 'http://localhost:5000/edit';
+                
                 var minMaxLength = /^[\s\S]{8,20}$/,
                     upper = /[A-Z]/,
                     lower  = /[a-z]/,
@@ -112,6 +114,7 @@
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
                 axios.post(path, null, {params: {request: 'password', password: new_password, userid: 3}})
                     .then((res) => {
+                        window.print("Password must contain: at least one lower and upper case letter, at least one number, and at least one special character")
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
                         }
@@ -213,6 +216,14 @@
     }
 
     .password-container .password .show-password {
+        margin-left: 0;
+    }
+
+    p {
+        margin-left: 5px;
+    }
+
+    .points-container {
         margin-left: 0;
     }
 
