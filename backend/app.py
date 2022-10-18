@@ -40,27 +40,36 @@ def login():
         query = f'SELECT * FROM UserInfo where (Username = "{username}" AND Passwd = "{password}");'
         cursor.execute(query)
         results = cursor.fetchall()
-        
-    if len(results) > 0:
-        status = 1
+
     if len(results) > 0:
         status='success'
         mycursor1 = db.cursor()
         mycursor2 = db.cursor()
 
-        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
-        val = [
-            ({username}, {password}, '{status}', datetime.now())
+        sql1 = f'SELECT UserID from UserInfo where Username ="{username}"'
+        mycursor1.execute(sql1)
+        result = mycursor1.fetchall()
+        sql2 = "INSERT INTO Login (UserID, UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s, %s)"
+        val2 = [
+            ({result},{username}, {password}, f'{status}', datetime.now())
         ]
         mycursor2.executemany(sql2, val2)
         db.commit()
         
-    if len(results) > 0:
         return jsonify({
             'status': status,
             'results': results
         })
     else:
+        status='failure'
+        mycursor=db.cursor()
+
+        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
+        val = [
+            ({username}, {password}, f'{status}', datetime.now())
+        ]
+        mycursor.executemany(sql, val)
+        db.commit()
         return jsonify({
             'status': status,
             'results': results
