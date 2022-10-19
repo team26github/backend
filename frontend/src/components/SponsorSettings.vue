@@ -38,7 +38,7 @@
         edit_max_points() {
             let path = 'http://localhost:5000/edit'
             let new_max_points = window.prompt("Enter maximum value of points");
-            axios.get(path, {params: {request: 'maximum_points', max_points: new_max_points}})
+            axios.get(path, {params: {request: 'maximum_points', username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {       
                         axios.post(path, null, {params: {request: 'maximum_points', max_points: new_max_points,}})
