@@ -8,8 +8,8 @@
   "javascript": {
     "framework": "vue",
     "config": {
-      "SourceDir": "src",
-      "DistributionDir": "build",
+      "SourceDir": "/Users/grantgonzalez/Documents/CPSC 4911/F22-Team26-Znoyko.Sadak.Gonzalez.Pierce.grant.david.gonzalez/frontend",
+      "DistributionDir": "/Users/grantgonzalez/Documents/CPSC 4911/F22-Team26-Znoyko.Sadak.Gonzalez.Pierce.grant.david.gonzalez/frontend/dist",
       "BuildCommand": "npm run build",
       "StartCommand": "npm run serve"
     }
