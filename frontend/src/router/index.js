@@ -23,17 +23,17 @@ const routes = [
         redirect: '/login'
     },
     {
-        path: '/driver/:id',
+        path: '/driver/:username',
         name: 'driver-dashboard',
         component: DriverDashboard
     },
     {
-        path: '/admin/:id',
+        path: '/admin/:username',
         name: 'admin-dashboard',
         component: AdminDashboard
     },
     {
-        path: '/sponsor/:id',
+        path: '/sponsor/:username',
         name: 'sponsor-dashboard',
         component: SponsorDashboard
     },
@@ -43,37 +43,37 @@ const routes = [
         component: NavBar
     },
     {
-        path: '/driver/:id/profile',
+        path: '/driver/:username/profile',
         name: 'driver-profile',
         component: DriverProfile
     },
     {
-        path: '/admin/:id/profile',
+        path: '/admin/:username/profile',
         name: 'admin-profile',
         component: AdminProfile
     },
     {
-        path: '/sponsor/:id/profile',
+        path: '/sponsor/:username/profile',
         name: 'sponsor-profile',
         component: SponsorProfile
     },
     {
-        path: '/driver/:id/settings',
+        path: '/driver/:username/settings',
         name: 'driver-settings',
         component: DriverSettings
     },
     {
-        path: '/admin/:id/settings',
+        path: '/admin/:username/settings',
         name: 'admin-settings',
         component: AdminSettings
     },
     {
-        path: '/sponsor/:id/settings',
+        path: '/sponsor/:username/settings',
         name: 'sponsor-settings',
         component: SponsorSettings
     },
     {
-        path: '/catalog',
+        path: '/catalog/:username',
         name: 'catalog',
         component: Catalog
     }
@@ -82,6 +82,6 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes
-})
+});
 
 export default router;

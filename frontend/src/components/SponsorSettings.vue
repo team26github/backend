@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type" :userid="username"></NavBar>
+        <NavBar :usertype="user_type" :username="username"></NavBar>
         <h1>&nbsp;Sponsor Settings<br></h1>
         <div class="row">
             <div class="max_points">
@@ -28,10 +28,26 @@
     data() {
         return {
             user_type: "sponsor",
-            username: "Sponsor1",
-            max_points: 100000,
-            expiration_period: 12,
+            username: null,
+            max_points: null,
+            expiration_period: null,
         };
+    },
+
+    mounted() {
+        this.username = this.$route.params.username;
+
+        let path = 'http://localhost:5000/userinfo';
+        axios.get(path, {params: {username: this.username}})
+            .then((res) => {
+                if (res.data.status === 'success') {
+                    this.max_points = res.data.results[0][5];
+                    this.expiration_period = res.data.results[0][6];
+                }
+                else {
+                    console.log("Unsuccessful");
+                }
+            });
     },
 
     methods: {

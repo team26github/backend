@@ -1,5 +1,5 @@
 <template>
-    <nav-bar :usertype="user_type" :userid="username"></nav-bar>
+    <nav-bar :usertype="user_type" :username="username"></nav-bar>
     <div class="row">
             <div class="add-point-container">
                 <button @click="add_points"> Add Points to Driver</button>
@@ -18,8 +18,8 @@
 
         data() {
             return {
-                dashboard_name: 'Admin Dashboard',
-                username: 'Admin1',
+                dashboard_name: `${this.username}'s Dashboard`,
+                username: null,
                 user_type: 'admin',
                 active: false,
                 points: 0
@@ -43,6 +43,10 @@
                 }
                 this.points += remove_point_val;
             }
+        },
+
+        mounted() {
+            this.username = this.$route.params.username;
         },
 
         components: {

@@ -166,5 +166,24 @@ def edit():
 
         return jsonify({'status': status})
 
+@app.route('/userinfo', methods=['GET'])
+def get_user_info():
+    username = request.args.get('username', '')
+    cursor = db.cursor()
+    query = f'SELECT * FROM UserInfo WHERE Username = "{username}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
 if __name__ == '__main__':
     app.run(debug=True)
