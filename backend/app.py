@@ -100,19 +100,19 @@ def edit():
             else:
                 return jsonify({'status': 'success'})
         
-        elif request.args.get('request', '') == 'maximum_points':
-            username = request.args.get('username', '')
+        elif request.args.get('request', '') == 'username1':
+            username = request.args.get('username1', '')
             query = f'SELECT UserID from UserInfo where Username = "{username}"'
             sponsor_id = cursor.execute(query)
             mycursor = db.cursor()
-            query2 = f'SELECT FIRST_NAME, LAST_NAME FROM DriverApplications WHERE SPONSOR_ID = "{sponsor_id}";'
+            query2= f'SELECT FIRST_NAME, LAST_NAME FROM DriverApplication WHERE (SPONSOR_ID = "{sponsor_id}");'
             mycursor.execute(query2)
             results = mycursor.fetchall()
 
             if len(results) > 0:
-                return jsonify({'status': 'success'})
-            else:
                 return jsonify({'status': 'failure'})
+            else:
+                return jsonify({'status': 'success'})
 
         return jsonify({'status', 'failure'})
 
@@ -148,7 +148,7 @@ def edit():
             db.commit()
             status = 'success'
             
-        elif request.args.get('request', '') == 'maximum_points':
+        elif request.args.get('request', '') == 'max_points':
             max_points = request.args.get('max_points', '')
             userid = request.args.get('userid', '')
             query = f'''UPDATE UserInfo
