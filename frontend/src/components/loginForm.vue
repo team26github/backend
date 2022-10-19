@@ -89,14 +89,17 @@
               this.username = res.data.results[0][4];
               this.password = res.data.results[0][1];
               this.user_type = res.data.results[0][2];
-              this.$router.push(`/${this.user_type.toLowerCase()}/${this.username}`);
+              this.$router.push({
+                name: `${this.user_type.toLowerCase()}-dashboard`,
+                params: { username: this.username }
+              });              
             }
-          },)
+          })
           .catch((error) => {
             // esling-disable-next-line
             console.log(error);
           })
-      },
+      }
     }
   }
 </script>

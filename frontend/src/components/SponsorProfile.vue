@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type" :userid="username"></NavBar>
+        <NavBar :usertype="user_type" :username="username"></NavBar>
         <div class="row">
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
@@ -64,12 +64,12 @@
 
         data() {
             return {
-                user_id: 3,
-                username: "Sponsor1",
-                password: "Password3",
+                user_id: null,
+                username: null,
+                password: null,
                 password_text: "***********************",
-                email: "sponsor@email.com",
-                user_type: "sponsor",
+                email: null,
+                user_type: "Sponsor",
                 button_text: "Show Password",
                 password_active: false,
                 edit_username_active: false,
@@ -79,6 +79,28 @@
                 records: '',
             };
         },
+
+        mounted() {
+            this.username = this.$route.params.username;
+
+            let path = 'http://localhost:5000/userinfo';
+            axios.get(path, {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_id = res.data.results[0][0];
+                        this.password = res.data.results[0][1];
+                        this.email = res.data.results[0][3];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        },
+
         methods: {
             fetchAllData:function(){ //show records
                 axios.get('http://localhost:5000/', {params: {request: 'username'}})

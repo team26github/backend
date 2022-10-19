@@ -1,5 +1,5 @@
 <template>
-    <NavBar :usertype="user_type" :userid="username"></NavBar>
+    <NavBar :usertype="user_type" :username="username"></NavBar>
 </template>
 
 <script>
@@ -10,8 +10,12 @@
     data() {
         return {
             user_type: "admin",
-            username: "Admin1"
+            username: null
         };
+    },
+
+    mounted() {
+        this.username = this.$route.params.username;
     },
 
     components: { NavBar }
