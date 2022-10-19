@@ -44,11 +44,11 @@
                     if (res.data.status === "success") {
                         this.max_points = new_max_points;
                         console.log("success");
-                        }
+                    }
                     else {
                         window.alert("Maximum points change unsuccessful");
-                        }
-                    })
+                    }
+                })
                 .catch((error) => {
                     // esling-disable-next-line
                     console.log(error);
