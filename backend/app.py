@@ -189,5 +189,51 @@ def get_user_info():
             'results': results
         })
 
+@app.route('/apply', methods=['GET', 'POST'])
+def submit_application():
+    username = request.args['username']
+    password = request.args['password']
+
+    if request.method == 'GET':
+        cursor = db.cursor()
+        query = f'SELECT * FROM UserInfo where (Username = "{username}" AND Passwd = "{password}");'
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+    if len(results) > 0:
+        status='success'
+        mycursor1 = db.cursor()
+        mycursor2 = db.cursor()
+
+        sql1 = f'SELECT UserID from UserInfo where Username ="{username}"'
+        mycursor1.execute(sql1)
+        result = mycursor1.fetchall()
+        sql2 = "INSERT INTO Login (UserID, UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s, %s)"
+        val2 = [
+            ({result},{username}, {password}, f'{status}', datetime.now())
+        ]
+        mycursor2.executemany(sql2, val2)
+        db.commit()
+        
+        return jsonify({
+            'status': status,
+            'results': results
+        })
+    else:
+        status='failure'
+        mycursor=db.cursor()
+
+        sql = "INSERT INTO Login (UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s)"
+        val = [
+            ({username}, {password}, f'{status}', datetime.now())
+        ]
+        mycursor.executemany(sql, val)
+        db.commit()
+        return jsonify({
+            'status': status,
+            'results': results
+        })
+        
+
 if __name__ == '__main__':
     app.run(debug=True)
