@@ -31,6 +31,7 @@
             username: "Sponsor1",
             max_points: 100000,
             expiration_period: 12,
+            user_id:3
         };
     },
 
@@ -38,28 +39,16 @@
         edit_max_points() {
             let path = 'http://localhost:5000/edit'
             let new_max_points = window.prompt("Enter maximum value of points");
-            axios.get(path, {params: {request: 'maximum_points', username: this.username}})
+            axios.post(path, null, {params: {request: 'max_points', max_points: new_max_points, userid: this.user_id}})
                 .then((res) => {
-                    if (res.data.status === 'success') {       
-                        axios.post(path, null, {params: {request: 'maximum_points', max_points: new_max_points,}})
-                            .then((res) => {
-                                if (res.data.status === "success") {
-                                    this.max_points = new_max_points;
-                                    console.log("success");
-                                }
-                                else {
-                                    window.alert("Maximum points change unsuccessful");
-                                }
-                            })
-                            .catch((error) => {
-                                // esling-disable-next-line
-                                console.log(error);
-                            })
-                    }
+                    if (res.data.status === "success") {
+                        this.max_points = new_max_points;
+                        console.log("success");
+                        }
                     else {
-                        window.alert("Unable to make change.");
-                    }
-                })
+                        window.alert("Maximum points change unsuccessful");
+                        }
+                    })
                 .catch((error) => {
                     // esling-disable-next-line
                     console.log(error);
@@ -69,27 +58,19 @@
         edit_expiration() {
                 let path = 'http://localhost:5000/edit';
                 let new_expiration_period = window.prompt("Enter new expiration period");
-                axios.get(path, {params: {request: 'expiration_period', expiration_period: new_expiration_period}})
+                axios.post(path, null, {params: {request: 'expiration_period', expiration_period: new_expiration_period, userid: this.user_id}})
                 .then((res) => {
                     if (res.data.status === "success") {
-                        axios.post(path, null, {params: {request: 'expiration_period', expiration_period: new_expiration_period, userid: 3}})
-                        .then((res) => {
-                            if (res.data.status === "success") {
-                                this.expiration_period = new_expiration_period;
-                                window.alert("Expiration Period change successful");
-                            }
-                            else {
-                                window.alert("Expiration Period change unsuccessful");
-                            }
-                        })
-                        .catch((error) => {
-                            // esling-disable-next-line
-                            console.log(error);
-                        })
-                    }
+                        this.expiration_period = new_expiration_period;
+                        window.alert("Expiration Period change successful");
+                        }
                     else {
-                        window.alert("Unable to make change.");
-                    }
+                        window.alert("Expiration Period change unsuccessful");
+                        }
+                        })
+                .catch((error) => {
+                    // esling-disable-next-line
+                    console.log(error);
                 })
             },
     },

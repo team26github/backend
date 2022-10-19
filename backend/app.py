@@ -122,10 +122,10 @@ def edit():
         if request.args.get('request', '') == 'email':
             email = request.args.get('email', '')
             userid = request.args.get('userid', '')
-            query = f'''UPDATE UserInfo
-                        SET Email = "{email}"
-                        WHERE UserID = {userid}'''
+            print("UserID: "+userid+" Email:"+email)
+            query = f'UPDATE UserInfo SET Email = "{email}" WHERE UserID = {userid}'
             cursor.execute(query)
+            db.commit()
             status = 'success'
 
         elif request.args.get('request', '') == 'username':
@@ -135,6 +135,7 @@ def edit():
                         SET Username = "{username}"
                         WHERE UserID = {userid}'''
             cursor.execute(query)
+            db.commit()
             status = 'success'
 
         elif request.args.get('request', '') == 'password':
@@ -144,15 +145,17 @@ def edit():
                         SET Passwd = "{password}"
                         WHERE UserID = {userid}'''
             cursor.execute(query)
+            db.commit()
             status = 'success'
             
         elif request.args.get('request', '') == 'maximum_points':
             max_points = request.args.get('max_points', '')
             userid = request.args.get('userid', '')
             query = f'''UPDATE UserInfo
-                        SET PointsLimit = "{max_points}"
+                        SET PointsLimit = {max_points}
                         WHERE UserID = {userid}'''
             cursor.execute(query)
+            db.commit()
             status = 'success'
 
         elif request.args.get('request', '') == 'expiration_period':
@@ -162,6 +165,7 @@ def edit():
                         SET ExpirationPeriod = "{expiration_period}"
                         WHERE UserID = {userid}'''
             cursor.execute(query)
+            db.commit()
             status = 'success'
 
         return jsonify({'status': status})
