@@ -1,5 +1,5 @@
 <template>
-    <NavBar :usertype="user_type" :userid="user_id"></NavBar>
+    <NavBar :usertype="user_type" :username="username"></NavBar>
     <div class="catalog-container">
         <div class="row">
             <div class="catalog-item-container">
@@ -52,14 +52,36 @@
 
 <script>
     import NavBar from "./NavBar.vue";
+    import axios from 'axios';
 
     export default {
     name: "user-catalog",
     data() {
         return {
-            user_type: "driver",
-            user_id: 1
+            user_type: null,
+            user_id: null,
+            username: null
         };
+    },
+
+    mounted() {
+        this.username = this.$route.params.username;
+
+        let path = 'http://localhost:5000/userinfo';
+        axios.get(path, {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_id = res.data.results[0][0];
+                        this.user_type = res.data.results[0][2];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
     },
     components: { NavBar }
 }
