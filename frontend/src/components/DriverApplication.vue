@@ -55,13 +55,18 @@
             password: '',
             email: '',
             user_type: '',
+            production_path: "http://18.191.136.200",
+            localhost_path: "http://localhost:5000",
+            path: null
         };
+        },
+
+        mounted() {
+            this.path = this.localhost_path;
         },
 
         methods: {
         submit_application() { 
-            const path = '18.191.136.200/apply';
-
             if (this.first_name === '') {
             this.status = 'First Name cannot be blank.'
             return;
@@ -83,7 +88,7 @@
             return;
             }
 
-            axios.get(path, {params: {username: this.username, password: this.password}})
+            axios.get(this.path + '/apply', {params: {username: this.username, password: this.password}})
             .then((res) => {
             
                 if (res.data.status === 'failure'){

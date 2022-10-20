@@ -31,15 +31,18 @@
             username: null,
             max_points: null,
             expiration_period: null,
-            user_id: null
+            user_id: null,
+            production_path: "http://18.191.136.200",
+            localhost_path: "http://localhost:5000",
+            path: null
         };
     },
 
     mounted() {
         this.username = this.$route.params.username;
+        this.path = this.localhost_path;
 
-        let path = '18.191.136.200/userinfo';
-        axios.get(path, {params: {username: this.username}})
+        axios.get(this.path + '/userinfo', {params: {username: this.username}})
             .then((res) => {
                 if (res.data.status === 'success') {
                     this.max_points = res.data.results[0][5];
@@ -54,9 +57,8 @@
 
     methods: {
         edit_max_points() {
-            let path = '18.191.136.200/edit'
             let new_max_points = window.prompt("Enter maximum value of points");
-            axios.post(path, null, {params: {request: 'max_points', max_points: new_max_points, userid: this.user_id}})
+            axios.post(this.path + '/edit', null, {params: {request: 'max_points', max_points: new_max_points, userid: this.user_id}})
                 .then((res) => {
                     if (res.data.status === "success") {
                         this.max_points = new_max_points;
@@ -73,9 +75,8 @@
         },
        
         edit_expiration() {
-                let path = '18.191.136.200/edit';
                 let new_expiration_period = window.prompt("Enter new expiration period");
-                axios.post(path, null, {params: {request: 'expiration_period', expiration_period: new_expiration_period, userid: this.user_id}})
+                axios.post(this.path + '/edit', null, {params: {request: 'expiration_period', expiration_period: new_expiration_period, userid: this.user_id}})
                 .then((res) => {
                     if (res.data.status === "success") {
                         this.expiration_period = new_expiration_period;
