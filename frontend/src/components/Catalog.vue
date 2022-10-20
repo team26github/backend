@@ -67,7 +67,7 @@
     mounted() {
         this.username = this.$route.params.username;
 
-        let path = 'http://localhost:5000/userinfo';
+        let path = '18.191.136.200/userinfo';
         axios.get(path, {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {

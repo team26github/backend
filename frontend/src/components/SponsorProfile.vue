@@ -83,7 +83,7 @@
         mounted() {
             this.username = this.$route.params.username;
 
-            let path = 'http://localhost:5000/userinfo';
+            let path = '18.191.136.200/userinfo';
             axios.get(path, {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
@@ -103,7 +103,7 @@
 
         methods: {
             fetchAllData:function(){ //show records
-                axios.get('http://localhost:5000/', {params: {request: 'username'}})
+                axios.get('18.191.136.200/', {params: {request: 'username'}})
                 .then(function(response){
                         console.log(response);
                         this.allData = response.data.members;
@@ -124,7 +124,7 @@
             },
 
             edit_username() {
-                let path = 'http://localhost:5000/edit'
+                let path = '18.191.136.200/edit'
                 let new_username = window.prompt("Enter new username");
                 axios.get(path, {params: {request: 'username', username: new_username}})
                     .then((res) => {
@@ -157,7 +157,7 @@
             edit_password() {
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
-                let path = 'http://localhost:5000/edit';
+                let path = '18.191.136.200/edit';
                 var minMaxLength = /^[\s\S]{8,20}$/,
                     upper = /[A-Z]/,
                     lower  = /[a-z]/,
@@ -192,7 +192,7 @@
             },
 
             edit_email() {
-                let path = 'http://localhost:5000/edit';
+                let path = '18.191.136.200/edit';
                 let new_email = window.prompt("Enter new email");
                 axios.get(path, {params: {request: 'email', email: new_email}})
                 .then((res) => {
@@ -219,7 +219,7 @@
             },
 
             view_drivers() {
-                let path = 'http://localhost:5000/edit';
+                let path = '18.191.136.200/edit';
                 axios.get(path, {params: {request: 'username1', userid: 3}})
                 .then((res) => {
                     console.log(res)
