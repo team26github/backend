@@ -85,7 +85,7 @@
 
         mounted() {
             this.username = this.$route.params.username;
-            this.path = this.localhost_path;
+            this.path = this.production_path;
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
@@ -131,7 +131,7 @@
                 axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
                     .then((res) => {
                         if (res.data.status === 'success') {       
-                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: 3}})
+                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: this.user_id}})
                                 .then((res) => {
                                     if (res.data.status === "success") {
                                         this.username = new_username;
@@ -164,7 +164,7 @@
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
-                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: 3}})
+                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: this.user_id}})
                     .then((res) => {
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
@@ -197,7 +197,7 @@
                 axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
-                        axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: 3}})
+                        axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: this.user_id}})
                         .then((res) => {
                             if (res.data.status === "success") {
                                 this.email = new_email;
@@ -219,7 +219,7 @@
             },
 
             view_drivers() {
-                axios.get(this.path + '/edit', {params: {request: 'username1', userid: 3}})
+                axios.get(this.path + '/edit', {params: {request: 'username1', userid: this.user_id}})
                 .then((res) => {
                     console.log(res)
                     this.records = res.data;
