@@ -35,7 +35,7 @@
 
     methods: {
       get_login() { 
-        const path = 'http://18.191.136.200/login';
+        const path = 'https://18.191.136.200/login';
 
         if (this.username === '') {
           this.status = 'Username cannot be blank.'
