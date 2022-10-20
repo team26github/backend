@@ -35,8 +35,7 @@
         <div class="row">
             <div class="drivers-container">
                 <div class="drivers">
-                    <p><strong>Drivers: </strong>{{ drivers }}
-                    <button @click="view_drivers">View Drivers</button></p>
+                    <p><strong>Drivers: </strong>{{ drivers }}</p>
                 </div>
                 <!-- <table class="table table-bordered table-striped">
                     <tr>
@@ -75,8 +74,7 @@
                 edit_username_active: false,
                 edit_password_active: false,
                 edit_email_active: false,
-                drivers: 'Driver1, Driver 2',
-                records: '',
+                drivers: null,
             };
         },
 
@@ -91,6 +89,20 @@
                         this.user_id = res.data.results[0][0];
                         this.password = res.data.results[0][1];
                         this.email = res.data.results[0][3];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+                let path2 = 'http://localhost:5000/view-drivers';
+            axios.get(path2, {params: {UserID: this.user_id}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.drivers = res.data.results[0][1];
                     }
                     else {
                         console.log('Unsuccessful');
@@ -220,6 +232,7 @@
 
             view_drivers() {
                 let path = 'http://localhost:5000/edit';
+                this.user_id
                 axios.get(path, {params: {request: 'username1', userid: 3}})
                 .then((res) => {
                     console.log(res)

@@ -99,20 +99,6 @@ def edit():
                 return jsonify({'status': 'failure'})
             else:
                 return jsonify({'status': 'success'})
-        
-        elif request.args.get('request', '') == 'username1':
-            username = request.args.get('username1', '')
-            query = f'SELECT UserID from UserInfo where Username = "{username}"'
-            sponsor_id = cursor.execute(query)
-            mycursor = db.cursor()
-            query2= f'SELECT FIRST_NAME, LAST_NAME FROM DriverApplication WHERE (SPONSOR_ID = "{sponsor_id}");'
-            mycursor.execute(query2)
-            results = mycursor.fetchall()
-
-            if len(results) > 0:
-                return jsonify({'status': 'failure'})
-            else:
-                return jsonify({'status': 'success'})
 
         return jsonify({'status', 'failure'})
 
@@ -175,6 +161,43 @@ def get_user_info():
     username = request.args.get('username', '')
     cursor = db.cursor()
     query = f'SELECT * FROM UserInfo WHERE Username = "{username}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+@app.route('/view-drivers', methods=['GET'])
+def view_drivers():
+    UserID = request.args.get('UserID', '')
+    cursor = db.cursor()
+    query = f'SELECT * FROM DriverApplication WHERE SPONSOR_ID = "{UserID}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+@app.route('/get-sponsors', methods=['GET'])
+def get_sponsors():
+    cursor = db.cursor()
+    query = f'SELECT * FROM UserInfo WHERE UserType = "Sponsor"'
     cursor.execute(query)
     results = cursor.fetchall()
 
