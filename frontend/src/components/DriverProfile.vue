@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type" :userid="username"></NavBar>
+        <NavBar :usertype="user_type" :username="username"></NavBar>
         <div class="row">
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
@@ -44,12 +44,12 @@
 
         data() {
             return {
-                user_id: 1,
-                username: "Driver1",
-                password: "Password1",
+                user_id: null,
+                username: null,
+                password: null,
                 password_text: "***********************",
-                email: "driver1@email.com",
-                user_type: "driver",
+                email: null,
+                user_type: "Driver",
                 button_text: "Show Password",
                 password_active: false,
                 edit_username_active: false,
@@ -57,6 +57,28 @@
                 edit_email_active: false,
             };
         },
+
+        mounted() {
+            this.username = this.$route.params.username;
+
+            let path = '18.191.136.200/userinfo';
+            axios.get(path, {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_id = res.data.results[0][0];
+                        this.password = res.data.results[0][1];
+                        this.email = res.data.results[0][3];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        },
+
         methods: {
             show_password() {
                 if (this.password_active) {
@@ -72,7 +94,7 @@
             },
 
             edit_username() {
-                let path = 'http://localhost:5000/edit'
+                let path = '18.191.136.200/edit'
                 let new_username = window.prompt("Enter new username");
                 axios.get(path, {params: {request: 'username', username: new_username}})
                     .then((res) => {
@@ -105,7 +127,7 @@
             edit_password() {
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
-                let path = 'http://localhost:5000/edit';
+                let path = '18.191.136.200/edit';
                 
                 var minMaxLength = /^[\s\S]{8,20}$/,
                     upper = /[A-Z]/,
@@ -142,7 +164,7 @@
             },
 
             edit_email() {
-                let path = 'http://localhost:5000/edit';
+                let path = '18.191.136.200/edit';
                 let new_email = window.prompt("Enter new email");
                 axios.get(path, {params: {request: 'email', email: new_email}})
                 .then((res) => {
