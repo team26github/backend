@@ -55,14 +55,17 @@
                 edit_username_active: false,
                 edit_password_active: false,
                 edit_email_active: false,
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
             };
         },
 
         mounted() {
             this.username = this.$route.params.username;
+            this.path = this.localhost_path;
 
-            let path = '18.191.136.200/userinfo';
-            axios.get(path, {params: {username: this.username}})
+            axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
                         console.log(res.data);
@@ -94,12 +97,11 @@
             },
 
             edit_username() {
-                let path = '18.191.136.200/edit'
                 let new_username = window.prompt("Enter new username");
-                axios.get(path, {params: {request: 'username', username: new_username}})
+                axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
                     .then((res) => {
                         if (res.data.status === 'success') {       
-                            axios.post(path, null, {params: {request: 'username', username: new_username, userid: 2}})
+                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: 2}})
                                 .then((res) => {
                                     if (res.data.status === "success") {
                                         this.username = new_username;
@@ -127,13 +129,12 @@
             edit_password() {
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
-                let path = '18.191.136.200/edit';
                 var minMaxLength = /^[\s\S]{8,20}$/,
                     upper = /[A-Z]/,
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
-                axios.post(path, null, {params: {request: 'password', password: new_password, userid: 3}})
+                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: 3}})
                     .then((res) => {
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
@@ -162,12 +163,11 @@
             },
 
             edit_email() {
-                let path = '18.191.136.200/edit';
                 let new_email = window.prompt("Enter new email");
-                axios.get(path, {params: {request: 'email', email: new_email}})
+                axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
-                        axios.post(path, null, {params: {request: 'email', email: new_email, userid: 2}})
+                        axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: 2}})
                         .then((res) => {
                             if (res.data.status === "success") {
                                 this.email = new_email;
