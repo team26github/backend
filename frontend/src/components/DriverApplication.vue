@@ -60,7 +60,7 @@
 
         methods: {
         submit_application() { 
-            const path = 'http://localhost:5000/apply';
+            const path = '18.191.136.200/apply';
 
             if (this.first_name === '') {
             this.status = 'First Name cannot be blank.'

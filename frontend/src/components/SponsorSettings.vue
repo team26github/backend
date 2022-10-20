@@ -38,7 +38,7 @@
     mounted() {
         this.username = this.$route.params.username;
 
-        let path = 'http://localhost:5000/userinfo';
+        let path = '18.191.136.200/userinfo';
         axios.get(path, {params: {username: this.username}})
             .then((res) => {
                 if (res.data.status === 'success') {
@@ -54,7 +54,7 @@
 
     methods: {
         edit_max_points() {
-            let path = 'http://localhost:5000/edit'
+            let path = '18.191.136.200/edit'
             let new_max_points = window.prompt("Enter maximum value of points");
             axios.post(path, null, {params: {request: 'max_points', max_points: new_max_points, userid: this.user_id}})
                 .then((res) => {
@@ -73,7 +73,7 @@
         },
        
         edit_expiration() {
-                let path = 'http://localhost:5000/edit';
+                let path = '18.191.136.200/edit';
                 let new_expiration_period = window.prompt("Enter new expiration period");
                 axios.post(path, null, {params: {request: 'expiration_period', expiration_period: new_expiration_period, userid: this.user_id}})
                 .then((res) => {
