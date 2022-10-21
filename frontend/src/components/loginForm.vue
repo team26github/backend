@@ -29,13 +29,19 @@
             login_counter: 0,
             disabled: false,
             time_to_wait: 0,
-            time: 0
+            time: 0,
+            production_path: "http://18.191.136.200",
+            localhost_path: "http://localhost:5000",
+            path: null
         };
+    },
+
+    mounted() {
+      this.path = this.production_path;
     },
 
     methods: {
         get_login() {
-            const path = "18.191.136.200/login";
             if (this.username === "") {
                 this.status = "Username cannot be blank.";
                 return;
@@ -44,7 +50,7 @@
                 this.status = "Password cannot be blank.";
                 return;
             }
-            axios.get(path, { params: { username: this.username, password: this.password } })
+            axios.get(this.path + "/login", { params: { username: this.username, password: this.password } })
                 .then((res) => {
                 if (res.data.status === "failure") {
                     this.status = "Incorrect Credentials";
