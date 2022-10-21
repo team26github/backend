@@ -28,6 +28,10 @@ def get_new_token():
     EXPIRES = datetime.datetime.now() + datetime.timedelta(seconds=7200)
 '''
 
+@app.route('/')
+def hello_world():
+    return 'Hello World'
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     username = request.args['username']
