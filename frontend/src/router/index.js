@@ -11,6 +11,7 @@ import DriverSettings from '../components/DriverSettings.vue';
 import AdminSettings from '../components/AdminSettings.vue';
 import SponsorSettings from '../components/SponsorSettings.vue';
 import Catalog from '../components/Catalog.vue';
+import DriverApplication from '../components/DriverApplication.vue';
 
 const routes = [
     {
@@ -76,6 +77,11 @@ const routes = [
         path: '/catalog/:username',
         name: 'catalog',
         component: Catalog
+    },
+    {
+        path: '/driverapplication',
+        name: 'driver-application',
+        component: DriverApplication
     }
 ];
 
