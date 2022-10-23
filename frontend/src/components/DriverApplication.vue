@@ -74,15 +74,6 @@
         },
 
         methods: {
-<<<<<<< HEAD
-            fetchAllData:function(){ //show records
-                axios.get('http://localhost:5000/get-sponsors')
-                .then(function(response){
-                        console.log(response);
-                        // this.sponsors = response.data.members;
-                        this.sponsors = response.data.results;
-                });
-=======
             fetchSponsors:function() {
                 let path = 'http://localhost:5000/get-sponsors';
 
@@ -99,56 +90,10 @@
                     .catch((error) => {
                         console.log(error);
                     })
->>>>>>> ce77767658f4c2493911f101f0045a2eb73b77c4
             },
 
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
-<<<<<<< HEAD
-
-                if (this.first_name === '') {
-                this.status = 'First Name cannot be blank.'
-                return;
-                }
-                else if (this.last_name === '') {
-                this.status = 'Last Name cannot be blank.'
-                return; 
-                }
-                else if (this.username === '') {
-                this.status = 'Username cannot be blank.'
-                return;
-                }
-                else if (this.password === '') {
-                this.status = 'Password cannot be blank.'
-                return;
-                }
-                else if (this.email === '') {
-                this.status = 'Email cannot be blank.'
-                return;
-                }
-
-                axios.get(path, {params: {username: this.username, password: this.password}})
-                .then((res) => {
-                
-                    if (res.data.status === 'failure'){
-                    this.status = 'Incorrect Credentials';
-                    this.login_counter++;
-                    }
-                    else {
-                    this.status = 'Success'
-                    this.username = res.data.results[0][4];
-                    this.password = res.data.results[0][1];
-                    this.user_type = res.data.results[0][2];
-                    this.$router.push(`/${this.user_type.toLowerCase()}/${this.username}`);
-                    }
-                },)
-                .catch((error) => {
-                    // esling-disable-next-line
-                    console.log(error);
-                })
-            },
-        },
-=======
                 
                 axios.get(path, {params: {request: 'email', email: this.email}})
                 .then((res) => {
@@ -176,7 +121,6 @@
         created:function(){
             this.fetchSponsors();
         },
->>>>>>> ce77767658f4c2493911f101f0045a2eb73b77c4
     }
 
 </script>
