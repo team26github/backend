@@ -175,11 +175,21 @@ def get_user_info():
             'results': results
         })
 
+<<<<<<< HEAD
 @app.route('/view-drivers', methods=['GET'])
 def view_drivers():
     UserID = request.args.get('UserID', '')
     cursor = db.cursor()
     query = f'SELECT * FROM DriverApplication WHERE SPONSOR_ID = "{UserID}"'
+=======
+@app.route('/get-drivers', methods=['GET'])
+def get_drivers():
+    user_id = request.args['user_id']
+    cursor = db.cursor()
+    
+    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM DriverApplications WHERE SPONSOR_ID = "{user_id}"'
+    
+>>>>>>> ce77767658f4c2493911f101f0045a2eb73b77c4
     cursor.execute(query)
     results = cursor.fetchall()
 
@@ -197,7 +207,11 @@ def view_drivers():
 @app.route('/get-sponsors', methods=['GET'])
 def get_sponsors():
     cursor = db.cursor()
+<<<<<<< HEAD
     query = f'SELECT * FROM UserInfo WHERE UserType = "Sponsor"'
+=======
+    query = f'SELECT Username FROM UserInfo WHERE UserType = "Sponsor"'
+>>>>>>> ce77767658f4c2493911f101f0045a2eb73b77c4
     cursor.execute(query)
     results = cursor.fetchall()
 
@@ -212,6 +226,7 @@ def get_sponsors():
             'results': results
         })
 
+<<<<<<< HEAD
 @app.route('/apply', methods=['GET', 'POST'])
 def submit_application():
     username = request.args['username']
@@ -256,6 +271,47 @@ def submit_application():
             'status': status,
             'results': results
         })
+=======
+
+@app.route('/apply', methods=['GET', 'POST'])
+@cross_origin()
+def submit_application():
+    cursor = db.cursor()
+    if request.method == 'GET':
+        
+        if request.args.get('request', '') == 'email':
+            email = request.args.get('email', '')
+            query = f'SELECT Email from UserInfo where Email = "{email}"'
+            cursor.execute(query)
+            results = cursor.fetchall()
+            if len(results) > 0:
+                return jsonify({'status': 'failure'})
+            else:
+                return jsonify({'status': 'success'})
+
+        return jsonify({'status', 'failure'})
+
+    elif request.method == 'POST':
+        status = 'failure'
+
+        if request.args.get('request', '') == 'email':
+            first_name = request.args.get('first_name', '')
+            last_name = request.args.get('password', '')
+            username = request.args.get('password', '')
+            password = request.args.get('password', '')
+            email = request.args.get('email', '')
+            sponsors = request.args.get('password', '')
+            query = f'SELECT USERID FROM UserInfo WHERE Username = {sponsors}'
+            sponsor_id = cursor.execute(query)
+
+            # print("Email:"+email)
+            query = f'UPDATE UserInfo SET Email = "{email}" WHERE UserID = {userid}'
+            cursor.execute(query)
+            db.commit()
+            status = 'success'
+
+        return jsonify({'status': status})
+>>>>>>> ce77767658f4c2493911f101f0045a2eb73b77c4
         
 
 if __name__ == '__main__':

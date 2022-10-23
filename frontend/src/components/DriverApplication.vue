@@ -31,9 +31,9 @@
             <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
         </div>
 
-        <button type="submit" class="btn">Apply</button>
+        <!-- <button type="submit" class="btn">Apply</button> -->
 
-        <!-- <button type="submit" class="btn" id="apply-button" @click.prevent="submit_application" :disabled="disabled">Apply</button>  -->
+        <button type="submit" class="btn" @click="submit_application" >Apply</button> 
     </form>
 
 </template>
@@ -74,6 +74,7 @@
         },
 
         methods: {
+<<<<<<< HEAD
             fetchAllData:function(){ //show records
                 axios.get('http://localhost:5000/get-sponsors')
                 .then(function(response){
@@ -81,10 +82,29 @@
                         // this.sponsors = response.data.members;
                         this.sponsors = response.data.results;
                 });
+=======
+            fetchSponsors:function() {
+                let path = 'http://localhost:5000/get-sponsors';
+
+                axios.get(path, {params: {user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            console.log(res.data);
+                            this.sponsors = res.data.results;
+                        }
+                        else {
+                            console.log('Unsuccessful');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+>>>>>>> ce77767658f4c2493911f101f0045a2eb73b77c4
             },
 
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
+<<<<<<< HEAD
 
                 if (this.first_name === '') {
                 this.status = 'First Name cannot be blank.'
@@ -128,6 +148,35 @@
                 })
             },
         },
+=======
+                
+                axios.get(path, {params: {request: 'email', email: this.email}})
+                .then((res) => {
+                    if (res.data.status === "success") {
+                        axios.post(path, null, {params: {request: 'email', email: this.email}})
+                        .then((res) => {
+                            if (res.data.status === "success") {
+                                window.alert("Application submitted");
+                            }
+                            else {
+                                window.alert("Application not submitted");
+                            }
+                        })
+                        .catch((error) => {
+                            // esling-disable-next-line
+                            console.log(error);
+                        })
+                    }
+                    else {
+                        window.alert("Account already created with that email");
+                    }
+                })
+            },
+        },
+        created:function(){
+            this.fetchSponsors();
+        },
+>>>>>>> ce77767658f4c2493911f101f0045a2eb73b77c4
     }
 
 </script>
