@@ -31,9 +31,9 @@
             <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
         </div>
 
-        <button type="submit" class="btn">Apply</button>
+        <!-- <button type="submit" class="btn">Apply</button> -->
 
-        <!-- <button type="submit" class="btn" id="apply-button" @click.prevent="submit_application" :disabled="disabled">Apply</button>  -->
+        <button type="submit" class="btn" @click="submit_application" >Apply</button> 
     </form>
 
 </template>
@@ -56,77 +56,54 @@
             sponsors: [],
         };
         },
-        mounted() {
-            let path = 'http://localhost:5000/get-sponsors';
-            axios.get(path)
-                .then((res) => {
-                    if (res.data.status === 'success') {
-                        console.log(res.data);
-                        this.sponsors = res.data.results[0][4];
-                    }
-                    else {
-                        console.log('Unsuccessful');
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        },
 
         methods: {
-            fetchAllData:function(){ //show records
-                axios.get('http://localhost:5000/get-sponsors')
-                .then(function(response){
-                        console.log(response);
-                        // this.sponsors = response.data.members;
-                        this.sponsors = response.data.results;
-                });
+            fetchSponsors:function() {
+                let path = 'http://localhost:5000/get-sponsors';
+
+                axios.get(path, {params: {user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            console.log(res.data);
+                            this.sponsors = res.data.results;
+                        }
+                        else {
+                            console.log('Unsuccessful');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             },
 
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
-
-                if (this.first_name === '') {
-                this.status = 'First Name cannot be blank.'
-                return;
-                }
-                else if (this.last_name === '') {
-                this.status = 'Last Name cannot be blank.'
-                return; 
-                }
-                else if (this.username === '') {
-                this.status = 'Username cannot be blank.'
-                return;
-                }
-                else if (this.password === '') {
-                this.status = 'Password cannot be blank.'
-                return;
-                }
-                else if (this.email === '') {
-                this.status = 'Email cannot be blank.'
-                return;
-                }
-
-                axios.get(path, {params: {username: this.username, password: this.password}})
-                .then((res) => {
                 
-                    if (res.data.status === 'failure'){
-                    this.status = 'Incorrect Credentials';
-                    this.login_counter++;
+                axios.get(path, {params: {request: 'email', email: this.email}})
+                .then((res) => {
+                    if (res.data.status === "success") {
+                        axios.post(path, null, {params: {request: 'email', email: this.email}})
+                        .then((res) => {
+                            if (res.data.status === "success") {
+                                window.alert("Application submitted");
+                            }
+                            else {
+                                window.alert("Application not submitted");
+                            }
+                        })
+                        .catch((error) => {
+                            // esling-disable-next-line
+                            console.log(error);
+                        })
                     }
                     else {
-                    this.status = 'Success'
-                    this.username = res.data.results[0][4];
-                    this.password = res.data.results[0][1];
-                    this.user_type = res.data.results[0][2];
-                    this.$router.push(`/${this.user_type.toLowerCase()}/${this.username}`);
+                        window.alert("Account already created with that email");
                     }
-                },)
-                .catch((error) => {
-                    // esling-disable-next-line
-                    console.log(error);
                 })
             },
+        },
+        created:function(){
+            this.fetchSponsors();
         },
     }
 
