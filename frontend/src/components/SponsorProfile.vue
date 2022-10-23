@@ -35,21 +35,13 @@
         <div class="row">
             <div class="drivers-container">
                 <div class="drivers">
-                    <p><strong>Drivers: </strong>{{ drivers }}</p>
+                    <p><strong>Drivers: </strong>{{ selected }}
+                    <button @click="fetchDrivers">View Drivers</button></p>
                 </div>
-                <!-- <table class="table table-bordered table-striped">
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                    </tr>
-                    <tr v-for="rs in records" v-bind:key="rs.id">
-                        <td>{{ rs.FIRST_NAME }}</td>
-                        <td>{{ rs.LAST_NAME }}</td>
-                        !-- <td><button type="button" name="edit" class="btn btn-primary btn-xs edit">Edit</button></td>
-                        <td><button type="button" name="delete" class="btn btn-danger btn-xs delete">Delete</button></td> --
-                    </tr>
-                </table> -->
             </div>
+        </div>
+        <div class="row">
+            <option>{{drivers}}</option>
         </div>
     </div>
 </template>
@@ -74,7 +66,7 @@
                 edit_username_active: false,
                 edit_password_active: false,
                 edit_email_active: false,
-                drivers: null,
+                drivers: [],
             };
         },
 
@@ -97,21 +89,7 @@
                 .catch((error) => {
                     console.log(error);
                 })
-                let path2 = 'http://localhost:5000/view-drivers';
-            axios.get(path2, {params: {UserID: this.user_id}})
-                .then((res) => {
-                    if (res.data.status === 'success') {
-                        console.log(res.data);
-                        this.drivers = res.data.results[0][1];
-                    }
-                    else {
-                        console.log('Unsuccessful');
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        },
+            },
 
         methods: {
             fetchAllData:function(){ //show records
@@ -120,6 +98,32 @@
                         console.log(response);
                         this.allData = response.data.members;
                 });
+            },
+
+            fetchDrivers:function() {
+                let path = 'http://localhost:5000/get-drivers';
+
+                axios.get(path, {params: {user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            console.log(res.data);
+                           
+                            for (var i = 0; i < 30; i++) {
+                                if (res.data.results[i] == null) {
+                                    return;
+                                }
+                                else {
+                                    this.drivers[i] = res.data.results[i];
+                                }
+                            }
+                        }
+                        else {
+                            console.log('Unsuccessful');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             },
             
             show_password() {
@@ -229,22 +233,10 @@
                     }
                 })
             },
-
-            view_drivers() {
-                let path = 'http://localhost:5000/edit';
-                this.user_id
-                axios.get(path, {params: {request: 'username1', userid: 3}})
-                .then((res) => {
-                    console.log(res)
-                    this.records = res.data;
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-            },
         },
         created:function(){
             this.fetchAllData();
+            this.fetchDrivers();
         },
 
         components: { NavBar }
