@@ -61,6 +61,7 @@
             user_type: null,
             user_id: null,
             username: null,
+            catalog_filters: null,
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
