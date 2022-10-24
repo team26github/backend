@@ -4,9 +4,9 @@
 
         <div>Select Sponsor: {{ selected }}</div>
 
-        <select v-model="selected" required>
+        <select name = "selected" v-model="selected" required>
             <option disabled value="">Please select one sponsor you would like to apply to</option>
-            <option>{{sponsors}}</option>
+            <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
         </select>
 
         <br><br>
@@ -31,8 +31,6 @@
             <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
         </div>
 
-        <!-- <button type="submit" class="btn">Apply</button> -->
-
         <button type="submit" class="btn" @click="submit_application" >Apply</button> 
     </form>
 
@@ -54,23 +52,8 @@
             email: '',
             user_type: '',
             sponsors: [],
+            sponsor_selected: '',
         };
-        },
-        mounted() {
-            let path = 'http://localhost:5000/get-sponsors';
-            axios.get(path)
-                .then((res) => {
-                    if (res.data.status === 'success') {
-                        console.log(res.data);
-                        this.sponsors = res.data.results[0][4];
-                    }
-                    else {
-                        console.log('Unsuccessful');
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
         },
 
         methods: {
@@ -95,27 +78,19 @@
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
                 
-                axios.get(path, {params: {request: 'email', email: this.email}})
-                .then((res) => {
-                    if (res.data.status === "success") {
-                        axios.post(path, null, {params: {request: 'email', email: this.email}})
-                        .then((res) => {
-                            if (res.data.status === "success") {
-                                window.alert("Application submitted");
-                            }
-                            else {
-                                window.alert("Application not submitted");
-                            }
-                        })
-                        .catch((error) => {
-                            // esling-disable-next-line
-                            console.log(error);
-                        })
-                    }
-                    else {
-                        window.alert("Account already created with that email");
-                    }
-                })
+                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password}})
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot submit application.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
             },
         },
         created:function(){
