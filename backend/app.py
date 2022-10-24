@@ -219,40 +219,26 @@ def get_sponsors():
 @cross_origin()
 def submit_application():
     cursor = db.cursor()
-    if request.method == 'GET':
-        
-        if request.args.get('request', '') == 'email':
-            email = request.args.get('email', '')
-            query = f'SELECT Email from UserInfo where Email = "{email}"'
-            cursor.execute(query)
-            results = cursor.fetchall()
-            if len(results) > 0:
-                return jsonify({'status': 'failure'})
-            else:
-                return jsonify({'status': 'success'})
-
-        return jsonify({'status', 'failure'})
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
         status = 'failure'
 
-        if request.args.get('request', '') == 'email':
-            first_name = request.args.get('first_name', '')
-            last_name = request.args.get('password', '')
-            username = request.args.get('password', '')
-            password = request.args.get('password', '')
-            email = request.args.get('email', '')
-            sponsors = request.args.get('password', '')
-            query = f'SELECT USERID FROM UserInfo WHERE Username = {sponsors}'
-            sponsor_id = cursor.execute(query)
+        # if request.args.get('request', '') == 'email':
+        email = request.args.get('email', '')
+        first_name = request.args.get('first_name', '')
+        last_name = request.args.get('last_name', '')
+        username = request.args.get('username', '')
+        passwd = request.args.get('passwd', '')
+        sponsor_id = request.args.get('sponsor_id', '')
+        
+        # print("UserID: "+userid+" Email:"+email)
+        query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD, SPONSOR_ID) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}","{sponsor_id}")'
 
-            # print("Email:"+email)
-            query = f'UPDATE UserInfo SET Email = "{email}" WHERE UserID = {userid}'
-            cursor.execute(query)
-            db.commit()
-            status = 'success'
-
+        cursor.execute(query)
+        db.commit()
+        status = 'success'
+            
         return jsonify({'status': status})
+
         
 
 if __name__ == '__main__':

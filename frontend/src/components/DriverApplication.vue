@@ -6,7 +6,7 @@
 
         <select v-model="selected" required>
             <option disabled value="">Please select one sponsor you would like to apply to</option>
-            <option>{{sponsors}}</option>
+            <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
         </select>
 
         <br><br>
@@ -56,22 +56,6 @@
             sponsors: [],
         };
         },
-        mounted() {
-            let path = 'http://localhost:5000/get-sponsors';
-            axios.get(path)
-                .then((res) => {
-                    if (res.data.status === 'success') {
-                        console.log(res.data);
-                        this.sponsors = res.data.results[0][4];
-                    }
-                    else {
-                        console.log('Unsuccessful');
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        },
 
         methods: {
             fetchSponsors:function() {
@@ -95,27 +79,20 @@
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
                 
-                axios.get(path, {params: {request: 'email', email: this.email}})
-                .then((res) => {
-                    if (res.data.status === "success") {
-                        axios.post(path, null, {params: {request: 'email', email: this.email}})
-                        .then((res) => {
-                            if (res.data.status === "success") {
-                                window.alert("Application submitted");
-                            }
-                            else {
-                                window.alert("Application not submitted");
-                            }
-                        })
-                        .catch((error) => {
-                            // esling-disable-next-line
-                            console.log(error);
-                        })
-                    }
-                    else {
-                        window.alert("Account already created with that email");
-                    }
-                })
+                axios.post(path, null, {params: {request: 'email', email: this.email, request: 'first_name', first_name: this.first_name, request: 'last_name', last_name: this.last_name, request: 'username', username: this.username, request: 'passwd', password: this.password}})
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            this.username = new_username;
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Username change unsuccessful");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
             },
         },
         created:function(){

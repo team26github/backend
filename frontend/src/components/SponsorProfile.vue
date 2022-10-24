@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="row">
-            <option>{{drivers}}</option>
+            <option v-for="driver in drivers" :key="driver">{{driver}}</option>
         </div>
     </div>
 </template>
