@@ -6,9 +6,7 @@
 
         <select v-model="selected" required>
             <option disabled value="">Please select one sponsor you would like to apply to</option>
-            <option>A</option>
-            <option>B</option>
-            <option>C</option>
+            <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
         </select>
 
         <br><br>
@@ -33,9 +31,9 @@
             <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
         </div>
 
-        <button type="submit" class="btn">Apply</button>
+        <!-- <button type="submit" class="btn">Apply</button> -->
 
-        <!-- <button type="submit" class="btn" id="apply-button" @click.prevent="submit_application" :disabled="disabled">Apply</button>  -->
+        <button type="submit" class="btn" @click="submit_application" >Apply</button> 
     </form>
 
 </template>
@@ -55,60 +53,51 @@
             password: '',
             email: '',
             user_type: '',
-            production_path: "http://18.191.136.200",
-            localhost_path: "http://localhost:5000",
-            path: null
+            sponsors: [],
         };
         },
 
-        mounted() {
-            this.path = this.localhost_path;
-        },
-
         methods: {
-        submit_application() { 
-            if (this.first_name === '') {
-            this.status = 'First Name cannot be blank.'
-            return;
-            }
-            else if (this.last_name === '') {
-            this.status = 'Last Name cannot be blank.'
-            return; 
-            }
-            else if (this.username === '') {
-            this.status = 'Username cannot be blank.'
-            return;
-            }
-            else if (this.password === '') {
-            this.status = 'Password cannot be blank.'
-            return;
-            }
-            else if (this.email === '') {
-            this.status = 'Email cannot be blank.'
-            return;
-            }
+            fetchSponsors:function() {
+                let path = 'http://localhost:5000/get-sponsors';
 
-            axios.get(this.path + '/apply', {params: {username: this.username, password: this.password}})
-            .then((res) => {
-            
-                if (res.data.status === 'failure'){
-                this.status = 'Incorrect Credentials';
-                this.login_counter++;
-                }
-                else {
-                this.status = 'Success'
-                this.username = res.data.results[0][4];
-                this.password = res.data.results[0][1];
-                this.user_type = res.data.results[0][2];
-                this.$router.push(`/${this.user_type.toLowerCase()}/${this.username}`);
-                }
-            },)
-            .catch((error) => {
-                // esling-disable-next-line
-                console.log(error);
-            })
+                axios.get(path, {params: {user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            console.log(res.data);
+                            this.sponsors = res.data.results;
+                        }
+                        else {
+                            console.log('Unsuccessful');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             },
-        }
+
+            submit_application() { 
+                const path = 'http://localhost:5000/apply';
+                
+                axios.post(path, null, {params: {request: 'email', email: this.email, request: 'first_name', first_name: this.first_name, request: 'last_name', last_name: this.last_name, request: 'username', username: this.username, request: 'passwd', password: this.password}})
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            this.username = new_username;
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Username change unsuccessful");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
+            },
+        },
+        created:function(){
+            this.fetchSponsors();
+        },
     }
 
 </script>
