@@ -215,29 +215,29 @@ def get_sponsors():
         })
 
 
-@app.route('/apply', methods=['GET', 'POST'])
+@app.route('/apply', methods=['POST'])
 @cross_origin()
-def submit_application():
+def apply():
     cursor = db.cursor()
-    if request.method == 'POST':
-        status = 'failure'
+    status = 'failure'
 
-        # if request.args.get('request', '') == 'email':
-        email = request.args.get('email', '')
-        first_name = request.args.get('first_name', '')
-        last_name = request.args.get('last_name', '')
-        username = request.args.get('username', '')
-        passwd = request.args.get('passwd', '')
-        sponsor_id = request.args.get('sponsor_id', '')
+    email = request.args.get('email', '')
+    first_name = request.args.get('first_name', '')
+    last_name = request.args.get('last_name', '')
+    username = request.args.get('username', '')
+    passwd = request.args.get('password', '')
+    sponsor = request.args.get('selected', '')
+
+    query = f'SELECT UserID FROM UserInfo WHERE Username="{sponsor}"'
+    sponsor_id = cursor.execute(query)
+    
+    query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD, SPONSOR_ID) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}", "{sponsor_id})'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
         
-        # print("UserID: "+userid+" Email:"+email)
-        query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD, SPONSOR_ID) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}","{sponsor_id}")'
-
-        cursor.execute(query)
-        db.commit()
-        status = 'success'
-            
-        return jsonify({'status': status})
+    return jsonify({'status': status})
 
         
 
