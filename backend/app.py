@@ -1,6 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-from datetime import datetime
+from datetime import datetime, timedelta
+from ebaysdk.finding import Connection as Finding
+from ebaysdk.exception import ConnectionError
+import pandas
+import os
 import pymysql
 import requests
 import json
@@ -14,7 +18,7 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 def get_new_token():
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic GrantGon-Team26-SBX-ad2605cb4-5ce27a66:SBX-d2605cb45cb2-b1f3-4c22-8e85-3209'
+        'Authorization': 'Basic R3JhbnRHb24tVGVhbTI2LVNCWC1hZDI2MDVjYjQtNWNlMjdhNjY6U0JYLWQyNjA1Y2I0NWNiMi1iMWYzLTRjMjItOGU4NS0zMjA5'
     }
 
     body = {
@@ -22,12 +26,64 @@ def get_new_token():
         'scope': 'https://api.ebay.com/oauth/api_scope'
     }
 
-    res = requests.post(TOKEN_URL, headers=headers, data=body)
+    res = requests.post('https://api.sandbox.ebay.com/identity/v1/oauth2/token', headers=headers, data=body)
+
     data = json.loads(res.content)
     global EBAY_TOKEN
     EBAY_TOKEN = data['access_token']
     global EXPIRES
-    EXPIRES = datetime.datetime.now() + datetime.timedelta(seconds=7200)
+    EXPIRES = datetime.now() + timedelta(seconds=7200)
+
+def get_ebay_results(payload):
+    try:
+        api = Finding(appid='GrantGon-Team26-SBX-ad2605cb4-5ce27a66', config_file=None)
+        res = api.execute('findItemsAdvanced', payload)
+        return res.dict()
+    except ConnectionError as e:
+        print(e)
+        print(e.response.dict())
+
+def get_total_ebay_pages(results):
+    if results:
+        return int(results.get('paginationOutput').get('totalPages'))
+    else:
+        return
+
+def search_ebay(payload):
+    # Parse response - results and concatenate to the dataframe
+    results = get_ebay_results(payload)
+    total_pages = get_total_ebay_pages(results)
+    items_list = results['searchResult']['item']
+
+    i = 2
+    while i <= total_pages:
+        payload['pagination'] = {'entriesPerPage': 25, 'pageNumber': i}
+        results = get_ebay_results(payload)
+        items_list.extend(results['searchResult']['item'])
+        i += 1
+    
+    df_items = pandas.DataFrame(columns=['itemId', 'title', 'viewItemURL', 'galleryURL', 'location', 'postalCode', 'paymentMethod', 'listingType', 'bestOfferEnabled', 'buyItNowAvailable', 'currentPrice', 'bidCount', 'sellingState'])
+
+    for item in items_list:
+        row = {
+            'itemId': item.get('itemId'),
+            'title': item.get('title'),
+            'viewItemURL': item.get('viewItemURL'),
+            'galleryURL': item.get('galleryURL'),
+            'location': item.get('location'),
+            'postalCode': item.get('postalCode'),
+            'paymentMethod': item.get('paymentMethod'),
+            'listingType': item.get('listingInfo').get('listingType'),
+            'bestOfferEnabled': item.get('listingInfo').get('buyItNowAvailable'),
+            'currentPrice': item.get('sellingStatus').get('currentPrice').get('value'),
+            'bidCount': item.get('bidCount'),
+            'sellingState': item.get('sellingState')
+        }
+    
+        new_df = pandas.DataFrame([row])
+        df_items = pandas.concat([df_items, new_df], axis=0, ignore_index=True)
+    
+    return df_items
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -239,7 +295,29 @@ def submit_application():
             
         return jsonify({'status': status})
 
+
+@app.route('/update_catalog_items', methods=['GET'])
+def get_catalog_items():
+    if EXPIRES < datetime.now():
+        get_new_token()
+    
+    sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
+    production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
+    keywords = request.args['keywords']
+    payload = {
+        'keywords': keywords,
+        'sortOrder': 'StartTimeNewest'
+    }
+
+    results = search_ebay(payload)
+
+    print(results)
+
+    return jsonify({
+        'status': 'success'
+    })
         
 
 if __name__ == '__main__':
+    get_new_token()
     app.run(debug=True)

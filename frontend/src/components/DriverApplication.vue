@@ -61,7 +61,7 @@
         },
 
         mounted() {
-            this.path = this.production_path;
+            this.path = this.localhost_path;
         },
 
         methods: {

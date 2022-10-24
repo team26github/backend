@@ -24,7 +24,7 @@
             <div class="catalog-items">
                 <p><strong>Catalog Filters:</strong></p>
                 <p v-for="filter in catalog_filters" :key="filter">&nbsp;{{ filter }}</p>
-                <button>Edit Catalog Filters</button>
+                <button @click="edit_catalog">Edit Catalog Filters</button>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@
 
     mounted() {
         this.username = this.$route.params.username;
-        this.path = this.production_path;
+        this.path = this.localhost_path;
 
         axios.get(this.path + '/userinfo', {params: {username: this.username}})
             .then((res) => {
@@ -105,7 +105,16 @@
                     // esling-disable-next-line
                     console.log(error);
                 })
-            },
+        },
+
+        edit_catalog() {
+            axios.get(this.path + '/update_catalog_items', {params: {keywords: 'Samsung'}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        window.alert('Success');
+                    }
+                })
+        }
     },
     components: { NavBar}
 }
