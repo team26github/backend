@@ -45,23 +45,28 @@
         name: "driver-application",
 
         data() {
-        return {
-            status: null,
-            first_name: '',
-            last_name:'',
-            username: '',
-            password: '',
-            email: '',
-            user_type: '',
-            sponsors: [],
-        };
+            return {
+                status: null,
+                first_name: '',
+                last_name:'',
+                username: '',
+                password: '',
+                email: '',
+                user_type: '',
+                sponsors: [],
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
+            };
+        },
+
+        mounted() {
+            this.path = this.localhost_path;
         },
 
         methods: {
             fetchSponsors:function() {
-                let path = 'http://localhost:5000/get-sponsors';
-
-                axios.get(path, {params: {user_id: this.user_id}})
+                axios.get(this.path + '/get-sponsors', {params: {user_id: this.user_id}})
                     .then((res) => {
                         if (res.data.status === 'success') {
                             console.log(res.data);
@@ -76,10 +81,9 @@
                     })
             },
 
-            submit_application() { 
-                const path = 'http://localhost:5000/apply';
-                
-                axios.post(path, null, {params: {request: 'email', email: this.email, request: 'first_name', first_name: this.first_name, request: 'last_name', last_name: this.last_name, request: 'username', username: this.username, request: 'passwd', password: this.password}})
+            /*
+            submit_application() {                 
+                axios.post(this.path + '/apply', null, {params: {request: 'email', email: this.email, request: 'first_name', first_name: this.first_name, request: 'last_name', last_name: this.last_name, request: 'username', username: this.username, request: 'passwd', password: this.password}})
                     .then((res) => {
                         if (res.data.status === "success") {
                             this.username = new_username;
@@ -94,6 +98,7 @@
                         console.log(error);
                     })
             },
+            */
         },
         created:function(){
             this.fetchSponsors();
