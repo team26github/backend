@@ -20,6 +20,13 @@
                 <button>Edit Point Conversion</button>
             </div>
         </div>
+        <div class="row">
+            <div class="catalog-items">
+                <p><strong>Catalog Filters:</strong></p>
+                <p v-for="filter in catalog_filters" :key="filter">&nbsp;{{ filter }}</p>
+                <button>Edit Catalog Filters</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -39,6 +46,7 @@
             expiration_period: null,
             user_id: null,
             dollar_to_point_value: null,
+            catalog_filters: ["Cars,", "Toys"],
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -125,7 +133,7 @@
         gap: 1rem;
     }
 
-    .catalog-item-points {
+    .catalog-item-points, .catalog-items {
         display: flex;
         flex-direction: row;
         align-items: center;
