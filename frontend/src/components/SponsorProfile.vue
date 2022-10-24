@@ -35,22 +35,13 @@
         <div class="row">
             <div class="drivers-container">
                 <div class="drivers">
-                    <p><strong>Drivers: </strong>{{ drivers }}
-                    <button @click="view_drivers">View Drivers</button></p>
+                    <p><strong>Drivers: </strong>{{ selected }}
+                    <button @click="fetchDrivers">View Drivers</button></p>
                 </div>
-                <!-- <table class="table table-bordered table-striped">
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                    </tr>
-                    <tr v-for="rs in records" v-bind:key="rs.id">
-                        <td>{{ rs.FIRST_NAME }}</td>
-                        <td>{{ rs.LAST_NAME }}</td>
-                        !-- <td><button type="button" name="edit" class="btn btn-primary btn-xs edit">Edit</button></td>
-                        <td><button type="button" name="delete" class="btn btn-danger btn-xs delete">Delete</button></td> --
-                    </tr>
-                </table> -->
             </div>
+        </div>
+        <div class="row">
+            <option v-for="driver in drivers" :key="driver">{{driver}}</option>
         </div>
     </div>
 </template>
@@ -75,19 +66,15 @@
                 edit_username_active: false,
                 edit_password_active: false,
                 edit_email_active: false,
-                drivers: 'Driver1, Driver 2',
-                records: '',
-                production_path: "http://18.191.136.200",
-                localhost_path: "http://localhost:5000",
-                path: null
+                drivers: [],
             };
         },
 
         mounted() {
             this.username = this.$route.params.username;
-            this.path = this.production_path;
 
-            axios.get(this.path + '/userinfo', {params: {username: this.username}})
+            let path = 'http://localhost:5000/userinfo';
+            axios.get(path, {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
                         console.log(res.data);
@@ -102,15 +89,41 @@
                 .catch((error) => {
                     console.log(error);
                 })
-        },
+            },
 
         methods: {
             fetchAllData:function(){ //show records
-                axios.get(this.path + '/', {params: {request: 'username'}})
+                axios.get('http://localhost:5000/', {params: {request: 'username'}})
                 .then(function(response){
                         console.log(response);
                         this.allData = response.data.members;
                 });
+            },
+
+            fetchDrivers:function() {
+                let path = 'http://localhost:5000/get-drivers';
+
+                axios.get(path, {params: {user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            console.log(res.data);
+                           
+                            for (var i = 0; i < 30; i++) {
+                                if (res.data.results[i] == null) {
+                                    return;
+                                }
+                                else {
+                                    this.drivers[i] = res.data.results[i];
+                                }
+                            }
+                        }
+                        else {
+                            console.log('Unsuccessful');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             },
             
             show_password() {
@@ -127,11 +140,12 @@
             },
 
             edit_username() {
+                let path = 'http://localhost:5000/edit'
                 let new_username = window.prompt("Enter new username");
-                axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
+                axios.get(path, {params: {request: 'username', username: new_username}})
                     .then((res) => {
                         if (res.data.status === 'success') {       
-                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: this.user_id}})
+                            axios.post(path, null, {params: {request: 'username', username: new_username, userid: 3}})
                                 .then((res) => {
                                     if (res.data.status === "success") {
                                         this.username = new_username;
@@ -159,12 +173,13 @@
             edit_password() {
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
+                let path = 'http://localhost:5000/edit';
                 var minMaxLength = /^[\s\S]{8,20}$/,
                     upper = /[A-Z]/,
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
-                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: this.user_id}})
+                axios.post(path, null, {params: {request: 'password', password: new_password, userid: 3}})
                     .then((res) => {
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
@@ -193,11 +208,12 @@
             },
 
             edit_email() {
+                let path = 'http://localhost:5000/edit';
                 let new_email = window.prompt("Enter new email");
-                axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
+                axios.get(path, {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
-                        axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: this.user_id}})
+                        axios.post(path, null, {params: {request: 'email', email: new_email, userid: 3}})
                         .then((res) => {
                             if (res.data.status === "success") {
                                 this.email = new_email;
@@ -217,20 +233,10 @@
                     }
                 })
             },
-
-            view_drivers() {
-                axios.get(this.path + '/edit', {params: {request: 'username1', userid: this.user_id}})
-                .then((res) => {
-                    console.log(res)
-                    this.records = res.data;
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-            },
         },
         created:function(){
             this.fetchAllData();
+            this.fetchDrivers();
         },
 
         components: { NavBar }
