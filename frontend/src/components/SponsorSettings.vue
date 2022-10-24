@@ -14,6 +14,19 @@
                     <button @click="edit_expiration">Edit Expiration Period</button></p>
             </div>
         </div> 
+        <div class="row">
+            <div class="catalog-item-points">
+                <p><strong>Dollar to Point Conversion: </strong>$1 = {{ dollar_to_point_value }} point(s)</p>
+                <button>Edit Point Conversion</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="catalog-items">
+                <p><strong>Catalog Filters:</strong></p>
+                <p v-for="filter in catalog_filters" :key="filter">&nbsp;{{ filter }}</p>
+                <button>Edit Catalog Filters</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -32,6 +45,8 @@
             max_points: null,
             expiration_period: null,
             user_id: null,
+            dollar_to_point_value: null,
+            catalog_filters: ["Cars,", "Toys"],
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -131,6 +146,8 @@
     }
     .password, .username, .email {
         width: 100%;
+    }
+    .catalog-item-points, .catalog-items {
         display: flex;
         flex-direction: row;
         align-items: center;

@@ -99,20 +99,6 @@ def edit():
                 return jsonify({'status': 'failure'})
             else:
                 return jsonify({'status': 'success'})
-        
-        elif request.args.get('request', '') == 'username1':
-            username = request.args.get('username1', '')
-            query = f'SELECT UserID from UserInfo where Username = "{username}"'
-            sponsor_id = cursor.execute(query)
-            mycursor = db.cursor()
-            query2= f'SELECT FIRST_NAME, LAST_NAME FROM DriverApplication WHERE (SPONSOR_ID = "{sponsor_id}");'
-            mycursor.execute(query2)
-            results = mycursor.fetchall()
-
-            if len(results) > 0:
-                return jsonify({'status': 'failure'})
-            else:
-                return jsonify({'status': 'success'})
 
         return jsonify({'status', 'failure'})
 
@@ -188,6 +174,72 @@ def get_user_info():
             'status': 'failure',
             'results': results
         })
+
+@app.route('/get-drivers', methods=['GET'])
+def get_drivers():
+    user_id = request.args['user_id']
+    cursor = db.cursor()
+    
+    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM DriverApplications WHERE SPONSOR_ID = "{user_id}"'
+    
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+@app.route('/get-sponsors', methods=['GET'])
+def get_sponsors():
+    cursor = db.cursor()
+    query = f'SELECT Username FROM UserInfo WHERE UserType = "Sponsor"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+
+@app.route('/apply', methods=['GET', 'POST'])
+@cross_origin()
+def submit_application():
+    cursor = db.cursor()
+    if request.method == 'POST':
+        status = 'failure'
+
+        # if request.args.get('request', '') == 'email':
+        email = request.args.get('email', '')
+        first_name = request.args.get('first_name', '')
+        last_name = request.args.get('last_name', '')
+        username = request.args.get('username', '')
+        passwd = request.args.get('passwd', '')
+        sponsor_id = request.args.get('sponsor_id', '')
+        
+        # print("UserID: "+userid+" Email:"+email)
+        query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD, SPONSOR_ID) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}","{sponsor_id}")'
+
+        cursor.execute(query)
+        db.commit()
+        status = 'success'
+            
+        return jsonify({'status': status})
+
+        
 
 if __name__ == '__main__':
     app.run(debug=True)
