@@ -1,23 +1,49 @@
 <template>
     <div class = "nav">
-        <a @click="Home" :href="'/' + usertype + '/' + userid"><i class="fa fa-fw fa-home"></i> Home</a>
-        <a @click="Catalog" href="/catalog">Catalog</a>
-        <a @click="Profile" :href="'/' + usertype + '/' + userid + '/profile'">Profile</a>
-        <a @click="Settings" :href="'/' + usertype + '/' + userid + '/settings'">Settings</a>
-        <a v-on:click="Logout" href = "/login">Logout</a>
-
+        <a @click="home">Home</a>
+        <a @click="catalog">Catalog</a>
+        <a @click="profile">Profile</a>
+        <a @click="settings">Settings</a>
+        <a @click="logout">Logout</a>
     </div>
 </template>
 
 <script>
     export default {
         name:'NavBar',
-        props: ['usertype', 'userid'],
-        methods:{
-            logout()
-            {
+        props: ['usertype', 'username'],
+        methods: {
+            logout() {
                 localStorage.clear();
-                this.$router.push({name:'Login'})
+                this.$router.push({name:'login'})
+            },
+
+            home() {
+                this.$router.push({
+                    name: `${this.usertype.toLowerCase()}-dashboard`,
+                    params: { username: this.username }
+                });
+            },
+
+            catalog() {
+                this.$router.push({
+                    name: 'catalog',
+                    params: { username: this.username }
+                });
+            },
+
+            profile() {
+                this.$router.push({
+                    name: `${this.usertype.toLowerCase()}-profile`,
+                    params: { username: this.username }
+                });
+            },
+
+            settings() {
+                this.$router.push({
+                    name: `${this.usertype.toLowerCase()}-settings`,
+                    params: { username: this.username }
+                });
             }
         }
     }
@@ -41,6 +67,7 @@
     
     .nav a:hover {
         background-color: #8c72e0;
+        cursor: pointer;
     }
     
     @media screen and (max-width: 500px) {

@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type" :userid="username"></NavBar>
+        <NavBar :usertype="user_type" :username="username"></NavBar>
         <div class="row">
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
@@ -44,19 +44,44 @@
 
         data() {
             return {
-                user_id: 1,
-                username: "Admin1",
-                password: "Password2",
+                user_id: null,
+                username: null,
+                password: null,
                 password_text: "***********************",
-                email: "admin@email.com",
-                user_type: "admin",
+                email: null,
+                user_type: "Admin",
                 button_text: "Show Password",
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
-                edit_email_active: false
+                edit_email_active: false,
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
             };
         },
+
+        mounted() {
+            this.username = this.$route.params.username;
+            this.path = this.production_path;
+
+            axios.get(this.path + '/userinfo', {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_id = res.data.results[0][0];
+                        this.password = res.data.results[0][1];
+                        this.email = res.data.results[0][3];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        },
+
         methods: {
             show_password() {
                 if (this.password_active) {
@@ -72,12 +97,11 @@
             },
 
             edit_username() {
-                let path = 'http://localhost:5000/edit'
                 let new_username = window.prompt("Enter new username");
-                axios.get(path, {params: {request: 'username', username: new_username}})
+                axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
                     .then((res) => {
                         if (res.data.status === 'success') {       
-                            axios.post(path, null, {params: {request: 'username', username: new_username, userid: 2}})
+                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: this.user_id}})
                                 .then((res) => {
                                     if (res.data.status === "success") {
                                         this.username = new_username;
@@ -105,13 +129,12 @@
             edit_password() {
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
-                let path = 'http://localhost:5000/edit';
                 var minMaxLength = /^[\s\S]{8,20}$/,
                     upper = /[A-Z]/,
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
-                axios.post(path, null, {params: {request: 'password', password: new_password, userid: 3}})
+                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: this.user_id}})
                     .then((res) => {
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
@@ -140,12 +163,11 @@
             },
 
             edit_email() {
-                let path = 'http://localhost:5000/edit';
                 let new_email = window.prompt("Enter new email");
-                axios.get(path, {params: {request: 'email', email: new_email}})
+                axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
-                        axios.post(path, null, {params: {request: 'email', email: new_email, userid: 2}})
+                        axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: this.user_id}})
                         .then((res) => {
                             if (res.data.status === "success") {
                                 this.email = new_email;

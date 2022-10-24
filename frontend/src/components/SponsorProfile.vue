@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type" :userid="username"></NavBar>
+        <NavBar :usertype="user_type" :username="username"></NavBar>
         <div class="row">
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
@@ -35,22 +35,13 @@
         <div class="row">
             <div class="drivers-container">
                 <div class="drivers">
-                    <p><strong>Drivers: </strong>{{ drivers }}
-                    <button @click="view_drivers">View Drivers</button></p>
+                    <p><strong>Drivers: </strong>{{ selected }}
+                    <button @click="fetchDrivers">View Drivers</button></p>
                 </div>
-                <!-- <table class="table table-bordered table-striped">
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                    </tr>
-                    <tr v-for="rs in records" v-bind:key="rs.id">
-                        <td>{{ rs.FIRST_NAME }}</td>
-                        <td>{{ rs.LAST_NAME }}</td>
-                        !-- <td><button type="button" name="edit" class="btn btn-primary btn-xs edit">Edit</button></td>
-                        <td><button type="button" name="delete" class="btn btn-danger btn-xs delete">Delete</button></td> --
-                    </tr>
-                </table> -->
             </div>
+        </div>
+        <div class="row">
+            <option>{{drivers}}</option>
         </div>
     </div>
 </template>
@@ -64,21 +55,42 @@
 
         data() {
             return {
-                user_id: 3,
-                username: "Sponsor1",
-                password: "Password3",
+                user_id: null,
+                username: null,
+                password: null,
                 password_text: "***********************",
-                email: "sponsor@email.com",
-                user_type: "sponsor",
+                email: null,
+                user_type: "Sponsor",
                 button_text: "Show Password",
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
                 edit_email_active: false,
-                drivers: 'Driver1, Driver 2',
-                records: '',
+                drivers: [],
             };
         },
+
+        mounted() {
+            this.username = this.$route.params.username;
+
+            let path = 'http://localhost:5000/userinfo';
+            axios.get(path, {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_id = res.data.results[0][0];
+                        this.password = res.data.results[0][1];
+                        this.email = res.data.results[0][3];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+            },
+
         methods: {
             fetchAllData:function(){ //show records
                 axios.get('http://localhost:5000/', {params: {request: 'username'}})
@@ -86,6 +98,32 @@
                         console.log(response);
                         this.allData = response.data.members;
                 });
+            },
+
+            fetchDrivers:function() {
+                let path = 'http://localhost:5000/get-drivers';
+
+                axios.get(path, {params: {user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            console.log(res.data);
+                           
+                            for (var i = 0; i < 30; i++) {
+                                if (res.data.results[i] == null) {
+                                    return;
+                                }
+                                else {
+                                    this.drivers[i] = res.data.results[i];
+                                }
+                            }
+                        }
+                        else {
+                            console.log('Unsuccessful');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             },
             
             show_password() {
@@ -195,21 +233,10 @@
                     }
                 })
             },
-
-            view_drivers() {
-                let path = 'http://localhost:5000/edit';
-                axios.get(path, {params: {request: 'username1', userid: 3}})
-                .then((res) => {
-                    console.log(res)
-                    this.records = res.data;
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-            },
         },
         created:function(){
             this.fetchAllData();
+            this.fetchDrivers();
         },
 
         components: { NavBar }

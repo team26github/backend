@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container">
-        <NavBar :usertype="user_type" :userid="username"></NavBar>
+        <NavBar :usertype="user_type" :username="username"></NavBar>
         <h1>&nbsp;Sponsor Settings<br></h1>
         <div class="row">
             <div class="max_points">
@@ -28,38 +28,46 @@
     data() {
         return {
             user_type: "sponsor",
-            username: "Sponsor1",
-            max_points: 100000,
-            expiration_period: 12,
+            username: null,
+            max_points: null,
+            expiration_period: null,
+            user_id: null,
+            production_path: "http://18.191.136.200",
+            localhost_path: "http://localhost:5000",
+            path: null
         };
+    },
+
+    mounted() {
+        this.username = this.$route.params.username;
+        this.path = this.production_path;
+
+        axios.get(this.path + '/userinfo', {params: {username: this.username}})
+            .then((res) => {
+                if (res.data.status === 'success') {
+                    this.max_points = res.data.results[0][5];
+                    this.expiration_period = res.data.results[0][6];
+                    this.user_id = res.data.results[0][0];
+                }
+                else {
+                    console.log("Unsuccessful");
+                }
+            });
     },
 
     methods: {
         edit_max_points() {
-            let path = 'http://localhost:5000/edit'
             let new_max_points = window.prompt("Enter maximum value of points");
-            axios.get(path, {params: {request: 'maximum_points', max_points: new_max_points}})
+            axios.post(this.path + '/edit', null, {params: {request: 'max_points', max_points: new_max_points, userid: this.user_id}})
                 .then((res) => {
-                    if (res.data.status === 'success') {       
-                        axios.post(path, null, {params: {request: 'maximum_points', max_points: new_max_points,}})
-                            .then((res) => {
-                                if (res.data.status === "success") {
-                                    this.max_points = new_max_points;
-                                    console.log("success");
-                                }
-                                else {
-                                    window.alert("Maximum points change unsuccessful");
-                                }
-                            })
-                            .catch((error) => {
-                                // esling-disable-next-line
-                                console.log(error);
-                            })
-                    }
+                    if (res.data.status === "success") {
+                        this.max_points = new_max_points;
+                        console.log("success");
+                        }
                     else {
-                        window.alert("Unable to make change.");
-                    }
-                })
+                        window.alert("Maximum points change unsuccessful");
+                        }
+                    })
                 .catch((error) => {
                     // esling-disable-next-line
                     console.log(error);
@@ -67,29 +75,20 @@
         },
        
         edit_expiration() {
-                let path = 'http://localhost:5000/edit';
                 let new_expiration_period = window.prompt("Enter new expiration period");
-                axios.get(path, {params: {request: 'expiration_period', expiration_period: new_expiration_period}})
+                axios.post(this.path + '/edit', null, {params: {request: 'expiration_period', expiration_period: new_expiration_period, userid: this.user_id}})
                 .then((res) => {
                     if (res.data.status === "success") {
-                        axios.post(path, null, {params: {request: 'expiration_period', expiration_period: new_expiration_period, userid: 3}})
-                        .then((res) => {
-                            if (res.data.status === "success") {
-                                this.expiration_period = new_expiration_period;
-                                window.alert("Expiration Period change successful");
-                            }
-                            else {
-                                window.alert("Expiration Period change unsuccessful");
-                            }
-                        })
-                        .catch((error) => {
-                            // esling-disable-next-line
-                            console.log(error);
-                        })
-                    }
+                        this.expiration_period = new_expiration_period;
+                        window.alert("Expiration Period change successful");
+                        }
                     else {
-                        window.alert("Unable to make change.");
-                    }
+                        window.alert("Expiration Period change unsuccessful");
+                        }
+                        })
+                .catch((error) => {
+                    // esling-disable-next-line
+                    console.log(error);
                 })
             },
     },
