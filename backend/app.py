@@ -1,3 +1,4 @@
+from email import header
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
@@ -33,57 +34,6 @@ def get_new_token():
     EBAY_TOKEN = data['access_token']
     global EXPIRES
     EXPIRES = datetime.now() + timedelta(seconds=7200)
-
-def get_ebay_results(payload):
-    try:
-        api = Finding(appid='GrantGon-Team26-SBX-ad2605cb4-5ce27a66', config_file=None)
-        res = api.execute('findItemsAdvanced', payload)
-        return res.dict()
-    except ConnectionError as e:
-        print(e)
-        print(e.response.dict())
-
-def get_total_ebay_pages(results):
-    if results:
-        return int(results.get('paginationOutput').get('totalPages'))
-    else:
-        return
-
-def search_ebay(payload):
-    # Parse response - results and concatenate to the dataframe
-    results = get_ebay_results(payload)
-    total_pages = get_total_ebay_pages(results)
-    items_list = results['searchResult']['item']
-
-    i = 2
-    while i <= total_pages:
-        payload['pagination'] = {'entriesPerPage': 25, 'pageNumber': i}
-        results = get_ebay_results(payload)
-        items_list.extend(results['searchResult']['item'])
-        i += 1
-    
-    df_items = pandas.DataFrame(columns=['itemId', 'title', 'viewItemURL', 'galleryURL', 'location', 'postalCode', 'paymentMethod', 'listingType', 'bestOfferEnabled', 'buyItNowAvailable', 'currentPrice', 'bidCount', 'sellingState'])
-
-    for item in items_list:
-        row = {
-            'itemId': item.get('itemId'),
-            'title': item.get('title'),
-            'viewItemURL': item.get('viewItemURL'),
-            'galleryURL': item.get('galleryURL'),
-            'location': item.get('location'),
-            'postalCode': item.get('postalCode'),
-            'paymentMethod': item.get('paymentMethod'),
-            'listingType': item.get('listingInfo').get('listingType'),
-            'bestOfferEnabled': item.get('listingInfo').get('buyItNowAvailable'),
-            'currentPrice': item.get('sellingStatus').get('currentPrice').get('value'),
-            'bidCount': item.get('bidCount'),
-            'sellingState': item.get('sellingState')
-        }
-    
-        new_df = pandas.DataFrame([row])
-        df_items = pandas.concat([df_items, new_df], axis=0, ignore_index=True)
-    
-    return df_items
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -296,6 +246,7 @@ def submit_application():
         return jsonify({'status': status})
 
 
+# Not finished!!
 @app.route('/update_catalog_items', methods=['GET'])
 def get_catalog_items():
     if EXPIRES < datetime.now():
@@ -304,18 +255,49 @@ def get_catalog_items():
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args['keywords']
-    payload = {
-        'keywords': keywords,
-        'sortOrder': 'StartTimeNewest'
+    headers = {
+        'Authorization': EBAY_TOKEN,
+        'X-EBAY-C-ENDUSERCTX': ''
+    }
+    params = {
+        'aspect_filter': '<>',
+        'category_ids': '<>',
+        'epid': '<get>',
+        'fieldgroups': '<>',
+        'filter': '<>',
+        'gtin': '<get>',
+        'limit': '<get>',
+        'offset': '<get>',
+        'q': '<>',
+        'sort': '<>'
     }
 
-    results = search_ebay(payload)
+    results = requests.get(
+        '''https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?''',
+        headers=headers,
+        params=params
+    )
 
     print(results)
 
     return jsonify({
         'status': 'success'
     })
+
+@app.route('/conversion', methods=['POST'])
+def edit_point_conversion():
+    point_conversion = request.args.get('point_conversion', '')
+    sponsor_id = request.args.get('sponsorID', '')
+    status = 'failure'
+    cursor = db.cursor()
+
+    if point_conversion == '' or sponsor_id == '':
+        return jsonify({
+            'status': status
+        })
+    
+    query = f'UPDATE UserInfo SET DollarPointValue = {float(point_conversion)} WHERE SponsorID = {sponsor_id}'
+    cursor.execute(query)
         
 
 if __name__ == '__main__':

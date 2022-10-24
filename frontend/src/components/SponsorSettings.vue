@@ -17,7 +17,7 @@
         <div class="row">
             <div class="catalog-item-points">
                 <p><strong>Dollar to Point Conversion: </strong>$1 = {{ dollar_to_point_value }} point(s)</p>
-                <button>Edit Point Conversion</button>
+                <button @click="edit_point_conversion">Edit Point Conversion</button>
             </div>
         </div>
         <div class="row">
@@ -113,6 +113,23 @@
                     if (res.data.status === 'success') {
                         window.alert('Success');
                     }
+                })
+        },
+
+        edit_point_conversion() {
+            let conversion = window.prompt('Enter new point conversion (Ex: 1.5 -> $1 = 1.5 points)');
+            axios.post(this.path + '/conversion', null, {params: {point_conversion: conversion, sponsorID: this.user_id}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        window.alert('Point conversion successful');
+                    }
+                    else {
+                        window.alert('Point conversion unsuccessful');
+                    }
+                })
+                .catch((err) => {
+                    // esling-disable-next-line
+                    console.log(err);
                 })
         }
     },
