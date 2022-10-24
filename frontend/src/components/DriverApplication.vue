@@ -4,7 +4,7 @@
 
         <div>Select Sponsor: {{ selected }}</div>
 
-        <select v-model="selected" required>
+        <select name = "selected" v-model="selected" required>
             <option disabled value="">Please select one sponsor you would like to apply to</option>
             <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
         </select>
@@ -31,8 +31,6 @@
             <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
         </div>
 
-        <!-- <button type="submit" class="btn">Apply</button> -->
-
         <button type="submit" class="btn" @click="submit_application" >Apply</button> 
     </form>
 
@@ -54,6 +52,7 @@
             email: '',
             user_type: '',
             sponsors: [],
+            sponsor_selected: '',
         };
         },
 
@@ -79,14 +78,13 @@
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
                 
-                axios.post(path, null, {params: {request: 'email', email: this.email, request: 'first_name', first_name: this.first_name, request: 'last_name', last_name: this.last_name, request: 'username', username: this.username, request: 'passwd', password: this.password}})
+                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password, selected: this.selected}})
                     .then((res) => {
                         if (res.data.status === "success") {
-                            this.username = new_username;
                             console.log("success");
                         }
                         else {
-                            window.alert("Username change unsuccessful");
+                            window.alert("Cannot submit application.");
                         }
                     })
                     .catch((error) => {
