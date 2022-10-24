@@ -2,17 +2,19 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import pymysql
+import requests
+import json
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 db = pymysql.connect(host='team26-db.cpin0o6jvads.us-east-2.rds.amazonaws.com', user='admin', password='p83YoUoffEo0xChEq9kG', database='Team26Database')
 
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
-'''
+
 def get_new_token():
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ...'
+        'Authorization': 'Basic GrantGon-Team26-SBX-ad2605cb4-5ce27a66:SBX-d2605cb45cb2-b1f3-4c22-8e85-3209'
     }
 
     body = {
@@ -26,11 +28,6 @@ def get_new_token():
     EBAY_TOKEN = data['access_token']
     global EXPIRES
     EXPIRES = datetime.datetime.now() + datetime.timedelta(seconds=7200)
-'''
-
-@app.route('/')
-def hello_world():
-    return 'Hello World'
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

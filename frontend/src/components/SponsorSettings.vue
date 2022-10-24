@@ -1,5 +1,5 @@
 <template>
-    <div class="settings-container">
+    <div class="profile-container">
         <NavBar :usertype="user_type" :username="username"></NavBar>
         <h1>&nbsp;Sponsor Settings<br></h1>
         <div class="row">
@@ -14,12 +14,6 @@
                     <button @click="edit_expiration">Edit Expiration Period</button></p>
             </div>
         </div> 
-        <div class="row">
-            <div class="catalog-item-points">
-                <p><strong>Dollar to Point Conversion: </strong>$1 = {{ dollar_to_point_value }} point(s)</p>
-                <button>Edit Point Conversion</button>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -38,7 +32,6 @@
             max_points: null,
             expiration_period: null,
             user_id: null,
-            dollar_to_point_value: null,
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -47,7 +40,7 @@
 
     mounted() {
         this.username = this.$route.params.username;
-        this.path = this.localhost_path;
+        this.path = this.production_path;
 
         axios.get(this.path + '/userinfo', {params: {username: this.username}})
             .then((res) => {
@@ -70,11 +63,11 @@
                     if (res.data.status === "success") {
                         this.max_points = new_max_points;
                         console.log("success");
-                    }
+                        }
                     else {
                         window.alert("Maximum points change unsuccessful");
-                    }
-                })
+                        }
+                    })
                 .catch((error) => {
                     // esling-disable-next-line
                     console.log(error);
@@ -105,7 +98,7 @@
 
 
 <style scoped>
-    .settings-container {
+    .profile-container {
         display: flex;
         flex-direction: column;
         width: 98.5vw;
@@ -124,14 +117,22 @@
         justify-content: center;
         gap: 1rem;
     }
-
-    .catalog-item-points {
+    button {
+        margin-right: 5px;
+        margin-left: auto;
+    }
+    .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
+        display: flex;
+        width: 49%;
+        border-style: solid;
+        border-color: black;
+        justify-content: center;
+        align-items: center;
+    }
+    .password, .username, .email {
+        width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
-    }
-
-    button {
-        margin-left: 5px;
     }
 </style>
