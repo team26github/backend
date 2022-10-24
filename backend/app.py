@@ -226,12 +226,12 @@ def apply():
     last_name = request.args.get('last_name', '')
     username = request.args.get('username', '')
     passwd = request.args.get('password', '')
-    sponsor = request.args.get('selected', '')
+    # sponsor = request.args.get('selected', '')
 
-    query = f'SELECT UserID FROM UserInfo WHERE Username="{sponsor}"'
-    sponsor_id = cursor.execute(query)
+    # query = f'SELECT UserID FROM UserInfo WHERE Username="{sponsor}"'
+    # sponsor_id = cursor.execute(query)
     
-    query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD, SPONSOR_ID) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}", "{sponsor_id})'
+    query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}")'
     cursor.execute(query)
 
     db.commit()

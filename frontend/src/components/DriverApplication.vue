@@ -78,7 +78,7 @@
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
                 
-                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password, selected: this.selected}})
+                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password}})
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
