@@ -67,11 +67,14 @@
                 edit_password_active: false,
                 edit_email_active: false,
                 drivers: [],
+                localhost_path: 'http://localhost:5000',
+                production_path: "http://18.191.136.200"
             };
         },
 
         mounted() {
             this.username = this.$route.params.username;
+            this.path = this.localhost_path;
 
             let path = 'http://localhost:5000/userinfo';
             axios.get(path, {params: {username: this.username}})
