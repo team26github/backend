@@ -1,11 +1,7 @@
-from email import header
+from urllib.parse import urlencode
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
-from ebaysdk.finding import Connection as Finding
-from ebaysdk.exception import ConnectionError
-import pandas
-import os
 import pymysql
 import requests
 import json
@@ -252,12 +248,21 @@ def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
+    '''
+    app_id = 'GrantGon-Team26-PRD-dd8d93d80-fe8ea855'
+    cert_id = 'PRD-d8d93d80dc30-d829-4e5f-9ae9-1d50'
+    api = BrowseAPI(app_id, cert_id)
+    responses = api.execute('search', [{'q': 'drone', 'limit': 50}, {'category_ids': 20863}])
+
+    print(responses[0].itemSummaries[0])
+    '''
+    
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args['keywords']
     headers = {
         'Authorization': EBAY_TOKEN,
-        'X-EBAY-C-ENDUSERCTX': ''
+        'X-EBAY-C-ENDUSERCTX': urlencode({'contextualLocation': 'country=US,zip=29631'})
     }
     params = {
         'aspect_filter': '<>',
@@ -273,10 +278,7 @@ def get_catalog_items():
     }
 
     results = requests.get(
-        '''https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?''',
-        headers=headers,
-        params=params
-    )
+        f'''{sandbox_url}''', headers=headers, params=params)
 
     print(results)
 
@@ -285,6 +287,7 @@ def get_catalog_items():
     })
 
 @app.route('/conversion', methods=['POST'])
+@cross_origin()
 def edit_point_conversion():
     point_conversion = request.args.get('point_conversion', '')
     sponsor_id = request.args.get('sponsorID', '')
@@ -298,6 +301,12 @@ def edit_point_conversion():
     
     query = f'UPDATE UserInfo SET DollarPointValue = {float(point_conversion)} WHERE SponsorID = {sponsor_id}'
     cursor.execute(query)
+    db.commit()
+    status = 'success'
+
+    return jsonify({
+        'status': status
+    })
         
 
 if __name__ == '__main__':

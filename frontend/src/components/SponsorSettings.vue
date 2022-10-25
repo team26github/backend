@@ -46,7 +46,7 @@
             expiration_period: null,
             user_id: null,
             dollar_to_point_value: null,
-            catalog_filters: ["Cars,", "Toys"],
+            catalog_filters: ["Phones,", "Watches"],
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -63,6 +63,7 @@
                     this.max_points = res.data.results[0][5];
                     this.expiration_period = res.data.results[0][6];
                     this.user_id = res.data.results[0][0];
+                    this.dollar_to_point_value = res.data.results[0][8];
                 }
                 else {
                     console.log("Unsuccessful");
@@ -122,9 +123,11 @@
                 .then((res) => {
                     if (res.data.status === 'success') {
                         window.alert('Point conversion successful');
+                        this.dollar_to_point_value = conversion;
                     }
                     else {
                         window.alert('Point conversion unsuccessful');
+                        // Update in window
                     }
                 })
                 .catch((err) => {
@@ -160,7 +163,7 @@
     }
     button {
         margin-right: 5px;
-        margin-left: auto;
+        margin-left: 5px;
     }
     .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
         display: flex;
