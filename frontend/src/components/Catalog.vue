@@ -61,6 +61,7 @@
             user_type: null,
             user_id: null,
             username: null,
+            catalog_filters: null,
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -69,7 +70,7 @@
 
     mounted() {
         this.username = this.$route.params.username;
-        this.path = this.production_path;
+        this.path = this.localhost_path;
 
         axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {

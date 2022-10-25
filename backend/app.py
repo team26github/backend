@@ -1,7 +1,9 @@
+from urllib.parse import urlencode
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-from datetime import datetime
+from datetime import datetime, timedelta
 import pymysql
+import requests
 import json
 
 app = Flask(__name__)
@@ -9,11 +11,11 @@ app.config.from_object(__name__)
 db = pymysql.connect(host='team26-db.cpin0o6jvads.us-east-2.rds.amazonaws.com', user='admin', password='p83YoUoffEo0xChEq9kG', database='Team26Database')
 
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
-'''
+
 def get_new_token():
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ...'
+        'Authorization': 'Basic R3JhbnRHb24tVGVhbTI2LVNCWC1hZDI2MDVjYjQtNWNlMjdhNjY6U0JYLWQyNjA1Y2I0NWNiMi1iMWYzLTRjMjItOGU4NS0zMjA5'
     }
 
     body = {
@@ -21,13 +23,13 @@ def get_new_token():
         'scope': 'https://api.ebay.com/oauth/api_scope'
     }
 
-    res = requests.post(TOKEN_URL, headers=headers, data=body)
+    res = requests.post('https://api.sandbox.ebay.com/identity/v1/oauth2/token', headers=headers, data=body)
+
     data = json.loads(res.content)
     global EBAY_TOKEN
     EBAY_TOKEN = data['access_token']
     global EXPIRES
-    EXPIRES = datetime.datetime.now() + datetime.timedelta(seconds=7200)
-'''
+    EXPIRES = datetime.now() + timedelta(seconds=7200)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -239,7 +241,74 @@ def apply():
         
     return jsonify({'status': status})
 
+
+# Not finished!!
+@app.route('/update_catalog_items', methods=['GET'])
+def get_catalog_items():
+    if EXPIRES < datetime.now():
+        get_new_token()
+    
+    '''
+    app_id = 'GrantGon-Team26-PRD-dd8d93d80-fe8ea855'
+    cert_id = 'PRD-d8d93d80dc30-d829-4e5f-9ae9-1d50'
+    api = BrowseAPI(app_id, cert_id)
+    responses = api.execute('search', [{'q': 'drone', 'limit': 50}, {'category_ids': 20863}])
+
+    print(responses[0].itemSummaries[0])
+    '''
+    
+    sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
+    production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
+    keywords = request.args['keywords']
+    headers = {
+        'Authorization': EBAY_TOKEN,
+        'X-EBAY-C-ENDUSERCTX': urlencode({'contextualLocation': 'country=US,zip=29631'})
+    }
+    params = {
+        'aspect_filter': '<>',
+        'category_ids': '<>',
+        'epid': '<get>',
+        'fieldgroups': '<>',
+        'filter': '<>',
+        'gtin': '<get>',
+        'limit': '<get>',
+        'offset': '<get>',
+        'q': '<>',
+        'sort': '<>'
+    }
+
+    results = requests.get(
+        f'''{sandbox_url}''', headers=headers, params=params)
+
+    print(results)
+
+    return jsonify({
+        'status': 'success'
+    })
+
+@app.route('/conversion', methods=['POST'])
+@cross_origin()
+def edit_point_conversion():
+    point_conversion = request.args.get('point_conversion', '')
+    sponsor_id = request.args.get('sponsorID', '')
+    status = 'failure'
+    cursor = db.cursor()
+
+    if point_conversion == '' or sponsor_id == '':
+        return jsonify({
+            'status': status
+        })
+    
+    query = f'UPDATE UserInfo SET DollarPointValue = {float(point_conversion)} WHERE SponsorID = {sponsor_id}'
+    cursor.execute(query)
+    db.commit()
+    status = 'success'
+
+    return jsonify({
+        'status': status
+    })
         
 
 if __name__ == '__main__':
+    get_new_token()
     app.run(debug=True)
