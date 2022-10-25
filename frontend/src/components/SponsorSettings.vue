@@ -161,6 +161,7 @@
         justify-content: center;
         gap: 1rem;
     }
+    
     button {
         margin-right: 5px;
         margin-left: 5px;
