@@ -14,6 +14,19 @@
                     <button @click="edit_expiration">Edit Expiration Period</button></p>
             </div>
         </div> 
+        <div class="row">
+            <div class="catalog-item-points">
+                <p><strong>Dollar to Point Conversion: </strong>$1 = {{ dollar_to_point_value }} point(s)</p>
+                <button @click="edit_point_conversion">Edit Point Conversion</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="catalog-items">
+                <p><strong>Catalog Filters:</strong></p>
+                <p v-for="filter in catalog_filters" :key="filter">&nbsp;{{ filter }}</p>
+                <button @click="edit_catalog">Edit Catalog Filters</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -32,6 +45,8 @@
             max_points: null,
             expiration_period: null,
             user_id: null,
+            dollar_to_point_value: null,
+            catalog_filters: ["Phones,", "Watches"],
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -48,6 +63,7 @@
                     this.max_points = res.data.results[0][5];
                     this.expiration_period = res.data.results[0][6];
                     this.user_id = res.data.results[0][0];
+                    this.dollar_to_point_value = res.data.results[0][8];
                 }
                 else {
                     console.log("Unsuccessful");
@@ -90,7 +106,35 @@
                     // esling-disable-next-line
                     console.log(error);
                 })
-            },
+        },
+
+        edit_catalog() {
+            axios.get(this.path + '/update_catalog_items', {params: {keywords: 'Samsung'}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        window.alert('Success');
+                    }
+                })
+        },
+
+        edit_point_conversion() {
+            let conversion = window.prompt('Enter new point conversion (Ex: 1.5 -> $1 = 1.5 points)');
+            axios.post(this.path + '/conversion', null, {params: {point_conversion: conversion, sponsorID: this.user_id}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        window.alert('Point conversion successful');
+                        this.dollar_to_point_value = conversion;
+                    }
+                    else {
+                        window.alert('Point conversion unsuccessful');
+                        // Update in window
+                    }
+                })
+                .catch((err) => {
+                    // esling-disable-next-line
+                    console.log(err);
+                })
+        }
     },
     components: { NavBar}
 }
@@ -119,7 +163,7 @@
     }
     button {
         margin-right: 5px;
-        margin-left: auto;
+        margin-left: 5px;
     }
     .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
         display: flex;
@@ -131,6 +175,8 @@
     }
     .password, .username, .email {
         width: 100%;
+    }
+    .catalog-item-points, .catalog-items {
         display: flex;
         flex-direction: row;
         align-items: center;
