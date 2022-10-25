@@ -8,6 +8,10 @@
         <div class="remove-points-container">
                 <button @click="deduct_points">Deduct Points from Driver</button>
             </div>
+        <p>{{ status }}</p>
+      <a href="/pendingapplications">
+        <input type="button" value="Pending Applications"/>
+      </a>
 </template>
 
 <script>
