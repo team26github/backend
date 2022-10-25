@@ -4,7 +4,7 @@
 
         <div>Select Sponsor: {{ selected }}</div>
 
-        <select name = "selected" v-model="selected" required>
+        <select name = "selected" @change="onChange($event)" v-model="selected" required>
             <option disabled value="">Please select one sponsor you would like to apply to</option>
             <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
         </select>
@@ -52,11 +52,16 @@
             email: '',
             user_type: '',
             sponsors: [],
-            sponsor_selected: '',
+            sponsor_selected: ''
         };
         },
 
         methods: {
+            onChange(e)
+            {
+                this.sponsor_selected=e.target.value
+            },
+
             fetchSponsors:function() {
                 let path = 'http://localhost:5000/get-sponsors';
 
@@ -78,7 +83,7 @@
             submit_application() { 
                 const path = 'http://localhost:5000/apply';
                 
-                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password}})
+                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password, sponsor: this.sponsor_selected}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
