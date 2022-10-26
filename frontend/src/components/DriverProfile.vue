@@ -204,7 +204,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: darkseagreen;
+        background-color: #0096c7;
     }
 
     .password, .username, .email {
