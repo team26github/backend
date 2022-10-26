@@ -43,35 +43,41 @@
         <div class="info-row">
             <div class="driver-container" v-if="show_drivers">
                 <div class="driver-info" v-for="driver in display_drivers()" :key="driver">
-                    <p><strong>Full Name:</strong> {{ driver.full_name }}</p>
-                    <p><strong>Username:</strong> {{ driver.username }}</p>
-                    <p><strong>Email:</strong> {{ driver.email }}</p>
-                    <p><strong>Points Limit:</strong> {{ driver.points_limit }} points</p>
-                    <p><strong>Expiration Period:</strong> {{ driver.expiration_period }} months</p>
-                    <p><strong>Sponsor ID(s):</strong> {{ driver.sponsor_id }}</p>
-                    <p><strong>Point Conversion:</strong> {{ driver.dollar_point_value }} points = $1</p>
+                    <p><strong>Full Name:</strong> {{ driver.full_name }}<input type="text" placeholder="New Name" v-model="new_info['full_name']" v-if="update_driver"/></p>
+                    <p><strong>Username:</strong> {{ driver.username }}<input type="text" placeholder="New Username" v-model="new_info['username']" v-if="update_driver"/></p>
+                    <p><strong>Email:</strong> {{ driver.email }}<input type="text" placeholder="New Email" v-model="new_info['email']" v-if="update_driver"/></p>
+                    <p><strong>Points Limit:</strong> {{ driver.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_info['points_limit']" v-if="update_driver"/></p>
+                    <p><strong>Expiration Period:</strong> {{ driver.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_info['expiration_period']" v-if="update_driver"/></p>
+                    <p><strong>Sponsor ID(s):</strong> {{ driver.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_info['sponsor_id']" v-if="update_driver"/></p>
+                    <p><strong>Point Conversion:</strong> {{ driver.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_info['conversion_rate']" v-if="update_driver"/></p>
+                    <button v-if="!update_driver" @click="update_driver = true" class="update-button">Update</button>
+                    <button v-else @click="update_info(driver, new_info)" class="update-button">Update</button>
                 </div>
             </div>
             <div class="sponsor-container" v-if="show_sponsors">
                 <div class="sponsor-info" v-for="sponsor in display_sponsors()" :key="sponsor">
-                    <p><strong>Full Name:</strong> {{ sponsor.full_name }}</p>
-                    <p><strong>Username:</strong> {{ sponsor.username }}</p>
-                    <p><strong>Email:</strong> {{ sponsor.email }}</p>
-                    <p><strong>Points Limit:</strong> {{ sponsor.points_limit }} points</p>
-                    <p><strong>Expiration Period:</strong> {{ sponsor.expiration_period }} months</p>
-                    <p><strong>Sponsor ID(s):</strong> {{ sponsor.sponsor_id }}</p>
-                    <p><strong>Point Conversion:</strong> {{ sponsor.dollar_point_value }} points = $1</p>
+                    <p><strong>Full Name:</strong> {{ sponsor.full_name }}<input type="text" placeholder="New Name" v-model="new_info['full_name']" v-if="update_sponsor"/></p>
+                    <p><strong>Username:</strong> {{ sponsor.username }}<input type="text" placeholder="New Username" v-model="new_info['username']" v-if="update_sponsor"/></p>
+                    <p><strong>Email:</strong> {{ sponsor.email }}<input type="text" placeholder="New Email" v-model="new_info['email']" v-if="update_sponsor"/></p>
+                    <p><strong>Points Limit:</strong> {{ sponsor.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_info['points_limit']" v-if="update_sponsor"/></p>
+                    <p><strong>Expiration Period:</strong> {{ sponsor.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_info['expiration_period']" v-if="update_sponsor"/></p>
+                    <p><strong>Sponsor ID(s):</strong> {{ sponsor.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_info['sponsor_id']" v-if="update_sponsor"/></p>
+                    <p><strong>Point Conversion:</strong> {{ sponsor.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_info['conversion_rate']" v-if="update_sponsor"/></p>
+                    <button v-if="!update_sponsor" @click="update_sponsor = true" class="update-button">Update</button>
+                    <button v-else @click="update_info(sponsor, new_info)" class="update-button">Update</button>
                 </div>
             </div>
             <div class="admin-container" v-if="show_admins">
                 <div class="admin-info" v-for="admin in display_admins()" :key="admin">
-                    <p><strong>Full Name:</strong> {{ admin.full_name }}</p>
-                    <p><strong>Username:</strong> {{ admin.username }}</p>
-                    <p><strong>Email:</strong> {{ admin.email }}</p>
-                    <p><strong>Points Limit:</strong> {{ admin.points_limit }} points</p>
-                    <p><strong>Expiration Period:</strong> {{ admin.expiration_period }} months</p>
-                    <p><strong>Sponsor ID(s):</strong> {{ admin.sponsor_id }}</p>
-                    <p><strong>Point Conversion:</strong> {{ admin.dollar_point_value }} points = $1</p>
+                    <p><strong>Full Name:</strong> {{ admin.full_name }}<input type="text" placeholder="New Name" v-model="new_info['full_name']" v-if="update_admin"/></p>
+                    <p><strong>Username:</strong> {{ admin.username }}<input type="text" placeholder="New Username" v-model="new_info['username']" v-if="update_admin"/></p>
+                    <p><strong>Email:</strong> {{ admin.email }}<input type="text" placeholder="New Email" v-model="new_info['email']" v-if="update_admin"/></p>
+                    <p><strong>Points Limit:</strong> {{ admin.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_info['points_limit']" v-if="update_admin"/></p>
+                    <p><strong>Expiration Period:</strong> {{ admin.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_info['expiration_period']" v-if="update_admin"/></p>
+                    <p><strong>Sponsor ID(s):</strong> {{ admin.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_info['sponsor_id']" v-if="update_admin"/></p>
+                    <p><strong>Point Conversion:</strong> {{ admin.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_info['conversion_rate']" v-if="update_admin"/></p>
+                    <button v-if="!update_admin" @click="update_admin = true" class="update-button">Update</button>
+                    <button v-else @click="update_info(admin, new_info)" class="update-button">Update</button>
                 </div>
             </div>
         </div>
@@ -91,12 +97,24 @@
             driver_info: [],
             sponsor_info: [],
             admin_info: [],
+            new_info: {
+                'full_name': null,
+                'username': null,
+                'email': null,
+                'points_limit': null,
+                'expiration_period': null,
+                'sponsor_id': null,
+                'conversion_rate': null
+            },
             show_drivers: false,
             show_sponsors: false,
             show_admins: false,
             selected_driver: 'All',
             selected_sponsor: 'All',
             selected_admin: 'All',
+            update_driver: false,
+            update_sponsor: false,
+            update_admin: false,
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -106,62 +124,7 @@
     mounted() {
         this.username = this.$route.params.username;
         this.path = this.localhost_path;
-
-        axios.get(this.path + '/info', { params: { username: this.username } })
-            .then((res) => {
-                if (res.data.status === 'success') {
-                    for (const info of res.data.results.drivers) {
-                        let driver = {};
-
-                        driver['user_id'] = info[0];
-                        driver['user_type'] = info[2];
-                        driver['email'] = info[3];
-                        driver['username'] = info[4];
-                        driver['points_limit'] = info[5];
-                        driver['expiration_period'] = info[6];
-                        driver['sponsor_id'] = info[7];
-                        driver['dollar_point_value'] = info[8];
-                        driver['full_name'] = info[9];
-
-                        this.driver_info.push(driver);
-                    }
-
-                    for (const info of res.data.results.sponsors) {
-                        let sponsor = {};
-
-                        sponsor['user_id'] = info[0];
-                        sponsor['user_type'] = info[2];
-                        sponsor['email'] = info[3];
-                        sponsor['username'] = info[4];
-                        sponsor['points_limit'] = info[5];
-                        sponsor['expiration_period'] = info[6];
-                        sponsor['sponsor_id'] = info[7];
-                        sponsor['dollar_point_value'] = info[8];
-                        sponsor['full_name'] = info[9];
-
-                        this.sponsor_info.push(sponsor);
-                    }
-
-                    for (const info of res.data.results.admins) {
-                        let admin = {};
-
-                        admin['user_id'] = info[0];
-                        admin['user_type'] = info[2];
-                        admin['email'] = info[3];
-                        admin['username'] = info[4];
-                        admin['points_limit'] = info[5];
-                        admin['expiration_period'] = info[6];
-                        admin['sponsor_id'] = info[7];
-                        admin['dollar_point_value'] = info[8];
-                        admin['full_name'] = info[9];
-
-                        this.admin_info.push(admin);
-                    }
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
+        this.get_info();
     },
 
     methods: {
@@ -226,6 +189,100 @@
                 name: 'new-admin',
                 params: { username: this.username }
             })
+        },
+
+        get_info() {
+            axios.get(this.path + '/info', { params: { username: this.username } })
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        for (const info of res.data.results.drivers) {
+                            let driver = {};
+
+                            driver['user_id'] = info[0];
+                            driver['user_type'] = info[2];
+                            driver['email'] = info[3];
+                            driver['username'] = info[4];
+                            driver['points_limit'] = info[5];
+                            driver['expiration_period'] = info[6];
+                            driver['sponsor_id'] = info[7];
+                            driver['dollar_point_value'] = info[8];
+                            driver['full_name'] = info[9];
+
+                            this.driver_info.push(driver);
+                        }
+
+                        for (const info of res.data.results.sponsors) {
+                            let sponsor = {};
+
+                            sponsor['user_id'] = info[0];
+                            sponsor['user_type'] = info[2];
+                            sponsor['email'] = info[3];
+                            sponsor['username'] = info[4];
+                            sponsor['points_limit'] = info[5];
+                            sponsor['expiration_period'] = info[6];
+                            sponsor['sponsor_id'] = info[7];
+                            sponsor['dollar_point_value'] = info[8];
+                            sponsor['full_name'] = info[9];
+
+                            this.sponsor_info.push(sponsor);
+                        }
+
+                        for (const info of res.data.results.admins) {
+                            let admin = {};
+
+                            admin['user_id'] = info[0];
+                            admin['user_type'] = info[2];
+                            admin['email'] = info[3];
+                            admin['username'] = info[4];
+                            admin['points_limit'] = info[5];
+                            admin['expiration_period'] = info[6];
+                            admin['sponsor_id'] = info[7];
+                            admin['dollar_point_value'] = info[8];
+                            admin['full_name'] = info[9];
+
+                            this.admin_info.push(admin);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        },
+
+        update_info(old_info, new_info) {
+            let data = {}
+
+            for (let key of Object.keys(new_info)) {
+                if (new_info[key] !== null) {
+                    data[key] = new_info[key];
+                }
+            }
+
+            axios.post(this.path + '/update-info', null, {params: {update_data: data, user_id: old_info.user_id}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log('success');
+                        
+                        if (old_info.user_type === 'Driver') this.update_driver = false;
+                        else if (old_info.user_type === 'Sponsor') this.update_sponsor = false;
+                        else this.update_admin = false;
+
+                        this.new_info = {
+                            'full_name': null,
+                            'username': null,
+                            'email': null,
+                            'points_limit': null,
+                            'expiration_period': null,
+                            'sponsor_id': null,
+                            'conversion_rate': null
+                        }
+
+                        this.get_info();
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
         }
     },
 
@@ -264,7 +321,6 @@
     }
     
     button {
-        margin-right: 5px;
         margin-left: 5px;
     }
 
@@ -295,11 +351,33 @@
         width: 100%;
         height: auto;
         align-items: left;
-        border-style: solid solid none solid;
+        border-style: solid none none none;
         border-color: black;
+    }
+
+    .update-field {
+        display: flex;
+        height: auto;
+        margin-right: 5%;
+        align-items: right;
     }
 
     .driver-info p, .sponsor-info p, .admin-info p {
         margin-left: 5%;
+    }
+
+    .driver-info p input, .sponsor-info p input, .admin-info p input {
+        display: flex;
+        margin-right: 5%;
+        margin-top: 1%;
+    }
+
+    .update-button {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-left: 5%;
+        margin-bottom: 1.5rem;
+        width: 60px;
     }
 </style>

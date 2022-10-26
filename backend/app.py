@@ -408,6 +408,22 @@ def new_admin():
         
     return jsonify({'status': status})
 
+@app.route('/update-info', methods=['POST'])
+@cross_origin
+def update_info():
+    data = request.args.get('update_data', '')
+    #user = request.args.get('user_id', '')
+    status = 'failure'
+    #cursor = db.cursor()
+
+    print(f'\n\n{data}\n\n')
+    
+    status = 'success'
+
+    return jsonify({
+        'status': status
+    })
+
 
 if __name__ == '__main__':
     get_new_token()
