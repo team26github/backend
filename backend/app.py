@@ -232,7 +232,7 @@ def get_info():
 
     query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
     cursor.execute(query)
-    results['Admins'] = cursor.fetchall()
+    results['admins'] = cursor.fetchall()
 
     if len(results) > 0:
         return jsonify({

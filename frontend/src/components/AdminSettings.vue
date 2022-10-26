@@ -10,7 +10,7 @@
                 <label class="drivers">Choose a Driver:</label>
                 <select class="drivers" @change="get_driver($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="driver in driver_info" :key="driver">{{ driver[9] }}</option>
+                    <option v-for="driver in driver_info" :key="driver">{{ driver.full_name }}</option>
                 </select>
                 <button @click="show_drivers = !show_drivers">{{ (show_drivers ? "Hide" : "View") }}</button>
             </div>
@@ -21,7 +21,7 @@
                 <label class="sponsors">Choose a Sponsor:</label>
                 <select class="sponsors" @change="get_sponsor($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="sponsor in sponsor_info" :key="sponsor">{{ sponsor[9] }}</option>
+                    <option v-for="sponsor in sponsor_info" :key="sponsor">{{ sponsor.full_name }}</option>
                 </select>
                 <button @click="show_sponsors = !show_sponsors">{{ (show_sponsors ? "Hide" : "View") }}</button>
             </div>
@@ -32,43 +32,43 @@
                 <label class="admins">Choose an Admin:</label>
                 <select class="admins" @change="get_admin($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="admin in admin_info" :key="admin">{{ admin[9] }}</option>
+                    <option v-for="admin in admin_info" :key="admin">{{ admin.full_name }}</option>
                 </select>
                 <button @click="show_admins = !show_admins;">{{ (show_admins ? "Hide" : "View") }}</button>
             </div>
         </div>
         <div class="info-row">
             <div class="driver-container" v-if="show_drivers">
-                <div class="driver-info" v-for="driver in driver_info" :key="driver">
-                    <p><strong>Full Name:</strong> {{ driver[9] }}</p>
-                    <p><strong>Username:</strong> {{ driver[4] }}</p>
-                    <p><strong>Email:</strong> {{ driver[3] }}</p>
-                    <p><strong>Points Limit:</strong> {{ driver[5] }} points</p>
-                    <p><strong>Expiration Period:</strong> {{ driver[6] }} months</p>
-                    <p><strong>Sponsor ID(s):</strong> {{ driver[7] }}</p>
-                    <p><strong>Point Conversion:</strong> {{ driver[8] }} points = $1</p>
+                <div class="driver-info" v-for="driver in display_drivers()" :key="driver">
+                    <p><strong>Full Name:</strong> {{ driver.full_name }}</p>
+                    <p><strong>Username:</strong> {{ driver.username }}</p>
+                    <p><strong>Email:</strong> {{ driver.email }}</p>
+                    <p><strong>Points Limit:</strong> {{ driver.points_limit }} points</p>
+                    <p><strong>Expiration Period:</strong> {{ driver.expiration_period }} months</p>
+                    <p><strong>Sponsor ID(s):</strong> {{ driver.sponsor_id }}</p>
+                    <p><strong>Point Conversion:</strong> {{ driver.dollar_point_value }} points = $1</p>
                 </div>
             </div>
             <div class="sponsor-container" v-if="show_sponsors">
-                <div class="sponsor-info" v-for="sponsor in sponsor_info" :key="sponsor">
-                    <p><strong>Full Name:</strong> {{ sponsor[9] }}</p>
-                    <p><strong>Username:</strong> {{ sponsor[4] }}</p>
-                    <p><strong>Email:</strong> {{ sponsor[3] }}</p>
-                    <p><strong>Points Limit:</strong> {{ sponsor[5] }} points</p>
-                    <p><strong>Expiration Period:</strong> {{ sponsor[6] }} months</p>
-                    <p><strong>Sponsor ID(s):</strong> {{ sponsor[7] }}</p>
-                    <p><strong>Point Conversion:</strong> {{ sponsor[8] }} points = $1</p>
+                <div class="sponsor-info" v-for="sponsor in display_sponsors()" :key="sponsor">
+                    <p><strong>Full Name:</strong> {{ sponsor.full_name }}</p>
+                    <p><strong>Username:</strong> {{ sponsor.username }}</p>
+                    <p><strong>Email:</strong> {{ sponsor.email }}</p>
+                    <p><strong>Points Limit:</strong> {{ sponsor.points_limit }} points</p>
+                    <p><strong>Expiration Period:</strong> {{ sponsor.expiration_period }} months</p>
+                    <p><strong>Sponsor ID(s):</strong> {{ sponsor.sponsor_id }}</p>
+                    <p><strong>Point Conversion:</strong> {{ sponsor.dollar_point_value }} points = $1</p>
                 </div>
             </div>
             <div class="admin-container" v-if="show_admins">
-                <div class="admin-info" v-for="admin in admin_info" :key="admin">
-                    <p><strong>Full Name:</strong> {{ admin[9] }}</p>
-                    <p><strong>Username:</strong> {{ admin[4] }}</p>
-                    <p><strong>Email:</strong> {{ admin[3] }}</p>
-                    <p><strong>Points Limit:</strong> {{ admin[5] }} points</p>
-                    <p><strong>Expiration Period:</strong> {{ admin[6] }} months</p>
-                    <p><strong>Sponsor ID(s):</strong> {{ admin[7] }}</p>
-                    <p><strong>Point Conversion:</strong> {{ admin[8] }} points = $1</p>
+                <div class="admin-info" v-for="admin in display_admins()" :key="admin">
+                    <p><strong>Full Name:</strong> {{ admin.full_name }}</p>
+                    <p><strong>Username:</strong> {{ admin.username }}</p>
+                    <p><strong>Email:</strong> {{ admin.email }}</p>
+                    <p><strong>Points Limit:</strong> {{ admin.points_limit }} points</p>
+                    <p><strong>Expiration Period:</strong> {{ admin.expiration_period }} months</p>
+                    <p><strong>Sponsor ID(s):</strong> {{ admin.sponsor_id }}</p>
+                    <p><strong>Point Conversion:</strong> {{ admin.dollar_point_value }} points = $1</p>
                 </div>
             </div>
         </div>
@@ -91,9 +91,9 @@
             show_drivers: false,
             show_sponsors: false,
             show_admins: false,
-            selected_driver: "All",
-            selected_sponsor: "All",
-            selected_admin: "All",
+            selected_driver: 'All',
+            selected_sponsor: 'All',
+            selected_admin: 'All',
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -107,18 +107,52 @@
         axios.get(this.path + '/info', { params: { username: this.username } })
             .then((res) => {
                 if (res.data.status === 'success') {
-                    console.log(res.data.results);
-
                     for (const info of res.data.results.drivers) {
-                        this.driver_info.push(info);
+                        let driver = {};
+
+                        driver['user_id'] = info[0];
+                        driver['user_type'] = info[2];
+                        driver['email'] = info[3];
+                        driver['username'] = info[4];
+                        driver['points_limit'] = info[5];
+                        driver['expiration_period'] = info[6];
+                        driver['sponsor_id'] = info[7];
+                        driver['dollar_point_value'] = info[8];
+                        driver['full_name'] = info[9];
+
+                        this.driver_info.push(driver);
                     }
 
                     for (const info of res.data.results.sponsors) {
-                        this.sponsor_info.push(info);
+                        let sponsor = {};
+
+                        sponsor['user_id'] = info[0];
+                        sponsor['user_type'] = info[2];
+                        sponsor['email'] = info[3];
+                        sponsor['username'] = info[4];
+                        sponsor['points_limit'] = info[5];
+                        sponsor['expiration_period'] = info[6];
+                        sponsor['sponsor_id'] = info[7];
+                        sponsor['dollar_point_value'] = info[8];
+                        sponsor['full_name'] = info[9];
+
+                        this.sponsor_info.push(sponsor);
                     }
 
                     for (const info of res.data.results.admins) {
-                        this.admin_info.push(info);
+                        let admin = {};
+
+                        admin['user_id'] = info[0];
+                        admin['user_type'] = info[2];
+                        admin['email'] = info[3];
+                        admin['username'] = info[4];
+                        admin['points_limit'] = info[5];
+                        admin['expiration_period'] = info[6];
+                        admin['sponsor_id'] = info[7];
+                        admin['dollar_point_value'] = info[8];
+                        admin['full_name'] = info[9];
+
+                        this.admin_info.push(admin);
                     }
                 }
             })
@@ -141,6 +175,33 @@
         get_admin(event) {
             this.selected_admin = event.target.value;
             console.log(this.selected_admin);
+        },
+
+        display_drivers() {
+            if (this.selected_driver === 'All') return this.driver_info;
+            else {
+                for (let d of this.driver_info) {
+                    if (d.full_name === this.selected_driver) return [d];
+                }
+            }
+        },
+
+        display_sponsors() {
+            if (this.selected_sponsor === 'All') return this.sponsor_info;
+            else {
+                for (let s of this.sponsor_info) {
+                    if (s.full_name === this.selected_sponsor) return [s];
+                }
+            }
+        },
+
+        display_admins() {
+            if (this.selected_admin === 'All') return this.admin_info;
+            else {
+                for (let a of this.admin_info) {
+                    if (a.full_name === this.selected_admin) return [a];
+                }
+            }
         }
     },
 
