@@ -13,6 +13,7 @@
                     <option v-for="driver in driver_info" :key="driver">{{ driver.full_name }}</option>
                 </select>
                 <button @click="show_drivers = !show_drivers">{{ (show_drivers ? "Hide" : "View") }}</button>
+                <button @click="go_to_new_driver">Add New Driver</button>
             </div>
         </div>
         <div class="row">
@@ -24,6 +25,7 @@
                     <option v-for="sponsor in sponsor_info" :key="sponsor">{{ sponsor.full_name }}</option>
                 </select>
                 <button @click="show_sponsors = !show_sponsors">{{ (show_sponsors ? "Hide" : "View") }}</button>
+                <button @click="go_to_new_sponsor">Add New Sponsor</button>
             </div>
         </div>
         <div class="row">
@@ -35,6 +37,7 @@
                     <option v-for="admin in admin_info" :key="admin">{{ admin.full_name }}</option>
                 </select>
                 <button @click="show_admins = !show_admins;">{{ (show_admins ? "Hide" : "View") }}</button>
+                <button @click="go_to_new_admin">Add New Admin</button>
             </div>
         </div>
         <div class="info-row">
@@ -202,6 +205,27 @@
                     if (a.full_name === this.selected_admin) return [a];
                 }
             }
+        },
+
+        go_to_new_driver() {
+            this.$router.push({
+                name: 'new-driver',
+                params: { username: this.username }
+            })
+        },
+
+        go_to_new_sponsor() {
+            this.$router.push({
+                name: 'new-sponsor',
+                params: { username: this.username }
+            })
+        },
+        
+        go_to_new_admin() {
+            this.$router.push({
+                name: 'new-admin',
+                params: { username: this.username }
+            })
         }
     },
 
