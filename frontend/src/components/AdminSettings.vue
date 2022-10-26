@@ -8,9 +8,9 @@
             <div class="driver-profiles-permissions">
                 <p><strong>View Driver Profiles & Permissions</strong></p>
                 <label class="drivers">Choose a Driver:</label>
-                <select class="drivers">
+                <select class="drivers" @change="get_driver($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="driver in driver_info" :key="driver" :value="driver[9]" @change="get_driver($event)">{{ driver[9] }}</option>
+                    <option v-for="driver in driver_info" :key="driver">{{ driver[9] }}</option>
                 </select>
                 <button @click="show_drivers = !show_drivers">{{ (show_drivers ? "Hide" : "View") }}</button>
             </div>
@@ -19,9 +19,9 @@
             <div class="sponsor-profiles-permissions">
                 <p><strong>View Sponsor Profiles & Permissions</strong></p>
                 <label class="sponsors">Choose a Sponsor:</label>
-                <select class="sponsors">
+                <select class="sponsors" @change="get_sponsor($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="sponsor in sponsor_info" :key="sponsor" :value="sponsor[9]" @change="get_sponsor($event)">{{ sponsor[9] }}</option>
+                    <option v-for="sponsor in sponsor_info" :key="sponsor">{{ sponsor[9] }}</option>
                 </select>
                 <button @click="show_sponsors = !show_sponsors">{{ (show_sponsors ? "Hide" : "View") }}</button>
             </div>
@@ -30,9 +30,9 @@
             <div class="admin-profiles-permissions">
                 <p><strong>View Admin Profiles & Permissions</strong></p>
                 <label class="admins">Choose an Admin:</label>
-                <select class="admins">
+                <select class="admins" @change="get_admin($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="admin in admin_info" :key="admin" :value="admin[9]" @change="get_admin($event)">{{ admin[9] }}</option>
+                    <option v-for="admin in admin_info" :key="admin">{{ admin[9] }}</option>
                 </select>
                 <button @click="show_admins = !show_admins;">{{ (show_admins ? "Hide" : "View") }}</button>
             </div>
@@ -130,14 +130,17 @@
     methods: {
         get_driver(event) {
             this.selected_driver = event.target.value;
+            console.log(this.selected_driver);
         },
         
         get_sponsor(event) {
             this.selected_sponsor = event.target.value;
+            console.log(this.selected_sponsor);
         },
 
         get_admin(event) {
             this.selected_admin = event.target.value;
+            console.log(this.selected_admin);
         }
     },
 
