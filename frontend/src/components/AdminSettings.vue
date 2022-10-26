@@ -220,7 +220,7 @@
                 params: { username: this.username }
             })
         },
-        
+
         go_to_new_admin() {
             this.$router.push({
                 name: 'new-admin',
@@ -242,7 +242,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: darkorange;
+        background-color: #ff90b3;
     }
 
     .row {
