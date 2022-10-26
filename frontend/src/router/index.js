@@ -13,6 +13,9 @@ import SponsorSettings from '../components/SponsorSettings.vue';
 import Catalog from '../components/Catalog.vue';
 import DriverApplication from '../components/DriverApplication.vue';
 import PendingApplications from '../components/PendingApplications.vue';
+import NewDriver from '../components/NewDriver.vue';
+import NewSponsor from '../components/NewSponsor.vue';
+import NewAdmin from '../components/NewAdmin.vue';
 
 const routes = [
     {
@@ -88,7 +91,22 @@ const routes = [
         path: '/sponsor/:username/pendingapplications',
         name: 'pending-applications',
         component: PendingApplications
-    }
+    },
+    {
+        path: '/admin/:username/new-driver',
+        name: 'new-driver',
+        component: NewDriver
+    },
+    {
+        path: '/admin/:username/new-sponsor',
+        name: 'new-sponsor',
+        component: NewSponsor
+    },
+    {
+        path: '/admin/:username/new-admin',
+        name: 'new-admin',
+        component: NewAdmin
+    },
 ];
 
 const router = createRouter({
