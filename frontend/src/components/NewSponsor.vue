@@ -13,7 +13,7 @@
             </div>
 
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Username" name="username" v-model="username" required><br><br>
+                <input class="input-field" type="text" placeholder="Username" name="username" v-model="sponsor_username" required><br><br>
             </div>
 
             <div class="input-container">
@@ -38,23 +38,44 @@
         name: "new-sponsor",
 
         data() {
-        return {
-            status: null,
-            first_name: '',
-            last_name:'',
-            username: '',
-            password: '',
-            email: '',
-            user_type: '',
-        };
+            return {
+                status: null,
+                first_name: '',
+                last_name:'',
+                username: '',
+                sponsor_username: '',
+                password: '',
+                email: '',
+                user_type: '',
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
+            };
+        },
+
+        mounted() {
+            this.username = this.$route.params.username;
+            this.path = this.localhost_path;
+
+            axios.get(this.path + '/userinfo', {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_type = res.data.results[0][2];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         },
 
         methods: {
 
-            create_sponsor() { 
-                const path = 'http://localhost:5000/new-sponsor';
-                
-                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password}}) 
+            create_sponsor() {                 
+                axios.post(this.path + '/new-sponsor', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.sponsor_username, password: this.password}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");

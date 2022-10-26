@@ -14,7 +14,7 @@
             </div>
 
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Username" name="username" v-model="username" required><br><br>
+                <input class="input-field" type="text" placeholder="Username" name="username" v-model="admin_username" required><br><br>
             </div>
 
             <div class="input-container">
@@ -39,22 +39,43 @@
         name: "new-admin",
 
         data() {
-        return {
-            status: null,
-            first_name: '',
-            last_name:'',
-            username: '',
-            password: '',
-            email: '',
-            user_type: "Admin",
-        };
+            return {
+                status: null,
+                first_name: '',
+                last_name:'',
+                username: '',
+                admin_username: '',
+                password: '',
+                email: '',
+                user_type: "Admin",
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
+            };
+        },
+
+        mounted() {
+            this.username = this.$route.params.username;
+            this.path = this.localhost_path;
+
+            axios.get(this.path + '/userinfo', {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_type = res.data.results[0][2];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         },
 
         methods: {
-            create_admin() { 
-                const path = 'http://localhost:5000/new-admin';
-                
-                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password}}) 
+            create_admin() {                 
+                axios.post(this.path + '/new-admin', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.admin_username, password: this.password}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
