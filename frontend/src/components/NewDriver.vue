@@ -1,44 +1,48 @@
 <template>
-    <!-- <NavBar :usertype="user_type" :username="username"></NavBar> -->
-    <form style="max-width:800px;margin:auto">
-        <h1>New Driver</h1>
+    <div class="settings-container">
+        <NavBar :usertype="user_type" :username="username"></NavBar>
+        <form style="max-width:800px;margin:auto">
+            <h1>New Driver</h1>
 
-        <div>Select Sponsor: {{ selected }}</div>
+            <div>Select Sponsor: {{ selected }}</div>
 
-        <select name = "selected" @change="onChange($event)" v-model="selected" required>
-            <option disabled value="">Please select one sponsor you would like to apply to</option>
-            <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
-        </select>
+            <select name = "selected" @change="onChange($event)" v-model="selected" required>
+                <option disabled value="">Please select one sponsor you would like to apply to</option>
+                <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
+            </select>
 
-        <br><br>
+            <br><br>
 
-        <div class="input-container">
-            <input class="input-field" type="text" placeholder="First Name" name="first_name" v-model="first_name" required><br><br>
-        </div>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="First Name" name="first_name" v-model="first_name" required><br><br>
+            </div>
 
-        <div class="input-container">
-            <input class="input-field" type="text" placeholder="Last Name" name="last_name" v-model="last_name" required><br><br>
-        </div>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Last Name" name="last_name" v-model="last_name" required><br><br>
+            </div>
 
-        <div class="input-container">
-            <input class="input-field" type="text" placeholder="Username" name="username" v-model="username" required><br><br>
-        </div>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Username" name="username" v-model="username" required><br><br>
+            </div>
 
-        <div class="input-container">
-            <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
-        </div>
-        
-        <div class="input-container">
-            <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
-        </div>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
+            </div>
+            
+            <div class="input-container">
+                <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
+            </div>
 
-        <button type="submit" class="btn" @click="create_driver" >Create</button> 
-    </form>
+            <button type="submit" class="btn" @click="create_driver" >Create</button> 
+        </form>
+    </div>
 
 </template>
 
 <script>
     import axios from 'axios';
+    import NavBar from '../components/NavBar.vue';
+
 
     export default {
         name: "new-driver",
@@ -102,12 +106,24 @@
         created:function(){
             this.fetchSponsors();
         },
+        components: { NavBar },
     }
 
 </script>
 
 <style scoped>
     * {box-sizing: border-box;}
+
+    .settings-container {
+        /* display: flex; */
+        flex-direction: column;
+        width: 98.5vw;
+        height: 97.5vh;
+        border-style: solid;
+        border-color: black;
+        gap: 1rem;
+        background-color: #ff90b3;
+    }
 
     .input-container {
     display: flex;

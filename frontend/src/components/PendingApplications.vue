@@ -1,19 +1,21 @@
 <template>
-    <form style="max-width:800px;margin:auto">
-        <h1>Pending Driver Applications</h1>
+    <div class="profile-container">
+        <form style="max-width:800px;margin:auto">
+            <h1>Pending Driver Applications</h1>
 
-        <div>Select Driver:</div>
+            <div>Select Driver:</div>
 
-        <select name = "selected" required>
-            <option disabled value="">Please select one application</option>
-            <option value="None">None</option>
-            <option v-for="driver in drivers" :key="driver">{{driver}}</option>
-        </select>
+            <select name = "selected" required>
+                <option disabled value="">Please select one driver application to review:</option>
+                <option value="None">None</option>
+                <option v-for="driver in drivers" :key="driver">{{driver}}</option>
+            </select>
 
-        <br><br>
-    </form>
-    <div class="sponsor-dashboard-button">
-        <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
+            <br><br>
+        </form>
+        <div class="sponsor-dashboard-button">
+            <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
+        </div>
     </div>
 </template>
 
@@ -84,6 +86,17 @@
 
 <style scoped>
     * {box-sizing: border-box;}
+
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        width: 98.5vw;
+        height: 97.5vh;
+        border-style: solid;
+        border-color: black;
+        gap: 1rem;
+        background-color: #73bfb8;
+    }
 
     .input-container {
     display: flex;
