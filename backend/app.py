@@ -232,7 +232,7 @@ def get_info():
 
     query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
     cursor.execute(query)
-    results['Admins'] = cursor.fetchall()
+    results['admins'] = cursor.fetchall()
 
     if len(results) > 0:
         return jsonify({
@@ -306,8 +306,7 @@ def get_catalog_items():
         'sort': '<>'
     }
 
-    results = requests.get(
-        f'''{sandbox_url}''', headers=headers, params=params)
+    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params)
 
     print(results)
 
