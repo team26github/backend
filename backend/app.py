@@ -216,6 +216,35 @@ def get_sponsors():
             'results': results
         })
 
+@app.route('/info', methods=['GET'])
+def get_info():
+    username = request.args.get('username', '')
+    results = {}
+    cursor = db.cursor()
+
+    query = f'SELECT * FROM UserInfo WHERE UserType = "Driver"'
+    cursor.execute(query)
+    results['drivers'] = cursor.fetchall()
+
+    query = f'SELECT * FROM UserInfo WHERE UserType = "Sponsor"'
+    cursor.execute(query)
+    results['sponsors'] = cursor.fetchall()
+
+    query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
+    cursor.execute(query)
+    results['Admins'] = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
 
 @app.route('/apply', methods=['POST'])
 @cross_origin()
