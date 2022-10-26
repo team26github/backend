@@ -409,15 +409,23 @@ def new_admin():
     return jsonify({'status': status})
 
 @app.route('/update-info', methods=['POST'])
-@cross_origin
+@cross_origin()
 def update_info():
-    data = request.args.get('update_data', '')
-    #user = request.args.get('user_id', '')
+    data = json.loads(request.args.get('update_data', ''))
+    user = request.args.get('user_id', '')
     status = 'failure'
-    #cursor = db.cursor()
+    cursor = db.cursor()
 
-    print(f'\n\n{data}\n\n')
-    
+    for key in data:
+        if key == 'PointsLimit' or key == 'SponsorID':
+            query = f'UPDATE UserInfo SET {key} = {int(data[key])} WHERE UserID = {user}'
+        elif key == 'DollarPointValue':
+            query = f'UPDATE UserInfo SET {key} = {float(data[key])} WHERE UserID = {user}'
+        else:
+            query = f'UPDATE UserInfo SET {key} = "{data[key]}" WHERE UserID = {user}'
+        cursor.execute(query)
+        db.commit()
+
     status = 'success'
 
     return jsonify({
