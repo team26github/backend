@@ -111,6 +111,7 @@
     height: 100vh;
     display: grid;
     place-items: center;
+    background-color: #8c72e0;
   }
 
   .login {
@@ -119,6 +120,7 @@
     padding: 0 10px 10px;
     border-style: solid;
     border-color: black;
+    background-color: #ffffff;
   }
 
   p {
