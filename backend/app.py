@@ -178,13 +178,12 @@ def get_user_info():
         })
 
 @app.route('/get-drivers', methods=['GET'])
-@cross_origin()
 def get_drivers():
-    user_id = request.args['user_id']
+    user_id = request.args.get('user_id', '')
     cursor = db.cursor()
     
-    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM UserInfo WHERE UserType = "Driver" AND SPONSOR_ID = "{user_id}"'
-    
+    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM DriverApplications WHERE SPONSOR_ID = {user_id} AND APP_STATUS = "Pending"'
+
     cursor.execute(query)
     results = cursor.fetchall()
 
