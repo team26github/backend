@@ -277,8 +277,7 @@ def get_catalog_items():
         'sort': '<>'
     }
 
-    results = requests.get(
-        f'''{sandbox_url}''', headers=headers, params=params)
+    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params)
 
     print(results)
 
