@@ -179,11 +179,11 @@ def get_user_info():
 
 @app.route('/get-drivers', methods=['GET'])
 def get_drivers():
-    user_id = request.args['user_id']
+    user_id = request.args.get('user_id', '')
     cursor = db.cursor()
     
-    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM DriverApplications WHERE SPONSOR_ID = "{user_id}"'
-    
+    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM DriverApplications WHERE SPONSOR_ID = {user_id} AND APP_STATUS = "Pending"'
+
     cursor.execute(query)
     results = cursor.fetchall()
 
@@ -216,30 +216,59 @@ def get_sponsors():
             'results': results
         })
 
-
-@app.route('/apply', methods=['GET', 'POST'])
-@cross_origin()
-def submit_application():
+@app.route('/info', methods=['GET'])
+def get_info():
+    username = request.args.get('username', '')
+    results = {}
     cursor = db.cursor()
-    if request.method == 'POST':
-        status = 'failure'
 
-        # if request.args.get('request', '') == 'email':
-        email = request.args.get('email', '')
-        first_name = request.args.get('first_name', '')
-        last_name = request.args.get('last_name', '')
-        username = request.args.get('username', '')
-        passwd = request.args.get('passwd', '')
-        sponsor_id = request.args.get('sponsor_id', '')
+    query = f'SELECT * FROM UserInfo WHERE UserType = "Driver"'
+    cursor.execute(query)
+    results['drivers'] = cursor.fetchall()
+
+    query = f'SELECT * FROM UserInfo WHERE UserType = "Sponsor"'
+    cursor.execute(query)
+    results['sponsors'] = cursor.fetchall()
+
+    query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
+    cursor.execute(query)
+    results['Admins'] = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+
+@app.route('/apply', methods=['POST'])
+@cross_origin()
+def apply():
+    cursor = db.cursor()
+    status = 'failure'
+
+    email = request.args.get('email', '')
+    first_name = request.args.get('first_name', '')
+    last_name = request.args.get('last_name', '')
+    username = request.args.get('username', '')
+    passwd = request.args.get('password', '')
+    sponsor = request.args.get('sponsor', '')
+    query = f'SELECT UserID FROM UserInfo WHERE Username="{sponsor[3:-3]}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    sponsor_id=results[0][0]
+    query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD, SPONSOR_ID) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}","{sponsor_id}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
         
-        # print("UserID: "+userid+" Email:"+email)
-        query = f'INSERT INTO DriverApplications (EMAIL, FIRST_NAME, LAST_NAME, USERNAME, PASSWD, SPONSOR_ID) VALUES("{email}","{first_name}","{last_name}","{username}","{passwd}","{sponsor_id}")'
-
-        cursor.execute(query)
-        db.commit()
-        status = 'success'
-            
-        return jsonify({'status': status})
+    return jsonify({'status': status})
 
 
 # Not finished!!

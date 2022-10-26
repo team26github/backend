@@ -12,6 +12,7 @@ import AdminSettings from '../components/AdminSettings.vue';
 import SponsorSettings from '../components/SponsorSettings.vue';
 import Catalog from '../components/Catalog.vue';
 import DriverApplication from '../components/DriverApplication.vue';
+import PendingApplications from '../components/PendingApplications.vue';
 
 const routes = [
     {
@@ -82,6 +83,11 @@ const routes = [
         path: '/driverapplication',
         name: 'driver-application',
         component: DriverApplication
+    },
+    {
+        path: '/sponsor/:username/pendingapplications',
+        name: 'pending-applications',
+        component: PendingApplications
     }
 ];
 

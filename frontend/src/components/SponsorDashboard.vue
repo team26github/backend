@@ -8,6 +8,9 @@
         <div class="remove-points-container">
                 <button @click="deduct_points">Deduct Points from Driver</button>
             </div>
+        <div class="pending-applications-button">
+            <button @click="go_to_pending_applications">Pending Applications</button>
+        </div>
 </template>
 
 <script>
@@ -25,6 +28,13 @@
         },
 
         methods: {
+            go_to_pending_applications() {
+                this.$router.push({
+                    name: 'pending-applications',
+                    params: { username: this.username }
+                });
+            },
+
             add_points() {
                 let add_point_val = window.prompt("Enter number of points to be added");
                 this.points += add_point_val;
@@ -47,3 +57,7 @@
         }
     }
 </script>
+
+<style scoped>
+    
+</style>
