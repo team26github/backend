@@ -8,7 +8,7 @@
 
             <select name = "selected" @change="onChange($event)" v-model="selected" required>
                 <option disabled value="">Please select one sponsor you would like to apply to</option>
-                <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
+                <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor[0]}}</option>
             </select>
 
             <br><br>
@@ -22,7 +22,7 @@
             </div>
 
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Username" name="username" v-model="username" required><br><br>
+                <input class="input-field" type="text" placeholder="Username" name="username" v-model="driver_username" required><br><br>
             </div>
 
             <div class="input-container">
@@ -48,17 +48,41 @@
         name: "new-driver",
 
         data() {
-        return {
-            status: null,
-            first_name: '',
-            last_name:'',
-            username: '',
-            password: '',
-            email: '',
-            user_type: '',
-            sponsors: [],
-            sponsor_selected: ''
-        };
+            return {
+                status: null,
+                first_name: '',
+                last_name:'',
+                username: '',
+                driver_username: '',
+                password: '',
+                email: '',
+                user_type: '',
+                sponsors: [],
+                sponsor_selected: '',
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
+            };
+        },
+
+        mounted() {
+            this.username = this.$route.params.username;
+            this.path = this.localhost_path;
+
+            axios.get(this.path + '/userinfo', {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_type = res.data.results[0][2];
+                        this.fetchSponsors();
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         },
 
         methods: {
@@ -67,10 +91,8 @@
                 this.sponsor_selected=e.target.value
             },
 
-            fetchSponsors:function() {
-                let path = 'http://localhost:5000/get-sponsors';
-
-                axios.get(path, {params: {user_id: this.user_id}})
+            fetchSponsors() {
+                axios.get(this.path + '/get-sponsors', {params: {user_id: this.user_id}})
                     .then((res) => {
                         if (res.data.status === 'success') {
                             console.log(res.data);
@@ -85,10 +107,8 @@
                     })
             },
 
-            create_driver() { 
-                const path = 'http://localhost:5000/new-driver';
-                
-                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password, sponsor: this.sponsor_selected}}) 
+            create_driver() {                 
+                axios.post(this.path + '/new-driver', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.driver_username, password: this.password, sponsor: this.sponsor_selected}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
@@ -101,12 +121,10 @@
                         // esling-disable-next-line
                         console.log(error);
                     })
-            },
+            }
         },
-        created:function(){
-            this.fetchSponsors();
-        },
-        components: { NavBar },
+
+        components: { NavBar }
     }
 
 </script>

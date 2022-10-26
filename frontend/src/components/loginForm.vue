@@ -107,8 +107,8 @@
 
 <style scoped>
   .login-container {
-    width: 100vw;
-    height: 100vh;
+    width: 99.3vw;
+    height: 98.5vh;
     display: grid;
     place-items: center;
     background-color: #8c72e0;
