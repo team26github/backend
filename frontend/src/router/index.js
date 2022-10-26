@@ -85,7 +85,7 @@ const routes = [
         component: DriverApplication
     },
     {
-        path: '/pendingapplications',
+        path: '/sponsor/:username/pendingapplications',
         name: 'pending-applications',
         component: PendingApplications
     }
