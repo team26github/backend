@@ -107,10 +107,11 @@
 
 <style scoped>
   .login-container {
-    width: 100vw;
-    height: 100vh;
+    width: 99.3vw;
+    height: 98.5vh;
     display: grid;
     place-items: center;
+    background-color: #8c72e0;
   }
 
   .login {
@@ -119,6 +120,7 @@
     padding: 0 10px 10px;
     border-style: solid;
     border-color: black;
+    background-color: #ffffff;
   }
 
   p {

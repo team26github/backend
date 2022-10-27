@@ -239,7 +239,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: darkgray;
+        background-color: #73bfb8;
     }
 
     .password, .username, .email {

@@ -232,7 +232,7 @@ def get_info():
 
     query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
     cursor.execute(query)
-    results['Admins'] = cursor.fetchall()
+    results['admins'] = cursor.fetchall()
 
     if len(results) > 0:
         return jsonify({
@@ -306,8 +306,7 @@ def get_catalog_items():
         'sort': '<>'
     }
 
-    results = requests.get(
-        f'''{sandbox_url}''', headers=headers, params=params)
+    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params)
 
     print(results)
 
@@ -337,6 +336,102 @@ def edit_point_conversion():
         'status': status
     })
         
+@app.route('/new-driver', methods=['POST'])
+@cross_origin()
+def new_driver():
+    cursor = db.cursor()
+    status = 'failure'
+
+    email = request.args.get('email', '')
+    first_name = request.args.get('first_name', '')
+    last_name = request.args.get('last_name', '')
+    username = request.args.get('username', '')
+    passwd = request.args.get('password', '')
+    sponsor = request.args.get('sponsor', '')
+    query = f'SELECT UserID FROM UserInfo WHERE Username="{sponsor[3:-3]}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    sponsor_id=results[0][0]
+    query = f'INSERT INTO UserInfo (passwd, UserType, Email, Username, PointsLimit, ExpirationPeriod, SponsorID, DollarPointValue, Fullname) VALUES("{passwd}","Driver", "{email}","{username}",100000, 12, "{sponsor_id}", 3.25, "{first_name} {last_name}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/new-sponsor', methods=['POST'])
+@cross_origin()
+def new_sponser():
+    cursor = db.cursor()
+    status = 'failure'
+
+    email = request.args.get('email', '')
+    first_name = request.args.get('first_name', '')
+    last_name = request.args.get('last_name', '')
+    username = request.args.get('username', '')
+    passwd = request.args.get('password', '')
+
+    query = f'INSERT INTO UserInfo (passwd, UserType, Email, Username, PointsLimit, ExpirationPeriod, DollarPointValue, Fullname) VALUES("{passwd}","Sponsor", "{email}","{username}",100000, 12, 3.25, "{first_name} {last_name}")'
+    cursor.execute(query)
+
+    query = f'SELECT UserID FROM UserInfo WHERE email="{email}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    sponsor_id=results[0][0]
+    
+    query = f'UPDATE UserInfo SET SponsorID = "{sponsor_id}" WHERE email="{email}"'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/new-admin', methods=['POST'])
+@cross_origin()
+def new_admin():
+    cursor = db.cursor()
+    status = 'failure'
+
+    email = request.args.get('email', '')
+    first_name = request.args.get('first_name', '')
+    last_name = request.args.get('last_name', '')
+    username = request.args.get('username', '')
+    passwd = request.args.get('password', '')
+    
+    query = f'INSERT INTO UserInfo (passwd, UserType, Email, Username, PointsLimit, ExpirationPeriod, SponsorID, DollarPointValue, Fullname) VALUES("{passwd}","Admin", "{email}","{username}",100000, 12, 0, 3.25, "{first_name} {last_name}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/update-info', methods=['POST'])
+@cross_origin()
+def update_info():
+    data = json.loads(request.args.get('update_data', ''))
+    user = request.args.get('user_id', '')
+    status = 'failure'
+    cursor = db.cursor()
+
+    for key in data:
+        if key == 'PointsLimit' or key == 'SponsorID':
+            query = f'UPDATE UserInfo SET {key} = {int(data[key])} WHERE UserID = {user}'
+        elif key == 'DollarPointValue':
+            query = f'UPDATE UserInfo SET {key} = {float(data[key])} WHERE UserID = {user}'
+        else:
+            query = f'UPDATE UserInfo SET {key} = "{data[key]}" WHERE UserID = {user}'
+        cursor.execute(query)
+        db.commit()
+
+    status = 'success'
+
+    return jsonify({
+        'status': status
+    })
+
 
 if __name__ == '__main__':
     get_new_token()

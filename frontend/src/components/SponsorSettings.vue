@@ -150,7 +150,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: #a9a9a9;
+        background-color: #73bfb8;
     }
 
     .row {
