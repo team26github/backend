@@ -52,9 +52,11 @@
                     params: { username: this.username }
                 });
             },
-            add_points() {
-                let add_point_val = window.prompt("Enter number of points to be added");
-                this.points += add_point_val;
+            go_to_add_points() {
+                this.$router.push({
+                    name: 'add-points',
+                    params: { username: this.username }
+                });
             },
             deduct_points() {
                 let remove_point_val = window.prompt("Enter number of points to be removed");
