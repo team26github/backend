@@ -232,7 +232,7 @@ def get_info():
 
     query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
     cursor.execute(query)
-    results['Admins'] = cursor.fetchall()
+    results['admins'] = cursor.fetchall()
 
     if len(results) > 0:
         return jsonify({
@@ -306,8 +306,7 @@ def get_catalog_items():
         'sort': '<>'
     }
 
-    results = requests.get(
-        f'''{sandbox_url}''', headers=headers, params=params)
+    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params)
 
     print(results)
 
@@ -408,6 +407,30 @@ def new_admin():
     status = 'success'
         
     return jsonify({'status': status})
+
+@app.route('/update-info', methods=['POST'])
+@cross_origin()
+def update_info():
+    data = json.loads(request.args.get('update_data', ''))
+    user = request.args.get('user_id', '')
+    status = 'failure'
+    cursor = db.cursor()
+
+    for key in data:
+        if key == 'PointsLimit' or key == 'SponsorID':
+            query = f'UPDATE UserInfo SET {key} = {int(data[key])} WHERE UserID = {user}'
+        elif key == 'DollarPointValue':
+            query = f'UPDATE UserInfo SET {key} = {float(data[key])} WHERE UserID = {user}'
+        else:
+            query = f'UPDATE UserInfo SET {key} = "{data[key]}" WHERE UserID = {user}'
+        cursor.execute(query)
+        db.commit()
+
+    status = 'success'
+
+    return jsonify({
+        'status': status
+    })
 
 
 if __name__ == '__main__':
