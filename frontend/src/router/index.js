@@ -17,7 +17,7 @@ import NewDriver from '../components/NewDriver.vue';
 import NewSponsor from '../components/NewSponsor.vue';
 import NewAdmin from '../components/NewAdmin.vue';
 import SetInactive from '../components/SetInactive.vue';
-import SetInactive from '../components/SetInactiveAdmins.vue';
+import SetInactiveAdmins from '../components/SetInactiveAdmins.vue';
 
 const routes = [
     {

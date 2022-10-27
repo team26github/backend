@@ -22,7 +22,7 @@
 <script>
     import axios from 'axios';
     export default {
-        name: "set-inactive",
+        name: "set-inactive-admins",
 
         data() {
             return {
@@ -95,7 +95,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: #73bfb8;
+        background-color: #ff90b3;
     }
 
     .input-container {
