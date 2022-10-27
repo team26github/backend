@@ -1,7 +1,7 @@
 <template>
     <div class="profile-container">
         <form style="max-width:800px;margin:auto">
-            <h1>Add Points to Drivers</h1>
+            <h1>Remove Points from Drivers</h1>
 
             <div>Select Driver:</div>
 
@@ -14,10 +14,10 @@
             <br><br>
 
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Number of points to add" name="num_points" v-model="num_points" required><br><br>
+                <input class="input-field" type="text" placeholder="Number of points to remove" name="num_points" v-model="num_points" required><br><br>
             </div>
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Reason for addition" name="num_points" v-model="last_name" required><br><br>
+                <input class="input-field" type="text" placeholder="Reason for deduction" name="num_points" v-model="last_name" required><br><br>
             </div>
         </form>
         <div class="sponsor-dashboard-button">
@@ -29,7 +29,7 @@
 <script>
     import axios from 'axios';
     export default {
-        name: "add-points",
+        name: "remove-points",
 
         data() {
             return {
