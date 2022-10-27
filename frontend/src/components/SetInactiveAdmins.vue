@@ -13,8 +13,8 @@
 
             <br><br>
         </form>
-        <div class="sponsor-dashboard-button">
-            <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
+        <div class="admin-dashboard-button">
+            <button @click="go_to_admin_dashboard">Return to Dashboard</button>
         </div>
     </div>
 </template>
@@ -41,9 +41,9 @@
                 this.sponsor_selected=e.target.value
             },
 
-            go_to_sponsor_dashboard() {
+            go_to_admin_dashboard() {
                 this.$router.push({
-                    name: 'sponsor-dashboard',
+                    name: 'admin-dashboard',
                     params: { username: this.username }
                 })
             },

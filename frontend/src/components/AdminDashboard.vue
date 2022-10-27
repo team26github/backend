@@ -12,6 +12,11 @@
                     <button @click="deduct_points">Deduct Points from Driver</button>
             </div>
         </div>
+        <div class="row">
+            <div class="set-inactive-button">
+                <button @click="go_to_set_inactive">Set Drivers Inactive</button>
+            </div>
+        </div>
     </div>
 </template>
 
