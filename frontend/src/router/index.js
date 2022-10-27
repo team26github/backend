@@ -16,6 +16,7 @@ import PendingApplications from '../components/PendingApplications.vue';
 import NewDriver from '../components/NewDriver.vue';
 import NewSponsor from '../components/NewSponsor.vue';
 import NewAdmin from '../components/NewAdmin.vue';
+import SetInactive from '../components/NewAdmin.vue';
 
 const routes = [
     {
@@ -106,6 +107,11 @@ const routes = [
         path: '/admin/:username/new-admin',
         name: 'new-admin',
         component: NewAdmin
+    },
+    {
+        path: '/sponsor/:username/set-inactive',
+        name: 'set-inactive',
+        component: SetInactive
     },
 ];
 
