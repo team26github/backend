@@ -133,7 +133,7 @@ const routes = [
         component: RemovePoints
     },
     {
-        path: '/admin/:username/add-points-admin',
+        path: '/sponsor/:username/add-points-admin',
         name: 'add-points-admin',
         component: AddPointsAdmin
     },
