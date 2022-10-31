@@ -11,6 +11,20 @@
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
             </select>
 
+            <div>Select Decision:</div>
+
+            <select name = "selected" required>
+                <option disabled value="">Please select a decision:</option>
+                <option value="Accept">Accept</option>
+                <option value="Reject">Reject</option>
+            </select>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Reason for decision:" name="reason" v-model="reason" required><br><br>
+            </div>
+
+            <button type="submit" class="btn" @click="submit_addition" >Submit</button>
+
             <br><br>
         </form>
         <div class="sponsor-dashboard-button">
@@ -122,5 +136,19 @@
 
     .input-field:focus {
     border: 2px solid #8c72e0;
+    }
+
+    .btn {
+    background-color: #8c72e0;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    }
+
+    .btn:hover {
+    opacity: 1;
     }
 </style>

@@ -18,6 +18,10 @@ import NewSponsor from '../components/NewSponsor.vue';
 import NewAdmin from '../components/NewAdmin.vue';
 import SetInactive from '../components/SetInactive.vue';
 import SetInactiveAdmins from '../components/SetInactiveAdmins.vue';
+import AddPoints from '../components/AddPoints.vue';
+import RemovePoints from '../components/RemovePoints.vue';
+import AddPointsAdmin from '../components/AddPointsAdmin.vue';
+import RemovePointsAdmin from '../components/RemovePointsAdmin.vue';
 
 const routes = [
     {
@@ -118,6 +122,26 @@ const routes = [
         path: '/sponsor/:username/set-inactive-admins',
         name: 'set-inactive-admins',
         component: SetInactiveAdmins
+    },
+    {
+        path: '/sponsor/:username/add-points',
+        name: 'add-points',
+        component: AddPoints
+    },
+    {
+        path: '/sponsor/:username/remove-points',
+        name: 'remove-points',
+        component: RemovePoints
+    },
+    {
+        path: '/sponsor/:username/add-points-admin',
+        name: 'add-points-admin',
+        component: AddPointsAdmin
+    },
+    {
+        path: '/sponsor/:username/remove-points-admin',
+        name: 'remove-points-admin',
+        component: RemovePointsAdmin
     },
 ];
 
