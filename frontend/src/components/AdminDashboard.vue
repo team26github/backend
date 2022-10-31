@@ -12,6 +12,11 @@
                     <button @click="deduct_points">Deduct Points from Driver</button>
             </div>
         </div>
+        <div class="row">
+            <div class="set-inactive-admin-button">
+                <button @click="go_to_set_inactive_admins">Set Drivers Inactive</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -47,7 +52,13 @@
                     window.alert("Total point value cannot go below 0")
                 }
                 this.points += remove_point_val;
-            }
+            },
+            go_to_set_inactive_admins() {
+                this.$router.push({
+                    name: 'set-inactive-admins',
+                    params: { username: this.username }
+                });
+            },
         },
 
         mounted() {

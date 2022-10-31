@@ -17,6 +17,11 @@
                 <button @click="go_to_pending_applications">Pending Applications</button>
             </div>
         </div>
+        <div class="row">
+            <div class="set-inactive-button">
+                <button @click="go_to_set_inactive">Set Drivers Inactive</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -41,7 +46,12 @@
                     params: { username: this.username }
                 });
             },
-
+            go_to_set_inactive() {
+                this.$router.push({
+                    name: 'set-inactive',
+                    params: { username: this.username }
+                });
+            },
             add_points() {
                 let add_point_val = window.prompt("Enter number of points to be added");
                 this.points += add_point_val;
