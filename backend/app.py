@@ -270,15 +270,12 @@ def apply():
         
     return jsonify({'status': status})
 
-
-# Not finished!!
 @app.route('/get-catalog-items', methods=['GET'])
 def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
-    production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args.get('keywords', '')
     headers = {
         'Authorization': f'Bearer {EBAY_TOKEN}'
@@ -286,7 +283,7 @@ def get_catalog_items():
     params = {
         'limit': 50,
         'offset': 0,
-        'q': f'{keywords}'
+        'q': f'({keywords})'
     }
 
     results = requests.get(f'''{sandbox_url}''', headers=headers, params=params).json()
@@ -294,6 +291,21 @@ def get_catalog_items():
     return jsonify({
         'status': 'success',
         'results': results['itemSummaries']
+    })
+
+@app.route('/update-catalog-filters', methods=['POST'])
+@cross_origin()
+def update_catalog_filters():
+    sponsor_id = request.args.get('user_id', '')
+    filters = request.args.get('catalog_filters', '')
+    
+    cursor = db.cursor()
+    query = f'UPDATE UserInfo SET CatalogItemKeywords = "{filters}" WHERE SponsorID = {sponsor_id};'
+    cursor.execute(query)
+    db.commit()
+
+    return jsonify({
+        'status': 'success'
     })
 
 @app.route('/conversion', methods=['POST'])

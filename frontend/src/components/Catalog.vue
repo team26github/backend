@@ -40,8 +40,15 @@
                         this.user_id = res.data.results[0][0];
                         this.user_type = res.data.results[0][2];
                         this.point_conversion = res.data.results[0][8];
+                        this.catalog_filters = res.data.results[0][10].split(',');
 
-                        axios.get(this.path + '/get-catalog-items', {params: {keywords: 'iphone'}})
+                        let keywords = '';
+                        for (let i = 0; i < this.catalog_filters.length - 1; i++) {
+                            keywords += this.catalog_filters[i] + ',';
+                        }
+                        keywords += this.catalog_filters[this.catalog_filters.length - 1];
+
+                        axios.get(this.path + '/get-catalog-items', {params: {keywords: keywords}})
                             .then((res) => {
                                 let results = res.data.results;
 
