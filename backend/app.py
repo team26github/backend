@@ -272,46 +272,28 @@ def apply():
 
 
 # Not finished!!
-@app.route('/update_catalog_items', methods=['GET'])
+@app.route('/get-catalog-items', methods=['GET'])
 def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
-    '''
-    app_id = 'GrantGon-Team26-PRD-dd8d93d80-fe8ea855'
-    cert_id = 'PRD-d8d93d80dc30-d829-4e5f-9ae9-1d50'
-    api = BrowseAPI(app_id, cert_id)
-    responses = api.execute('search', [{'q': 'drone', 'limit': 50}, {'category_ids': 20863}])
-
-    print(responses[0].itemSummaries[0])
-    '''
-    
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
-    keywords = request.args['keywords']
+    keywords = request.args.get('keywords', '')
     headers = {
-        'Authorization': EBAY_TOKEN,
-        'X-EBAY-C-ENDUSERCTX': urlencode({'contextualLocation': 'country=US,zip=29631'})
+        'Authorization': f'Bearer {EBAY_TOKEN}'
     }
     params = {
-        'aspect_filter': '<>',
-        'category_ids': '<>',
-        'epid': '<get>',
-        'fieldgroups': '<>',
-        'filter': '<>',
-        'gtin': '<get>',
-        'limit': '<get>',
-        'offset': '<get>',
-        'q': '<>',
-        'sort': '<>'
+        'limit': 50,
+        'offset': 0,
+        'q': f'{keywords}'
     }
 
-    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params)
-
-    print(results)
+    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params).json()
 
     return jsonify({
-        'status': 'success'
+        'status': 'success',
+        'results': results['itemSummaries']
     })
 
 @app.route('/conversion', methods=['POST'])
