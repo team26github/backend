@@ -270,45 +270,39 @@ def apply():
         
     return jsonify({'status': status})
 
-
-# Not finished!!
-@app.route('/update_catalog_items', methods=['GET'])
+@app.route('/get-catalog-items', methods=['GET'])
 def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
-    '''
-    app_id = 'GrantGon-Team26-PRD-dd8d93d80-fe8ea855'
-    cert_id = 'PRD-d8d93d80dc30-d829-4e5f-9ae9-1d50'
-    api = BrowseAPI(app_id, cert_id)
-    responses = api.execute('search', [{'q': 'drone', 'limit': 50}, {'category_ids': 20863}])
-
-    print(responses[0].itemSummaries[0])
-    '''
-    
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
-    production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
-    keywords = request.args['keywords']
+    keywords = request.args.get('keywords', '')
     headers = {
-        'Authorization': EBAY_TOKEN,
-        'X-EBAY-C-ENDUSERCTX': urlencode({'contextualLocation': 'country=US,zip=29631'})
+        'Authorization': f'Bearer {EBAY_TOKEN}'
     }
     params = {
-        'aspect_filter': '<>',
-        'category_ids': '<>',
-        'epid': '<get>',
-        'fieldgroups': '<>',
-        'filter': '<>',
-        'gtin': '<get>',
-        'limit': '<get>',
-        'offset': '<get>',
-        'q': '<>',
-        'sort': '<>'
+        'limit': 50,
+        'offset': 0,
+        'q': f'({keywords})'
     }
 
-    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params)
+    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params).json()
 
-    print(results)
+    return jsonify({
+        'status': 'success',
+        'results': results['itemSummaries']
+    })
+
+@app.route('/update-catalog-filters', methods=['POST'])
+@cross_origin()
+def update_catalog_filters():
+    sponsor_id = request.args.get('user_id', '')
+    filters = request.args.get('catalog_filters', '')
+    
+    cursor = db.cursor()
+    query = f'UPDATE UserInfo SET CatalogItemKeywords = "{filters}" WHERE SponsorID = {sponsor_id};'
+    cursor.execute(query)
+    db.commit()
 
     return jsonify({
         'status': 'success'
@@ -431,6 +425,28 @@ def update_info():
     return jsonify({
         'status': status
     })
+
+@app.route('/add_points', methods=['POST'])
+@cross_origin()
+def submit():
+    cursor = db.cursor()
+    status = 'failure'
+
+    num_points = request.args.get('num_points', '')
+    reason = request.args.get('reason', '')
+    last_name = request.args.get('last_name', '')
+
+    query = f'SELECT UserID FROM UserInfo WHERE Username="{sponsor[3:-3]}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    sponsor_id=results[0][0]
+    query = f'INSERT INTO PointsChange (NUM_POINTS, REASON) VALUES("{num_points}","{reason}","{sponsor_id}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
 
 
 if __name__ == '__main__':

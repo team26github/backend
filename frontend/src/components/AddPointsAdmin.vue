@@ -1,19 +1,26 @@
 <template>
     <div class="profile-container">
         <form style="max-width:800px;margin:auto">
-            <h1>Set Drivers Inactive</h1>
+            <h1>Add Points to Drivers</h1>
 
             <div>Select Driver:</div>
 
             <select name = "selected" required>
-                <option disabled value="">Please select one driver to make inactive:</option>
+                <option disabled value="">Please select a driver:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
             </select>
 
             <br><br>
 
-            <button type="submit" class="btn" @click="submit_inactivation" >Submit</button>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Number of points to add" name="num_points" v-model="num_points" required><br><br>
+            </div>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Reason for addition" name="num_points" v-model="last_name" required><br><br>
+            </div>
+
+            <button type="submit" class="btn" @click="submit_deduction" >Submit</button>
         </form>
         <div class="admin-dashboard-button">
             <button @click="go_to_admin_dashboard">Return to Dashboard</button>
@@ -24,7 +31,7 @@
 <script>
     import axios from 'axios';
     export default {
-        name: "set-inactive-admins",
+        name: "add-points-admin",
 
         data() {
             return {

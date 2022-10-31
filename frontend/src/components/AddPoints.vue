@@ -1,22 +1,28 @@
 <template>
     <div class="profile-container">
         <form style="max-width:800px;margin:auto">
-            <h1>Set Drivers Inactive</h1>
+            <h1>Add Points to Drivers</h1>
 
             <div>Select Driver:</div>
 
             <select name = "selected" required>
-                <option disabled value="">Please select one driver to make inactive:</option>
+                <option disabled value="">Please select a driver:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
             </select>
 
             <br><br>
 
-            <button type="submit" class="btn" @click="submit_inactivation" >Submit</button>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Number of points to add" name="num_points" v-model="num_points" required><br><br>
+            </div>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Reason for addition" name="reason" v-model="reason" required><br><br>
+            </div>
+            <button type="submit" class="btn" @click="submit_addition" >Submit</button>
         </form>
-        <div class="admin-dashboard-button">
-            <button @click="go_to_admin_dashboard">Return to Dashboard</button>
+        <div class="sponsor-dashboard-button">
+            <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
         </div>
     </div>
 </template>
@@ -24,7 +30,7 @@
 <script>
     import axios from 'axios';
     export default {
-        name: "set-inactive-admins",
+        name: "add-points",
 
         data() {
             return {
@@ -33,7 +39,10 @@
                 drivers: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                num_points: '',
+                reason: ''
+
             };
         },
 
@@ -43,9 +52,9 @@
                 this.sponsor_selected=e.target.value
             },
 
-            go_to_admin_dashboard() {
+            go_to_sponsor_dashboard() {
                 this.$router.push({
-                    name: 'admin-dashboard',
+                    name: 'sponsor-dashboard',
                     params: { username: this.username }
                 })
             },
@@ -60,6 +69,23 @@
                         }
                     })
                     .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            submit_application() { 
+                const path = 'http://localhost:5000/add_points';
+                
+                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason}}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot add points.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
                         console.log(error);
                     })
             },
@@ -97,7 +123,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: #ff90b3;
+        background-color: #73bfb8;
     }
 
     .input-container {
