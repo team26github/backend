@@ -9,7 +9,7 @@
         </div>
         <div class="row">
             <div class="remove-points-container">
-                    <button @click="deduct_points">Deduct Points from Driver</button>
+                    <button @click="go_to_remove_points_admin">Deduct Points from Driver</button>
             </div>
         </div>
         <div class="row">
@@ -43,13 +43,11 @@
                     params: { username: this.username }
                 });
             },
-            deduct_points() {
-                let remove_point_val = window.prompt("Enter number of points to be removed");
-                this.points -= remove_point_val;
-                if (this.points < 0) {
-                    window.alert("Total point value cannot go below 0")
-                }
-                this.points += remove_point_val;
+            go_to_remove_points_admin() {
+                this.$router.push({
+                    name: 'remove-points-admins',
+                    params: { username: this.username }
+                });
             },
             go_to_set_inactive_admins() {
                 this.$router.push({

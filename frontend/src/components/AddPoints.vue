@@ -17,8 +17,9 @@
                 <input class="input-field" type="text" placeholder="Number of points to add" name="num_points" v-model="num_points" required><br><br>
             </div>
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Reason for addition" name="num_points" v-model="last_name" required><br><br>
+                <input class="input-field" type="text" placeholder="Reason for addition" name="reason" v-model="reason" required><br><br>
             </div>
+            <button type="submit" class="btn" @click="submit_addition" >Submit</button>
         </form>
         <div class="sponsor-dashboard-button">
             <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
@@ -38,7 +39,10 @@
                 drivers: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                num_points: '',
+                reason: ''
+
             };
         },
 
@@ -65,6 +69,23 @@
                         }
                     })
                     .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            submit_application() { 
+                const path = 'http://localhost:5000/add_points';
+                
+                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason}}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot add points.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
                         console.log(error);
                     })
             },
@@ -129,5 +150,19 @@
 
     .input-field:focus {
     border: 2px solid #8c72e0;
+    }
+
+    .btn {
+    background-color: #8c72e0;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    }
+
+    .btn:hover {
+    opacity: 1;
     }
 </style>
