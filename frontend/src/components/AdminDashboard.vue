@@ -4,12 +4,12 @@
         <br><br>
         <div class="row">
             <div class="add-point-container">
-                <button @click="add_points"> Add Points to Driver</button>
+                <button @click="go_to_add_points_admin"> Add Points to Driver</button>
             </div>
         </div>
         <div class="row">
             <div class="remove-points-container">
-                    <button @click="deduct_points">Deduct Points from Driver</button>
+                    <button @click="go_to_remove_points_admin">Deduct Points from Driver</button>
             </div>
         </div>
         <div class="row">
@@ -37,21 +37,17 @@
         },
 
         methods: {
-            add_points() {
-                let add_point_val = window.prompt("Enter number of points to be added");
-                this.points += add_point_val;
-                if (this.points > 1000000) {
-                    window.alert("Total points cannot be greater than 1000000")
-                }
-                this.points -+ add_point_val;
+            go_to_add_points_admin() {
+                this.$router.push({
+                    name: 'add-points-admin',
+                    params: { username: this.username }
+                });
             },
-            deduct_points() {
-                let remove_point_val = window.prompt("Enter number of points to be removed");
-                this.points -= remove_point_val;
-                if (this.points < 0) {
-                    window.alert("Total point value cannot go below 0")
-                }
-                this.points += remove_point_val;
+            go_to_remove_points_admin() {
+                this.$router.push({
+                    name: 'remove-points-admins',
+                    params: { username: this.username }
+                });
             },
             go_to_set_inactive_admins() {
                 this.$router.push({

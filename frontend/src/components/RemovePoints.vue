@@ -1,22 +1,27 @@
 <template>
     <div class="profile-container">
         <form style="max-width:800px;margin:auto">
-            <h1>Set Drivers Inactive</h1>
+            <h1>Remove Points from Drivers</h1>
 
             <div>Select Driver:</div>
 
             <select name = "selected" required>
-                <option disabled value="">Please select one driver to make inactive:</option>
+                <option disabled value="">Please select a driver:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
             </select>
 
             <br><br>
 
-            <button type="submit" class="btn" @click="submit_inactivation" >Submit</button>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Number of points to remove" name="num_points" v-model="num_points" required><br><br>
+            </div>
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Reason for deduction" name="num_points" v-model="last_name" required><br><br>
+            </div>
         </form>
-        <div class="admin-dashboard-button">
-            <button @click="go_to_admin_dashboard">Return to Dashboard</button>
+        <div class="sponsor-dashboard-button">
+            <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
         </div>
     </div>
 </template>
@@ -24,7 +29,7 @@
 <script>
     import axios from 'axios';
     export default {
-        name: "set-inactive-admins",
+        name: "remove-points",
 
         data() {
             return {
@@ -43,9 +48,9 @@
                 this.sponsor_selected=e.target.value
             },
 
-            go_to_admin_dashboard() {
+            go_to_sponsor_dashboard() {
                 this.$router.push({
-                    name: 'admin-dashboard',
+                    name: 'sponsor-dashboard',
                     params: { username: this.username }
                 })
             },
@@ -97,7 +102,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: #ff90b3;
+        background-color: #73bfb8;
     }
 
     .input-container {
@@ -124,19 +129,5 @@
 
     .input-field:focus {
     border: 2px solid #8c72e0;
-    }
-
-    .btn {
-    background-color: #8c72e0;
-    color: white;
-    padding: 15px 20px;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    opacity: 0.9;
-    }
-
-    .btn:hover {
-    opacity: 1;
     }
 </style>
