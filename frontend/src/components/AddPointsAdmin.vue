@@ -19,7 +19,6 @@
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Reason for addition" name="num_points" v-model="last_name" required><br><br>
             </div>
-
             <button type="submit" class="btn" @click="submit_application" >Submit</button>
         </form>
         <div class="admin-dashboard-button">
