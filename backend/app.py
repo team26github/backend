@@ -460,12 +460,11 @@ def submit_app_decision():
     sponsor_id = request.args.get('sponsor', '')
     decision = request.args.get('decision', '')
 
-    print(driver)
     query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
     cursor.execute(query)
     results = cursor.fetchall()
     driver_id=results[0][0]
-    query = f'INSERT INTO DriverAppLog (DriverAppID, Date, Changer, StatusChange, Reason) VALUES("{driver}","{datetime.now()}","{sponsor_id}", "{decision}", "{reason}")'
+    query = f'INSERT INTO DriverAppLog (DriverAppID, Date, Changer, StatusChange, Reason) VALUES("{driver_id}","{datetime.now()}","{sponsor_id}", "{decision}", "{reason}")'
     cursor.execute(query)
 
     db.commit()
@@ -480,11 +479,11 @@ def submit_deduction():
     status = 'failure'
 
     num_points = request.args.get('num_points', '')
-    num_points = -abs(num_points)
+    num_points = -abs(int(num_points))
     reason = request.args.get('reason', '')
     driver = request.args.get('driver', '')
     sponsor_id = request.args.get('sponsor', '')
-    print(driver)
+
     query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
     cursor.execute(query)
     results = cursor.fetchall()
