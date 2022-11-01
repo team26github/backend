@@ -5,7 +5,7 @@
 
             <div>Select Driver:</div>
 
-            <select name = "selected" required>
+            <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select a driver:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
@@ -19,6 +19,7 @@
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Reason for deduction" name="num_points" v-model="last_name" required><br><br>
             </div>
+            <button type="submit" class="btn" @click="submit_application" >Submit</button>
         </form>
         <div class="sponsor-dashboard-button">
             <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
@@ -65,6 +66,23 @@
                         }
                     })
                     .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            submit_application() { 
+                const path = 'http://localhost:5000/remove_points';
+                
+                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason, driver: this.driver_selected, sponsor: this.user_id}}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot remove points.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
                         console.log(error);
                     })
             },
@@ -129,5 +147,19 @@
 
     .input-field:focus {
     border: 2px solid #8c72e0;
+    }
+
+    .btn {
+    background-color: #8c72e0;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    }
+
+    .btn:hover {
+    opacity: 1;
     }
 </style>

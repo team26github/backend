@@ -449,6 +449,53 @@ def submit():
         
     return jsonify({'status': status})
 
+@app.route('/pending_applications', methods=['POST'])
+@cross_origin()
+def submit_app_decision():
+    cursor = db.cursor()
+    status = 'failure'
+
+    driver = request.args.get('driver', '')
+    reason = request.args.get('reason', '')
+    sponsor_id = request.args.get('sponsor', '')
+    decision = request.args.get('decision', '')
+
+    print(driver)
+    query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    driver_id=results[0][0]
+    query = f'INSERT INTO DriverAppLog (DriverAppID, Date, Changer, StatusChange, Reason) VALUES("{driver}","{datetime.now()}","{sponsor_id}", "{decision}", "{reason}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/remove_points', methods=['POST'])
+@cross_origin()
+def submit_deduction():
+    cursor = db.cursor()
+    status = 'failure'
+
+    num_points = request.args.get('num_points', '')
+    num_points = -abs(num_points)
+    reason = request.args.get('reason', '')
+    driver = request.args.get('driver', '')
+    sponsor_id = request.args.get('sponsor', '')
+    print(driver)
+    query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    driver_id=results[0][0]
+    query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{driver_id}","{num_points}","{datetime.now()}","{reason}","{sponsor_id}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
 
 if __name__ == '__main__':
     get_new_token()
