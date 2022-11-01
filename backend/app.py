@@ -434,13 +434,14 @@ def submit():
 
     num_points = request.args.get('num_points', '')
     reason = request.args.get('reason', '')
-    last_name = request.args.get('last_name', '')
-
-    query = f'SELECT UserID FROM UserInfo WHERE Username="{sponsor[3:-3]}"'
+    driver = request.args.get('driver', '')
+    sponsor_id = request.args.get('sponsor', '')
+    print(driver)
+    query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
     cursor.execute(query)
     results = cursor.fetchall()
-    sponsor_id=results[0][0]
-    query = f'INSERT INTO PointsChange (NUM_POINTS, REASON) VALUES("{num_points}","{reason}","{sponsor_id}")'
+    driver_id=results[0][0]
+    query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{driver_id}","{num_points}","{datetime.now()}","{reason}","{sponsor_id}")'
     cursor.execute(query)
 
     db.commit()

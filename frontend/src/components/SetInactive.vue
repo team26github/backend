@@ -5,7 +5,7 @@
 
             <div>Select Driver:</div>
 
-            <select name = "selected" required>
+            <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select one driver to make inactive:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
@@ -33,14 +33,15 @@
                 drivers: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                driver_selected:''
             };
         },
 
         methods: {
             onChange(e)
             {
-                this.sponsor_selected=e.target.value
+                this.driver_selected=e.target.value
             },
 
             go_to_sponsor_dashboard() {
