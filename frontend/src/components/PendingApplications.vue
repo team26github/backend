@@ -11,7 +11,7 @@
             </select>
 
             <div>Select Decision:</div>
-            <select name = "selected"  @change="onChange($event)" required>
+            <select name = "selected"  @change="eventChange($event)" required>
                 <option disabled value="">Please select a decision:</option>
                 <option value="Accepted">Accepted</option>
                 <option value="Rejected">Rejected</option>
@@ -57,7 +57,11 @@
             onChange(e)
             {
                 this.driver_selected=e.target.value
-                this.reason=e.target.value
+            },
+
+            eventChange(e)
+            {
+                this.decision=e.target.value
             },
 
             go_to_sponsor_dashboard() {
