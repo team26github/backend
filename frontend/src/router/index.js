@@ -104,7 +104,7 @@ const routes = [
         component: NewDriver
     },
     {
-        path: '/admin/:username/new-sponsor',
+        path: '/:username/new-sponsor',
         name: 'new-sponsor',
         component: NewSponsor
     },

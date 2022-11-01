@@ -27,6 +27,12 @@
                 <button @click="edit_catalog">Edit Catalog Filters</button>
             </div>
         </div>
+        <div class="row">
+            <div class="add-sponsor">
+                <p><strong>Add New Sponsor:</strong>
+                <button @click="go_to_new_sponsor">Add New Sponsor</button></p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -89,6 +95,13 @@
                     // esling-disable-next-line
                     console.log(error);
                 })
+        },
+        
+        go_to_new_sponsor() {
+            this.$router.push({
+                name: 'new-sponsor',
+                params: { username: this.username }
+            })
         },
        
         edit_expiration() {
