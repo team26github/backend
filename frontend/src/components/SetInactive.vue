@@ -5,13 +5,15 @@
 
             <div>Select Driver:</div>
 
-            <select name = "selected" required>
+            <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select one driver to make inactive:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
             </select>
 
             <br><br>
+
+            <button type="submit" class="btn" @click="submit_inactivation" >Submit</button>
         </form>
         <div class="sponsor-dashboard-button">
             <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
@@ -31,14 +33,15 @@
                 drivers: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                driver_selected:''
             };
         },
 
         methods: {
             onChange(e)
             {
-                this.sponsor_selected=e.target.value
+                this.driver_selected=e.target.value
             },
 
             go_to_sponsor_dashboard() {
@@ -122,5 +125,19 @@
 
     .input-field:focus {
     border: 2px solid #8c72e0;
+    }
+
+    .btn {
+    background-color: #8c72e0;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    }
+
+    .btn:hover {
+    opacity: 1;
     }
 </style>
