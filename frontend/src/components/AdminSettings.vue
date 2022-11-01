@@ -359,15 +359,9 @@
         border-color: black;
     }
 
-    .update-field {
-        display: flex;
-        height: auto;
-        margin-right: 5%;
-        align-items: right;
-    }
-
     .driver-info p, .sponsor-info p, .admin-info p {
         margin-left: 5%;
+        width: 100%;
     }
 
     .driver-info p input, .sponsor-info p input, .admin-info p input {

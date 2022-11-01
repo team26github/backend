@@ -270,39 +270,45 @@ def apply():
         
     return jsonify({'status': status})
 
-@app.route('/get-catalog-items', methods=['GET'])
+
+# Not finished!!
+@app.route('/update_catalog_items', methods=['GET'])
 def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
+    '''
+    app_id = 'GrantGon-Team26-PRD-dd8d93d80-fe8ea855'
+    cert_id = 'PRD-d8d93d80dc30-d829-4e5f-9ae9-1d50'
+    api = BrowseAPI(app_id, cert_id)
+    responses = api.execute('search', [{'q': 'drone', 'limit': 50}, {'category_ids': 20863}])
+
+    print(responses[0].itemSummaries[0])
+    '''
+    
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
-    keywords = request.args.get('keywords', '')
+    production_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search?'
+    keywords = request.args['keywords']
     headers = {
-        'Authorization': f'Bearer {EBAY_TOKEN}'
+        'Authorization': EBAY_TOKEN,
+        'X-EBAY-C-ENDUSERCTX': urlencode({'contextualLocation': 'country=US,zip=29631'})
     }
     params = {
-        'limit': 50,
-        'offset': 0,
-        'q': f'({keywords})'
+        'aspect_filter': '<>',
+        'category_ids': '<>',
+        'epid': '<get>',
+        'fieldgroups': '<>',
+        'filter': '<>',
+        'gtin': '<get>',
+        'limit': '<get>',
+        'offset': '<get>',
+        'q': '<>',
+        'sort': '<>'
     }
 
-    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params).json()
+    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params)
 
-    return jsonify({
-        'status': 'success',
-        'results': results['itemSummaries']
-    })
-
-@app.route('/update-catalog-filters', methods=['POST'])
-@cross_origin()
-def update_catalog_filters():
-    sponsor_id = request.args.get('user_id', '')
-    filters = request.args.get('catalog_filters', '')
-    
-    cursor = db.cursor()
-    query = f'UPDATE UserInfo SET CatalogItemKeywords = "{filters}" WHERE SponsorID = {sponsor_id};'
-    cursor.execute(query)
-    db.commit()
+    print(results)
 
     return jsonify({
         'status': 'success'
