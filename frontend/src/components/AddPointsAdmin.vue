@@ -5,7 +5,7 @@
 
             <div>Select Driver:</div>
 
-            <select name = "selected" required>
+            <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select a driver:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
@@ -20,7 +20,7 @@
                 <input class="input-field" type="text" placeholder="Reason for addition" name="num_points" v-model="last_name" required><br><br>
             </div>
 
-            <button type="submit" class="btn" @click="submit_deduction" >Submit</button>
+            <button type="submit" class="btn" @click="submit_application" >Submit</button>
         </form>
         <div class="admin-dashboard-button">
             <button @click="go_to_admin_dashboard">Return to Dashboard</button>
@@ -40,14 +40,17 @@
                 drivers: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                num_points: '',
+                reason: '',
+                driver_selected:''
             };
         },
 
         methods: {
             onChange(e)
             {
-                this.sponsor_selected=e.target.value
+                this.driver_selected=e.target.value
             },
 
             go_to_admin_dashboard() {
@@ -67,6 +70,23 @@
                         }
                     })
                     .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            submit_application() { 
+                const path = 'http://localhost:5000/add_points';
+                
+                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason, driver: this.driver_selected, sponsor: this.user_id}}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot add points.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
                         console.log(error);
                     })
             },

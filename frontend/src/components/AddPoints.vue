@@ -43,7 +43,6 @@
                 num_points: '',
                 reason: '',
                 driver_selected:''
-
             };
         },
 
