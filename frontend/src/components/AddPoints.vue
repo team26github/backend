@@ -5,7 +5,7 @@
 
             <div>Select Driver:</div>
 
-            <select name = "selected" required>
+            <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select a driver:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
@@ -19,7 +19,7 @@
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Reason for addition" name="reason" v-model="reason" required><br><br>
             </div>
-            <button type="submit" class="btn" @click="submit_addition" >Submit</button>
+            <button type="submit" class="btn" @click="submit_application" >Submit</button>
         </form>
         <div class="sponsor-dashboard-button">
             <button @click="go_to_sponsor_dashboard">Return to Dashboard</button>
@@ -41,7 +41,8 @@
                 localhost_path: "http://localhost:5000",
                 path: null,
                 num_points: '',
-                reason: ''
+                reason: '',
+                driver_selected:''
 
             };
         },
@@ -49,7 +50,7 @@
         methods: {
             onChange(e)
             {
-                this.sponsor_selected=e.target.value
+                this.driver_selected=e.target.value
             },
 
             go_to_sponsor_dashboard() {
@@ -75,7 +76,7 @@
             submit_application() { 
                 const path = 'http://localhost:5000/add_points';
                 
-                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason}}) 
+                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason, driver: this.driver_selected, sponsor: this.user_id}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
