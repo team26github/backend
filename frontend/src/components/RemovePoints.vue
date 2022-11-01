@@ -17,7 +17,7 @@
                 <input class="input-field" type="text" placeholder="Number of points to remove" name="num_points" v-model="num_points" required><br><br>
             </div>
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Reason for deduction" name="num_points" v-model="last_name" required><br><br>
+                <input class="input-field" type="text" placeholder="Reason for deduction" name="num_points" v-model="reason" required><br><br>
             </div>
             <button type="submit" class="btn" @click="submit_application" >Submit</button>
         </form>
@@ -39,14 +39,16 @@
                 drivers: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                driver_selected:'',
+                reason:''
             };
         },
 
         methods: {
             onChange(e)
             {
-                this.sponsor_selected=e.target.value
+                this.driver_selected=e.target.value
             },
 
             go_to_sponsor_dashboard() {
