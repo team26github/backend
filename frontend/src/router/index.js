@@ -18,7 +18,7 @@ import NewSponsor from '../components/NewSponsor.vue';
 import NewAdmin from '../components/NewAdmin.vue';
 import SetInactive from '../components/SetInactive.vue';
 import SetInactiveAdmins from '../components/SetInactiveAdmins.vue';
-import AddPoints from '../components/AddPoints.vue';
+import AddPoints from '../components/points/AddPoints.vue';
 import RemovePoints from '../components/RemovePoints.vue';
 import AddPointsAdmin from '../components/AddPointsAdmin.vue';
 import RemovePointsAdmin from '../components/RemovePointsAdmin.vue';
