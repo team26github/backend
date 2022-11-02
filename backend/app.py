@@ -496,6 +496,46 @@ def submit_deduction():
         
     return jsonify({'status': status})
 
+@app.route('/submit-purchase', methods=['POST'])
+@cross_origin()
+def submit_purchase():
+    cursor = db.cursor()
+    status = 'failure'
+
+    first_name = request.args.get('first_name', '')
+    last_name = request.args.get('last_name', '')
+    address = request.args.get('address', '')
+    address_city = request.args.get('address_city', '')
+    address_state = request.args.get('address_state', '')
+    address_zip_code = request.args.get('address_zip_code', '')
+    email = request.args.get('email', '')
+    items = request.args.get('items', '')
+    items_total = request.args.get('items_total', '')
+    points_total = request.args.get('points_total', '')
+    
+    query = f'INSERT INTO Purchases (ORDER_ID, FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/add-items-to-cart', methods=['POST'])
+@cross_origin()
+def add_items_to_cart():
+    sponsor_id = request.args.get('user_id', '')
+    items = request.args.get('items', '')
+    
+    cursor = db.cursor()
+    query = f'UPDATE Purchases SET ITEMS = "{items}" WHERE USER_ID = {user_id};'
+    cursor.execute(query)
+    db.commit()
+
+    return jsonify({
+        'status': 'success'
+    })
+
 if __name__ == '__main__':
     get_new_token()
     app.run(debug=True)
