@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    import NavBar from './NavBar.vue';
+    import NavBar from '../misc/NavBar.vue';
 
     export default {
     name: "cart-view",

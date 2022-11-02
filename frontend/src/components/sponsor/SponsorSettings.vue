@@ -38,7 +38,7 @@
 
 <script>
     import axios from 'axios';
-    import NavBar from './NavBar.vue';
+    import NavBar from '../misc/NavBar.vue';
     // import ButtonCounter from './ButtonCounter.vue'
 
     export default {

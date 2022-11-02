@@ -33,7 +33,7 @@
 
 <script>
     import axios from 'axios';
-    import NavBar from '../components/NavBar.vue';
+    import NavBar from '../misc/NavBar.vue';
 
     export default {
         name: "new-admin",

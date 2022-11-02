@@ -270,6 +270,7 @@ def apply():
         
     return jsonify({'status': status})
 
+
 @app.route('/get-catalog-items', methods=['GET'])
 def get_catalog_items():
     if EXPIRES < datetime.now():
@@ -278,15 +279,15 @@ def get_catalog_items():
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args.get('keywords', '')
     headers = {
-        'Authorization': f'Bearer {EBAY_TOKEN}'
+        'Authorization': f'Bearer {EBAY_TOKEN}',
     }
     params = {
         'limit': 50,
         'offset': 0,
-        'q': f'({keywords})'
+        'q': f'({keywords})',
     }
 
-    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params).json()
+    results = requests.get(f'{sandbox_url}', headers=headers, params=params).json()
 
     return jsonify({
         'status': 'success',
