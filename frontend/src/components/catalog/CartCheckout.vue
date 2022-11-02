@@ -41,7 +41,11 @@
                 <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
             </div>
 
-            <button type="submit" class="btn" @click="submit_purchase" >Complete Purchase</button> 
+            <!-- <button id="myBtn" class="btn" @click="submit_purchase" :disabled="insufficient_balance()"> -->
+            <button id="myBtn" class="btn" @click="submit_purchase">
+                Pay #{{ this.purchase_total }} points
+            </button>
+
         </form>
     </div>
 
@@ -49,7 +53,7 @@
 
 <script>
     import axios from 'axios';
-    import NavBar from '../misc/NavBar.vue';
+    import NavBar from '../components/NavBar.vue';
 
     export default {
         name: "cart-checkout",
@@ -66,6 +70,7 @@
                 address_zip_code: '',
                 email: '',
                 user_type: '',
+                points_balance: '',
                 items: [],
                 items_total: '',
                 points_total: '',
@@ -114,18 +119,6 @@
                     this.remove_points_purchase();
             },
 
-            // add_items_to_cart() {
-            //     axios.post(this.path + '/add-items-to-cart', null, {params: {items: this.items, user_id: this.user_id}})
-            //         .then((res) => {
-            //             if (res.data.status === 'success') {
-            //                 this.items = this.items.split(',');
-            //             }
-            //         })
-            //         .catch((error) => {
-            //             console.log(error);
-            //         })
-            // },
-
             remove_points_purchase() {
                 axios.post(this.path + 'remove_points_purchase', null, {params: {points_total: this.points_total, reason: this.reason, email: this.email}}) 
                     .then((res) => {
@@ -140,6 +133,23 @@
                         // esling-disable-next-line
                         console.log(error);
                     })
+            },
+
+            get_points_balance(){ //show records
+                axios.get(this.path + '/userinfo', {params: {request: 'username'}})
+                .then(function(response){
+                        console.log(response);
+                        this.points_balance = response.data.results[0][11];
+                });
+            },
+
+            insufficient_balance () {
+                if (this.get_points_balance() < this.points_total) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
             },
         },
         components: { NavBar }
@@ -200,5 +210,10 @@
 
     .btn:hover {
     opacity: 1;
+    }
+
+    #myBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
     }
 </style>

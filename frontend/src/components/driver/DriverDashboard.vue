@@ -1,16 +1,21 @@
 <template>
     <div class="profile-container">
         <nav-bar :usertype="user_type" :username="username"></nav-bar>
-    <!-- </div>  -->
-    <!-- <div class ="points-container"> -->
+        <div class="row">
             <div class="points">
                 <p><strong>Points: </strong>{{ default_points }}</p>
             </div>
+        </div>
+        <div class="row">
+            <div class="cart">
+                <p><button @click="go_to_my_cart">My Cart</button></p>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-    import NavBar from '../misc/NavBar.vue';
+    import NavBar from '../components/misc/NavBar.vue';
     export default {
         name: 'driver-dashboard',
 
@@ -30,6 +35,14 @@
 
         components: {
             "nav-bar": NavBar
+        },
+        methods: {
+            go_to_my_cart() {
+                this.$router.push({
+                    name: 'cart-checkout',
+                    params: { username: this.username }
+                })
+            },
         }
     }
 </script>
