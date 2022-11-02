@@ -2,16 +2,7 @@
     <div class="settings-container">
         <NavBar :usertype="user_type" :username="username"></NavBar>
         <form style="max-width:800px;margin:auto">
-            <h1>New Driver</h1>
-
-            <div>Select Sponsor: {{ selected }}</div>
-
-            <select name = "selected" @change="onChange($event)" v-model="selected" required>
-                <option disabled value="">Please select one sponsor you would like to apply to</option>
-                <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor[0]}}</option>
-            </select>
-
-            <br><br>
+            <h1>New Sponsor</h1>
 
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="First Name" name="first_name" v-model="first_name" required><br><br>
@@ -22,7 +13,7 @@
             </div>
 
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Username" name="username" v-model="driver_username" required><br><br>
+                <input class="input-field" type="text" placeholder="Username" name="username" v-model="sponsor_username" required><br><br>
             </div>
 
             <div class="input-container">
@@ -33,7 +24,7 @@
                 <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
             </div>
 
-            <button type="submit" class="btn" @click="create_driver" >Create</button> 
+            <button type="submit" class="btn" @click="create_sponsor" >Create</button> 
         </form>
     </div>
 
@@ -41,11 +32,10 @@
 
 <script>
     import axios from 'axios';
-    import NavBar from '../components/NavBar.vue';
-
+    import NavBar from '../misc/NavBar.vue';
 
     export default {
-        name: "new-driver",
+        name: "new-sponsor",
 
         data() {
             return {
@@ -53,12 +43,10 @@
                 first_name: '',
                 last_name:'',
                 username: '',
-                driver_username: '',
+                sponsor_username: '',
                 password: '',
                 email: '',
                 user_type: '',
-                sponsors: [],
-                sponsor_selected: '',
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
                 path: null
@@ -74,7 +62,6 @@
                     if (res.data.status === 'success') {
                         console.log(res.data);
                         this.user_type = res.data.results[0][2];
-                        this.fetchSponsors();
                     }
                     else {
                         console.log('Unsuccessful');
@@ -86,44 +73,23 @@
         },
 
         methods: {
-            onChange(e)
-            {
-                this.sponsor_selected=e.target.value
-            },
 
-            fetchSponsors() {
-                axios.get(this.path + '/get-sponsors', {params: {user_id: this.user_id}})
-                    .then((res) => {
-                        if (res.data.status === 'success') {
-                            console.log(res.data);
-                            this.sponsors = res.data.results;
-                        }
-                        else {
-                            console.log('Unsuccessful');
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    })
-            },
-
-            create_driver() {                 
-                axios.post(this.path + '/new-driver', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.driver_username, password: this.password, sponsor: this.sponsor_selected}}) 
+            create_sponsor() {                 
+                axios.post(this.path + '/new-sponsor', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.sponsor_username, password: this.password}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
                         }
                         else {
-                            window.alert("Cannot create driver.");
+                            window.alert("Cannot create sponsor.");
                         }
                     })
                     .catch((error) => {
                         // esling-disable-next-line
                         console.log(error);
                     })
-            }
+            },
         },
-
         components: { NavBar }
     }
 
