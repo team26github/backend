@@ -513,7 +513,7 @@ def submit_purchase():
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
     
-    query = f'INSERT INTO Purchases (ORDER_ID, FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
     cursor.execute(query)
 
     db.commit()
@@ -535,6 +535,39 @@ def add_items_to_cart():
     return jsonify({
         'status': 'success'
     })
+
+@app.route('/remove_points_purchase', methods=['POST'])
+@cross_origin()
+def points_purchase():
+    cursor = db.cursor()
+    status = 'failure'
+
+    points = request.args.get('points_total', '')
+    num_points = -abs(int(num_points))
+    reason = request.args.get('reason', '')
+    email = request.args.get('email', '')
+
+    query = f'SELECT UserID FROM UserInfo WHERE Email = "{email}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    user_id=results[0][0]
+
+    query = f'SELECT Points FROM UserInfo WHERE UserID = "{user_id}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    points=results[0][0]
+
+    new_points = points - num_points
+
+    query = f'UPDATE UserInfo SET Points = "{new_points}" WHERE UserID = "{user_id}"'
+
+    query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{user_id}","{num_points}","{datetime.now()}","{reason}","0")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
 
 if __name__ == '__main__':
     get_new_token()
