@@ -1,0 +1,179 @@
+<template>
+    <div class="checkout">
+        <NavBar :usertype="user_type" :username="username"></NavBar>
+        <form style="max-width:800px;margin:auto">
+            <h1>Checkout</h1>
+
+            <p>Please enter the below information to complete your purchase</p>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="First Name" name="first_name" v-model="first_name" required><br><br>
+            </div>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Last Name" name="last_name" v-model="last_name" required><br><br>
+            </div>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Address" name="address" v-model="address" required><br><br>
+            </div>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="City" name="city" v-model="address_city" required><br><br>
+            </div>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="State Abbreviation" name="state" v-model="address_state" required><br><br>
+            </div>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Zip Code" name="zip_code" v-model="address_zip_code" required><br><br>
+            </div>
+
+            <div class="input-container">
+                <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
+            </div>
+
+            <button type="submit" class="btn" @click="submit_purchase" >Complete Purchase</button> 
+        </form>
+    </div>
+
+</template>
+
+<script>
+    import axios from 'axios';
+    import NavBar from '../components/NavBar.vue';
+
+    export default {
+        name: "cart-checkout",
+
+        data() {
+            return {
+                status: null,
+                first_name: '',
+                last_name:'',
+                username: '',
+                address: '',
+                address_city: '',
+                address_state: '',
+                address_zip_code: '',
+                email: '',
+                user_type: '',
+                items: [],
+                items_total: '',
+                points_total: '',
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
+            };
+        },
+
+        mounted() {
+            this.username = this.$route.params.username;
+            this.path = this.localhost_path;
+
+            axios.get(this.path + '/userinfo', {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.user_type = res.data.results[0][2];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        },
+
+        methods: {
+
+            submit_purchase() {                 
+                axios.post(this.path + '/submit-purchase', null, {params: {first_name: this.first_name, last_name: this.last_name, address: this.address, address_city: this.address_city, address_state: this.address_state, address_zip_code: this.address_zip_code, email: this.email, items: this.items, items_total: this.items_total, points_total: this.points_total }}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot submit purchase.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
+            },
+
+            add_items_to_cart() {
+                axios.post(this.path + '/add-items-to-cart', null, {params: {items: this.items, user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            this.items = this.items.split(',');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+            },
+        },
+        components: { NavBar }
+    }
+
+</script>
+
+<style scoped>
+    * {box-sizing: border-box;}
+
+    .checkout{
+        /* display: flex; */
+        flex-direction: column;
+        width: 98.5vw;
+        height: 97.5vh;
+        border-style: solid;
+        border-color: black;
+        gap: 1rem;
+        background-color: #0096c7;
+    }
+
+    .input-container {
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+    }
+
+    /* Style the form icons */
+    .icon {
+    padding: 10px;
+    background: #8c72e0;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+    }
+
+    /* Style the input fields */
+    .input-field {
+    width: 100%;
+    padding: 10px;
+    outline: none;
+    }
+
+    .input-field:focus {
+    border: 2px solid #8c72e0;
+    }
+
+    /* Set a style for the submit button */
+    .btn {
+    background-color: #8c72e0;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    }
+
+    .btn:hover {
+    opacity: 1;
+    }
+</style>
