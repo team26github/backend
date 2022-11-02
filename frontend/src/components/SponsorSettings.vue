@@ -46,7 +46,7 @@
             expiration_period: null,
             user_id: null,
             dollar_to_point_value: null,
-            catalog_filters: ["Phones,", "Watches"],
+            catalog_filters: null,
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
             path: null
@@ -64,6 +64,7 @@
                     this.expiration_period = res.data.results[0][6];
                     this.user_id = res.data.results[0][0];
                     this.dollar_to_point_value = res.data.results[0][8];
+                    this.catalog_filters = res.data.results[0][10].split(',');
                 }
                 else {
                     console.log("Unsuccessful");
@@ -109,12 +110,21 @@
         },
 
         edit_catalog() {
-            axios.get(this.path + '/update_catalog_items', {params: {keywords: 'Samsung'}})
-                .then((res) => {
-                    if (res.data.status === 'success') {
-                        window.alert('Success');
-                    }
-                })
+            let filters = window.prompt(`Current filters for drivers are: ${this.catalog_filters}`);
+
+            if (filters === null || filters === '') window.alert('You must have at least one active filter');
+            else {
+                axios.post(this.path + '/update-catalog-filters', null, {params: {catalog_filters: filters, user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            this.catalog_filters = filters.split(',');
+                            window.alert(`The new filters for drivers are: ${this.catalog_filters}`);
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+            }
         },
 
         edit_point_conversion() {
