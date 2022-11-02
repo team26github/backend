@@ -22,6 +22,8 @@ import AddPoints from '../components/AddPoints.vue';
 import RemovePoints from '../components/RemovePoints.vue';
 import AddPointsAdmin from '../components/AddPointsAdmin.vue';
 import RemovePointsAdmin from '../components/RemovePointsAdmin.vue';
+import Cart from '../components/Cart.vue';
+import CartCheckout from '../components/CartCheckout.vue';
 
 const routes = [
     {
@@ -104,7 +106,7 @@ const routes = [
         component: NewDriver
     },
     {
-        path: '/admin/:username/new-sponsor',
+        path: '/:username/new-sponsor',
         name: 'new-sponsor',
         component: NewSponsor
     },
@@ -142,6 +144,16 @@ const routes = [
         path: '/sponsor/:username/remove-points-admin',
         name: 'remove-points-admin',
         component: RemovePointsAdmin
+    },
+    {
+        path: '/driver/:username/cart',
+        name: 'cart',
+        component: Cart
+    },
+    {
+        path: '/driver/:username/checkout',
+        name: 'cart-checkout',
+        component: CartCheckout
     },
 ];
 
