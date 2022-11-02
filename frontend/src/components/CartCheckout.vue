@@ -4,6 +4,13 @@
         <form style="max-width:800px;margin:auto">
             <h1>Checkout</h1>
 
+            <div class="row">
+                <div class="catalog-items">
+                    <p><strong>Cart Items:</strong></p>
+                    <p v-for="item in items" :key="item">&nbsp;{{ item }}</p>
+                </div>
+            </div>
+
             <p>Please enter the below information to complete your purchase</p>
 
             <div class="input-container">
@@ -64,7 +71,8 @@
                 points_total: '',
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                reason:'Purchase',
             };
         },
 
@@ -103,16 +111,33 @@
                         // esling-disable-next-line
                         console.log(error);
                     })
+                    this.remove_points_purchase();
             },
 
-            add_items_to_cart() {
-                axios.post(this.path + '/add-items-to-cart', null, {params: {items: this.items, user_id: this.user_id}})
+            // add_items_to_cart() {
+            //     axios.post(this.path + '/add-items-to-cart', null, {params: {items: this.items, user_id: this.user_id}})
+            //         .then((res) => {
+            //             if (res.data.status === 'success') {
+            //                 this.items = this.items.split(',');
+            //             }
+            //         })
+            //         .catch((error) => {
+            //             console.log(error);
+            //         })
+            // },
+
+            remove_points_purchase() {
+                axios.post(this.path + 'remove_points_purchase', null, {params: {points_total: this.points_total, reason: this.reason, email: this.email}}) 
                     .then((res) => {
-                        if (res.data.status === 'success') {
-                            this.items = this.items.split(',');
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot remove points and complete purchase.");
                         }
                     })
                     .catch((error) => {
+                        // esling-disable-next-line
                         console.log(error);
                     })
             },
