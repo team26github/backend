@@ -4,26 +4,27 @@
             <h1>Pending Driver Applications</h1>
 
             <div>Select Driver:</div>
-
-            <select name = "selected" required>
+            <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select one driver application to review:</option>
                 <option value="None">None</option>
                 <option v-for="driver in drivers" :key="driver">{{driver}}</option>
             </select>
 
             <div>Select Decision:</div>
-
-            <select name = "selected" required>
+            <select name = "selected"  @change="eventChange($event)" required>
                 <option disabled value="">Please select a decision:</option>
-                <option value="Accept">Accept</option>
-                <option value="Reject">Reject</option>
+                <option value="Accepted">Accepted</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Pending">Pending</option>
             </select>
+
+            <br><br>
 
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Reason for decision:" name="reason" v-model="reason" required><br><br>
             </div>
 
-            <button type="submit" class="btn" @click="submit_addition" >Submit</button>
+            <button type="submit" class="btn" @click="submit_application" >Submit</button>
 
             <br><br>
         </form>
@@ -45,14 +46,22 @@
                 drivers: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                driver_selected: '',
+                decision: '',
+                reason: ''
             };
         },
 
         methods: {
             onChange(e)
             {
-                this.sponsor_selected=e.target.value
+                this.driver_selected=e.target.value
+            },
+
+            eventChange(e)
+            {
+                this.decision=e.target.value
             },
 
             go_to_sponsor_dashboard() {
@@ -72,6 +81,23 @@
                         }
                     })
                     .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            submit_application() { 
+                const path = 'http://localhost:5000/pending_applications';
+                
+                axios.post(path, null, {params: {driver: this.driver_selected, reason: this.reason, sponsor: this.user_id, decision: this.decision}}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot add points.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
                         console.log(error);
                     })
             },

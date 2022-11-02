@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="remove-points-container">
+            <div class="remove-points-button">
                     <button @click="go_to_remove_points_admin">Deduct Points from Driver</button>
             </div>
         </div>
@@ -45,7 +45,7 @@
             },
             go_to_remove_points_admin() {
                 this.$router.push({
-                    name: 'remove-points-admins',
+                    name: 'remove-points-admin',
                     params: { username: this.username }
                 });
             },
