@@ -15,7 +15,7 @@
 </template>
 
 <script>
-    import NavBar from '../components/misc/NavBar.vue';
+    import NavBar from '@/components/misc/NavBar.vue';
     export default {
         name: 'driver-dashboard',
 
