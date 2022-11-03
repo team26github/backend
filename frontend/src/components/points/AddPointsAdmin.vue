@@ -72,10 +72,8 @@
                         console.log(error);
                     })
             },
-            submit_application() { 
-                const path = 'http://localhost:5000/add_points';
-                
-                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason, driver: this.driver_selected, sponsor: this.user_id}}) 
+            submit_application() {                 
+                axios.post(this.path + '/add_points', null, {params: {num_points: this.num_points, reason: this.reason, driver: this.driver_selected, sponsor: this.user_id}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
@@ -92,7 +90,7 @@
         },
 
         mounted() {
-            this.path = this.localhost_path;
+            this.path = this.production_path;
             this.username = this.$route.params.username;
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})

@@ -52,8 +52,15 @@
             email: '',
             user_type: '',
             sponsors: [],
-            sponsor_selected: ''
+            sponsor_selected: '',
+            production_path: "http://18.191.136.200",
+            localhost_path: "http://localhost:5000",
+            path: null
         };
+        },
+
+        mounted() {
+            this.path = this.production_path;
         },
 
         methods: {
@@ -63,9 +70,7 @@
             },
 
             fetchSponsors:function() {
-                let path = 'http://localhost:5000/get-sponsors';
-
-                axios.get(path, {params: {user_id: this.user_id}})
+                axios.get(this.path + '/get-sponsors', {params: {user_id: this.user_id}})
                     .then((res) => {
                         if (res.data.status === 'success') {
                             console.log(res.data);
@@ -80,10 +85,8 @@
                     })
             },
 
-            submit_application() { 
-                const path = 'http://localhost:5000/apply';
-                
-                axios.post(path, null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password, sponsor: this.sponsor_selected}}) 
+            submit_application() {                 
+                axios.post(this.path + '/apply', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.username, password: this.password, sponsor: this.sponsor_selected}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
