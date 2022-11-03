@@ -32,15 +32,26 @@
                 <p><strong>UserType: </strong>{{ user_type }}</p>
             </div>
         </div>
+        <div class="row">
+            <div class="drivers-container">
+                <div class="drivers">
+                    <p><strong>Drivers: </strong>{{ selected }}
+                    <button @click="fetchDrivers">View Drivers</button></p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <option v-for="driver in drivers" :key="driver">{{driver}}</option>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-    import NavBar from './NavBar.vue';
+    import NavBar from '../misc/NavBar.vue';
 
     export default {
-        name: 'admin-profile',
+        name: 'sponsor-profile',
 
         data() {
             return {
@@ -49,15 +60,16 @@
                 password: null,
                 password_text: "***********************",
                 email: null,
-                user_type: "Admin",
+                user_type: "Sponsor",
                 button_text: "Show Password",
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
                 edit_email_active: false,
-                production_path: "http://18.191.136.200",
-                localhost_path: "http://localhost:5000",
-                path: null
+                drivers: [],
+                allData: null,
+                localhost_path: 'http://localhost:5000',
+                production_path: "http://18.191.136.200"
             };
         },
 
@@ -83,6 +95,31 @@
         },
 
         methods: {
+            fetchAllData(){ //show records
+                axios.get(this.path + '/', {params: {request: 'username'}})
+                .then(function(response){
+                        console.log(response);
+                        this.allData = response.data.members;
+                });
+            },
+
+            fetchDrivers() {
+                axios.get(this.path + '/get-drivers', {params: {user_id: this.user_id}})
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            for (const name of res.data.results) {
+                                this.drivers.push(name[0]);
+                            }
+                        }
+                        else {
+                            console.log('Unsuccessful');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            
             show_password() {
                 if (this.password_active) {
                     this.password_text = "***********************";
@@ -101,7 +138,7 @@
                 axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
                     .then((res) => {
                         if (res.data.status === 'success') {       
-                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: this.user_id}})
+                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: 3}})
                                 .then((res) => {
                                     if (res.data.status === "success") {
                                         this.username = new_username;
@@ -134,13 +171,13 @@
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
-                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: this.user_id}})
+                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: 3}})
                     .then((res) => {
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
                         }
                         else {
-                            res.data.status = "false";
+                            res.data.status = "failure";
                         }
 
                         if(new_password === this.password){
@@ -167,7 +204,7 @@
                 axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
-                        axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: this.user_id}})
+                        axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: 3}})
                         .then((res) => {
                             if (res.data.status === "success") {
                                 this.email = new_email;
@@ -186,7 +223,7 @@
                         window.alert("That email is unavailable.");
                     }
                 })
-            }
+            },
         },
 
         components: { NavBar }
@@ -202,7 +239,7 @@
         border-style: solid;
         border-color: black;
         gap: 1rem;
-        background-color: #ff90b3;
+        background-color: #73bfb8;
     }
 
     .password, .username, .email {
@@ -221,7 +258,7 @@
         gap: 1rem;
     }
 
-    .user-id-container, .username-container, .password-container, .email-container, .user-type-container {
+    .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
         display: flex;
         width: 49%;
         border-style: solid;
@@ -235,7 +272,7 @@
         margin-left: auto;
     }
 
-    .password-container .password .show-password {
+    .password-container .password .show-password .show-drivers{
         margin-left: 0;
     }
 

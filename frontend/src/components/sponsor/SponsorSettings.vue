@@ -27,12 +27,18 @@
                 <button @click="edit_catalog">Edit Catalog Filters</button>
             </div>
         </div>
+        <div class="row">
+            <div class="add-sponsor">
+                <p><strong>Add New Sponsor:</strong>
+                <button @click="go_to_new_sponsor">Add New Sponsor</button></p>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-    import NavBar from './NavBar.vue';
+    import NavBar from '../misc/NavBar.vue';
     // import ButtonCounter from './ButtonCounter.vue'
 
     export default {
@@ -89,6 +95,13 @@
                     // esling-disable-next-line
                     console.log(error);
                 })
+        },
+        
+        go_to_new_sponsor() {
+            this.$router.push({
+                name: 'new-sponsor',
+                params: { username: this.username }
+            })
         },
        
         edit_expiration() {

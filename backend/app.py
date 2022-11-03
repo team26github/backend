@@ -270,6 +270,7 @@ def apply():
         
     return jsonify({'status': status})
 
+
 @app.route('/get-catalog-items', methods=['GET'])
 def get_catalog_items():
     if EXPIRES < datetime.now():
@@ -278,15 +279,15 @@ def get_catalog_items():
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args.get('keywords', '')
     headers = {
-        'Authorization': f'Bearer {EBAY_TOKEN}'
+        'Authorization': f'Bearer {EBAY_TOKEN}',
     }
     params = {
         'limit': 50,
         'offset': 0,
-        'q': f'({keywords})'
+        'q': f'({keywords})',
     }
 
-    results = requests.get(f'''{sandbox_url}''', headers=headers, params=params).json()
+    results = requests.get(f'{sandbox_url}', headers=headers, params=params).json()
 
     return jsonify({
         'status': 'success',
@@ -489,6 +490,79 @@ def submit_deduction():
     results = cursor.fetchall()
     driver_id=results[0][0]
     query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{driver_id}","{num_points}","{datetime.now()}","{reason}","{sponsor_id}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/submit-purchase', methods=['POST'])
+@cross_origin()
+def submit_purchase():
+    cursor = db.cursor()
+    status = 'failure'
+
+    first_name = request.args.get('first_name', '')
+    last_name = request.args.get('last_name', '')
+    address = request.args.get('address', '')
+    address_city = request.args.get('address_city', '')
+    address_state = request.args.get('address_state', '')
+    address_zip_code = request.args.get('address_zip_code', '')
+    email = request.args.get('email', '')
+    items = request.args.get('items', '')
+    items_total = request.args.get('items_total', '')
+    points_total = request.args.get('points_total', '')
+    
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/add-items-to-cart', methods=['POST'])
+@cross_origin()
+def add_items_to_cart():
+    sponsor_id = request.args.get('user_id', '')
+    items = request.args.get('items', '')
+    
+    cursor = db.cursor()
+    query = f'UPDATE Purchases SET ITEMS = "{items}" WHERE USER_ID = {user_id};'
+    cursor.execute(query)
+    db.commit()
+
+    return jsonify({
+        'status': 'success'
+    })
+
+@app.route('/remove_points_purchase', methods=['POST'])
+@cross_origin()
+def points_purchase():
+    cursor = db.cursor()
+    status = 'failure'
+
+    points = request.args.get('points_total', '')
+    num_points = -abs(int(num_points))
+    reason = request.args.get('reason', '')
+    email = request.args.get('email', '')
+
+    query = f'SELECT UserID FROM UserInfo WHERE Email = "{email}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    user_id=results[0][0]
+
+    query = f'SELECT Points FROM UserInfo WHERE UserID = "{user_id}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    points=results[0][0]
+
+    new_points = points - num_points
+
+    query = f'UPDATE UserInfo SET Points = "{new_points}" WHERE UserID = "{user_id}"'
+
+    query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{user_id}","{num_points}","{datetime.now()}","{reason}","0")'
     cursor.execute(query)
 
     db.commit()

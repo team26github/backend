@@ -5,10 +5,10 @@
 </template>
 
 <script>
-    import NavBar from './NavBar.vue';
+    import NavBar from '../misc/NavBar.vue';
 
     export default {
-    name: "driver-settings",
+    name: "cart-view",
     data() {
         return {
             user_type: "driver",
