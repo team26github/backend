@@ -1,52 +1,28 @@
 <template>
     <div class="profile-container">
-        <nav-bar :usertype="user_type" :username="username"></nav-bar>
-        <div class="row">
-            <div class="points">
-                <p><strong>Points: </strong>{{ default_points }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="cart">
-                <p><button @click="go_to_my_cart">My Cart</button></p>
-            </div>
-        </div>
-    </div>
+        <NavBar :usertype="user_type" :username="username"></NavBar>
+    </div>  
 </template>
 
 <script>
-    import NavBar from '../components/NavBar.vue';
+    import NavBar from '../misc/NavBar.vue';
+
     export default {
-        name: 'driver-dashboard',
+    name: "driver-settings",
+    data() {
+        return {
+            user_type: "driver",
+            username: null
+        };
+    },
 
-        data() {
-            return {
-                dashboard_name: `${this.username}'s Dashboard`,
-                username: null,
-                user_type: 'driver',
-                active: false,
-                default_points: 0
-            }
-        },
+    mounted() {
+        this.username = this.$route.params.username;
+    },
 
-        mounted() {
-            this.username = this.$route.params.username;
-        },
-
-        components: {
-            "nav-bar": NavBar
-        },
-        methods: {
-            go_to_my_cart() {
-                this.$router.push({
-                    name: 'cart-checkout',
-                    params: { username: this.username }
-                })
-            },
-        }
-    }
+    components: { NavBar }
+}
 </script>
-
 
 <style scoped>
     .profile-container {
