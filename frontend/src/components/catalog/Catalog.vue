@@ -1,11 +1,19 @@
 <template>
     <NavBar :usertype="user_type" :username="username"></NavBar>
+    <div class="options">
+        <label class="filters-label">Filters:</label>
+        <select class="filters" @change="get_filter($event)">
+            <option value="All" selected>All</option>
+            <option v-for="filter in catalog_filters" :key="filter">{{ filter }}</option>
+        </select>
+        <input type="text" placeholder="Search"/>
+    </div>
     <div class="catalog-container">
             <div v-for="item in catalog_items" :key="item" class="catalog-item-container">
-                <img v-if="'image' in item" src={{item.image.imageUrl}}/>
+                <img class="item-img" v-if="'image' in item" :src="item.image.imageUrl"/>
                 <p><strong>Item:</strong> {{item.title}}</p>
                 <p><strong>Price:</strong> {{(item.price.value * this.point_conversion).toFixed(2)}} points</p>
-                <a href={{item.itemWebUrl}}>Check it out!</a>
+                <a :href="item.itemWebUrl" target="_blank">Check it Out!</a>
             </div>
     </div>
 </template>
@@ -32,7 +40,7 @@
 
     mounted() {
         this.username = this.$route.params.username;
-        this.path = this.production_path;
+        this.path = this.localhost_path;
 
         axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
@@ -51,6 +59,7 @@
                         axios.get(this.path + '/get-catalog-items', {params: {keywords: keywords}})
                             .then((res) => {
                                 let results = res.data.results;
+                                console.log(results);
 
                                 for (let item of results) {
                                     this.catalog_items.push(item);
@@ -73,6 +82,19 @@
 </script>
 
 <style scoped>
+    .options {
+        text-align: right;
+        padding-right: 1rem;
+    }
+
+    .filters {
+        margin-right: 0.5rem;
+    }
+
+    .filters-label {
+        margin-right: 0.25rem;
+    }
+
     .catalog-container {
         display: flex;
         flex-wrap: wrap;
@@ -89,10 +111,16 @@
         border-style: solid;
         border-color: black;
         overflow: auto;
-        padding: 0 0 0.5rem 0.5rem;
-        width: 8vw;
-        height: 7vw;
+        padding: 0 0.5rem 0.5rem 0.5rem;
+        width: 10vw;
+        height: 10vw;
         margin: 1rem 1rem 0;
         background-color: white;
+    }
+
+    .item-img {
+        width: 100%;
+        height: 100%;
+        justify-content: center;
     }
 </style>
