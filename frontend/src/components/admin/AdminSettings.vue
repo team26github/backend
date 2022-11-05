@@ -14,7 +14,7 @@
                 </select>
                 <button @click="show_drivers = !show_drivers">{{ (show_drivers ? "Hide" : "View") }}</button>
                 <button @click="go_to_new_driver">Add New Driver</button>
-            </div>
+            </div> 
         </div>
         <div class="row">
             <div class="sponsor-profiles-permissions">
@@ -136,17 +136,14 @@
     methods: {
         get_driver(event) {
             this.selected_driver = event.target.value;
-            console.log(this.selected_driver);
         },
         
         get_sponsor(event) {
             this.selected_sponsor = event.target.value;
-            console.log(this.selected_sponsor);
         },
 
         get_admin(event) {
             this.selected_admin = event.target.value;
-            console.log(this.selected_admin);
         },
 
         display_drivers() {
