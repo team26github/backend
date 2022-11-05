@@ -276,21 +276,28 @@ def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
+    status = 'failure'
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args.get('keywords', '')
     headers = {
         'Authorization': f'Bearer {EBAY_TOKEN}',
     }
     params = {
-        'limit': 50,
+        'limit': 100,
         'offset': 0,
         'q': f'({keywords})',
     }
 
     results = requests.get(f'{sandbox_url}', headers=headers, params=params).json()
 
+    try:
+        results['itemSummaries']
+        status = 'success'
+    except:
+        status = 'failure'
+
     return jsonify({
-        'status': 'success',
+        'status': status,
         'results': results['itemSummaries']
     })
 

@@ -1,12 +1,13 @@
 <template>
     <NavBar :usertype="user_type" :username="username"></NavBar>
     <div class="options">
-        <label class="filters-label">Filters:</label>
+        <label>Filters:</label>
         <select class="filters" @change="get_filter($event)"> 
             <option value="All" selected>All</option>
             <option v-for="filter in catalog_filters" :key="filter">{{ filter }}</option>
         </select>
-        <input type="text" placeholder="Search"/>
+        <input class="filters" type="text" placeholder="Search" v-model="search_text"/>
+        <button type="submit" @click="search()">Search</button>
     </div>
     <div class="catalog-container" :key="update">
         <div v-for="item in catalog_items" :key="item" class="catalog-item-container">
@@ -31,6 +32,7 @@
             username: null,
             catalog_filters: null,
             selected_filter: null,
+            search_text: null,
             point_conversion: null,
             update: 0,
             catalog_items: null,
@@ -85,6 +87,7 @@
             axios.get(this.path + '/get-catalog-items', {params: {keywords: keywords}})
                 .then((res) => {
                     let results = res.data.results;
+                    //console.log(results);
 
                     for (let item of results) {
                         this.catalog_items.push(item);
@@ -93,6 +96,39 @@
                 .catch((err) => {
                     console.log(err);
                 })            
+        },
+
+        search() {
+            if (this.search_text !== null && this.search_text !== "") {
+
+                let keywords = '';
+                this.catalog_items = [];
+
+                if (this.selected_filter === null || this.selected_filter === 'All') {
+                    for (let i = 0; i < this.catalog_filters.length - 1; i++) {
+                        keywords += this.catalog_filters[i] + ',';
+                    }
+                    
+                    keywords += this.catalog_filters[this.catalog_filters.length - 1];
+                }
+                else keywords += this.selected_filter;
+
+                axios.get(this.path + '/get-catalog-items', {params: {keywords: keywords}})
+                    .then((res) => {
+                        let results = res.data.results;
+
+                        for (let item of results) {
+                            if (item.title.toLowerCase().includes(this.search_text.toLowerCase())) {
+                                this.catalog_items.push(item);
+                            }
+                        }
+                        
+                        this.update += 1;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
+            }
         }
     },
 
@@ -103,15 +139,10 @@
 <style scoped>
     .options {
         text-align: right;
-        padding-right: 1rem;
     }
 
     .filters {
-        margin-right: 0.5rem;
-    }
-
-    .filters-label {
-        margin-right: 0.25rem;
+        margin: 0.25rem 0 0.25rem 0.5rem;
     }
 
     .catalog-container {
