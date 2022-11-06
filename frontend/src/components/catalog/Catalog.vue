@@ -8,6 +8,8 @@
         </select>
         <input class="filters" type="text" placeholder="Search" v-model="search_text"/>
         <button type="submit" @click="search()">Search</button>
+        <button class="cart" @click="checkout()">Checkout</button>
+        <p class="cart">Items in Cart: {{ num_in_cart }}</p>
     </div>
     <div class="catalog-container" :key="update">
         <div v-for="item in catalog_items" :key="item" class="catalog-item-container">
@@ -15,6 +17,7 @@
             <p><strong>Item:</strong> {{item.title}}</p>
             <p><strong>Price:</strong> {{(item.price.value * this.point_conversion).toFixed(2)}} points</p>
             <a :href="item.itemWebUrl" target="_blank">Check it Out!</a>
+            <button @click="add_to_cart(item)">Add to Cart</button>
         </div>
     </div>
 </template>
@@ -35,6 +38,9 @@
             search_text: null,
             point_conversion: null,
             update: 0,
+            cart: [],
+            cost: 0,
+            num_in_cart: 0,
             catalog_items: null,
             production_path: "http://18.191.136.200",
             localhost_path: "http://localhost:5000",
@@ -129,6 +135,23 @@
                         console.log(err);
                     })
             }
+        },
+
+        add_to_cart(item) {
+            if (this.cart.indexOf(item) === -1) {
+                this.cart.push(item);
+                this.num_in_cart += 1;
+                this.cost += (item.price.value * this.point_conversion).toFixed(2);
+            }
+        },
+
+        checkout() {
+            let content = { username: this.username, cart: this.cart, cost: this.cost };            
+
+            this.$router.push({
+                name: 'cart-checkout',
+                params: { params: content }
+            });
         }
     },
 
@@ -138,11 +161,22 @@
 
 <style scoped>
     .options {
-        text-align: right;
+        float: left;
+    }
+
+    .options p {
+        display: inline-block;
+        width: auto;
+        margin-right: 0.5rem;
     }
 
     .filters {
         margin: 0.25rem 0 0.25rem 0.5rem;
+    }
+
+    .cart {
+        float: right;
+        margin: 0.25rem 0.2rem 0.25rem 0;
     }
 
     .catalog-container {
@@ -166,6 +200,10 @@
         width: 8.25vw;
         height: 8.25vw;
         background-color: white;
+    }
+
+    .catalog-item-container button {
+        margin-top: 1em;
     }
 
     .item-img {

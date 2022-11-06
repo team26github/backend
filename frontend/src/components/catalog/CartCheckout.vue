@@ -83,7 +83,11 @@
 
         mounted() {
             this.username = this.$route.params.username;
+            this.items = this.$route.params.cart;
             this.path = this.localhost_path;
+
+            console.log("params");
+            console.log(this.$route.params.params);
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
@@ -97,7 +101,7 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                })
+                });
         },
 
         methods: {
