@@ -39,7 +39,7 @@
             point_conversion: null,
             update: 0,
             cart: [],
-            cost: 0,
+            cost: 0.0,
             num_in_cart: 0,
             catalog_items: null,
             production_path: "http://18.191.136.200",
@@ -93,10 +93,32 @@
             axios.get(this.path + '/get-catalog-items', {params: {keywords: keywords}})
                 .then((res) => {
                     let results = res.data.results;
-                    //console.log(results);
+                    let temp = res.data.purchased;
+                    let purchased = [];                    
+                    
+                    for (let i = 0; i < temp.length; i++) {
+                        temp[i][0] = temp[i][0].split(/{\d: |'|"|}|, \d: /g);
+                    }
+
+                    for (let i = 0; i < temp.length; i++) {
+                        for (let j = 0; j < temp[0].length; j++) {
+                            for (let k = 0; k < temp[i][j].length; k++) {
+                                if (temp[i][j][k] !== "" && temp[i][j][k] !== " ") {
+                                    purchased.push(temp[i][j][k]);
+                                }
+                            }
+                        }
+                    }
+                    console.log(purchased);
 
                     for (let item of results) {
-                        this.catalog_items.push(item);
+                        let add = true;
+                        for (let i = 0; i < purchased.length; i++) {
+                            if (item.title === purchased[i]) add = false;
+                        }
+                        
+                        if (add) this.catalog_items.push(item);
+                        else add = true;
                     }
                 })
                 .catch((err) => {
@@ -139,18 +161,18 @@
 
         add_to_cart(item) {
             if (this.cart.indexOf(item) === -1) {
-                this.cart.push(item);
+                this.cart.push(item.title);
                 this.num_in_cart += 1;
-                this.cost += (item.price.value * this.point_conversion).toFixed(2);
+                this.cost += parseFloat((item.price.value * this.point_conversion).toFixed(2));
             }
         },
 
         checkout() {
-            let content = { username: this.username, cart: this.cart, cost: this.cost };            
+            //let content = { username: this.username, cart: this.cart, cost: this.cost };
 
             this.$router.push({
                 name: 'cart-checkout',
-                params: { params: content }
+                params: { username: this.username, cart: JSON.stringify(this.cart), cost: this.cost }
             });
         }
     },

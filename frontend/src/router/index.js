@@ -151,7 +151,7 @@ const routes = [
         component: Cart
     },
     {
-        path: '/driver/:username/checkout',
+        path: '/driver/:username/checkout/:cart*/:cost',
         name: 'cart-checkout',
         component: CartCheckout
     },
