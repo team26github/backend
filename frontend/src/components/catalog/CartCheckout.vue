@@ -6,8 +6,8 @@
 
             <div class="row">
                 <div class="catalog-items">
-                    <p><strong>Cart Items:</strong></p>
-                    <p v-for="item in items" :key="item">&nbsp;{{ item }}</p>
+                    <ul><strong>Cart Items:</strong></ul>
+                    <li v-for="item in items" :key="item">&nbsp;{{ item }}</li>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
 
             <!-- <button id="myBtn" class="btn" @click="submit_purchase" :disabled="insufficient_balance()"> -->
             <button id="myBtn" class="btn" @click="submit_purchase">
-                Pay #{{ this.purchase_total }} points
+                Pay {{ this.points_total }} points
             </button>
 
         </form>
@@ -83,12 +83,14 @@
 
         mounted() {
             this.username = this.$route.params.username;
+            this.items = JSON.parse(this.$route.params.cart);
+            this.points_total = this.$route.params.cost;
+            this.items_total = this.items.length;
             this.path = this.localhost_path;
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
-                        console.log(res.data);
                         this.user_type = res.data.results[0][2];
                     }
                     else {
@@ -97,16 +99,17 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                })
+                });
         },
 
         methods: {
 
-            submit_purchase() {                 
-                axios.post(this.path + '/submit-purchase', null, {params: {first_name: this.first_name, last_name: this.last_name, address: this.address, address_city: this.address_city, address_state: this.address_state, address_zip_code: this.address_zip_code, email: this.email, items: this.items, items_total: this.items_total, points_total: this.points_total }}) 
+            submit_purchase() {
+                axios.post(this.path + '/submit-purchase', null, {params: {first_name: this.first_name, last_name: this.last_name, address: this.address, address_city: this.address_city, address_state: this.address_state, address_zip_code: this.address_zip_code, email: this.email, items: JSON.stringify(this.items), items_total: this.items_total, points_total: this.points_total }}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
+                            this.remove_points_purchase();
                         }
                         else {
                             window.alert("Cannot submit purchase.");
@@ -115,8 +118,7 @@
                     .catch((error) => {
                         // esling-disable-next-line
                         console.log(error);
-                    })
-                    this.remove_points_purchase();
+                    });
             },
 
             remove_points_purchase() {
@@ -138,7 +140,6 @@
             get_points_balance(){ //show records
                 axios.get(this.path + '/userinfo', {params: {request: 'username'}})
                 .then(function(response){
-                        console.log(response);
                         this.points_balance = response.data.results[0][11];
                 });
             },
@@ -215,5 +216,9 @@
     #myBtn:disabled {
     cursor: not-allowed;
     opacity: 0.8;
+    }
+
+    .catalog-items ul {
+        margin-left: -2.5rem;
     }
 </style>
