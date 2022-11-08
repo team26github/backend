@@ -290,6 +290,11 @@ def get_catalog_items():
 
     results = requests.get(f'{sandbox_url}', headers=headers, params=params).json()
 
+    cursor = db.cursor()
+    query = 'SELECT ITEMS FROM Purchases'
+    cursor.execute(query)
+    purchased = cursor.fetchall()
+
     try:
         results['itemSummaries']
         status = 'success'
@@ -298,7 +303,8 @@ def get_catalog_items():
 
     return jsonify({
         'status': status,
-        'results': results['itemSummaries']
+        'results': results['itemSummaries'],
+        'purchased': purchased
     })
 
 @app.route('/update-catalog-filters', methods=['POST'])
@@ -517,11 +523,17 @@ def submit_purchase():
     address_state = request.args.get('address_state', '')
     address_zip_code = request.args.get('address_zip_code', '')
     email = request.args.get('email', '')
-    items = request.args.get('items', '')
+    items_array = json.loads(request.args.get('items', ''))
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
     
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
+    items = {}
+    index = 0
+    for item in items_array:
+        items[index] = item
+        index += 1
+    
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", {items_total}, {points_total}, "{items}")'
     cursor.execute(query)
 
     db.commit()
