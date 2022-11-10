@@ -84,10 +84,8 @@
                         console.log(error);
                     })
             },
-            submit_application() { 
-                const path = 'http://localhost:5000/pending_applications';
-                
-                axios.post(path, null, {params: {driver: this.driver_selected, reason: this.reason, sponsor: this.user_id, decision: this.decision}}) 
+            submit_application() {                 
+                axios.post(this.path + '/pending_applications', null, {params: {driver: this.driver_selected, reason: this.reason, sponsor: this.user_id, decision: this.decision}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");

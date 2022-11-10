@@ -6,12 +6,12 @@
 
             <div class="row">
                 <div class="catalog-items">
-                    <p><strong>Cart Items:</strong></p>
-                    <p v-for="item in items" :key="item">&nbsp;{{ item }}</p>
+                    <ul><strong>Cart Items:</strong></ul>
+                    <li v-for="item in items" :key="item">&nbsp;{{ item }}</li>
                 </div>
             </div>
 
-            <p>Please enter the below information to complete your purchase</p>
+            <p>Please enter the below information to complete your purchase.</p>
 
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="First Name" name="first_name" v-model="first_name" required><br><br>
@@ -41,9 +41,14 @@
                 <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
             </div>
 
-            <!-- <button id="myBtn" class="btn" @click="submit_purchase" :disabled="insufficient_balance()"> -->
-            <button id="myBtn" class="btn" @click="submit_purchase">
-                Pay #{{ this.purchase_total }} points
+            <button id="myBtn" class="btn" :disabled="!sufficient_balance" @click="submit_purchase()">
+                Pay {{ this.points_total }} points
+            </button>
+
+            <br><br>
+
+            <button id="myBtn" @click="return_to_dashboard()">
+                Return to Driver Dashboard
             </button>
 
         </form>
@@ -62,6 +67,7 @@
             return {
                 status: null,
                 first_name: '',
+                user_id: null,
                 last_name:'',
                 username: '',
                 address: '',
@@ -78,18 +84,29 @@
                 localhost_path: "http://localhost:5000",
                 path: null,
                 reason:'Purchase',
+                sufficient_balance: false,
             };
         },
 
         mounted() {
             this.username = this.$route.params.username;
+            this.items = JSON.parse(this.$route.params.cart);
+            this.points_total = this.$route.params.cost;
+            this.items_total = this.items.length;
             this.path = this.localhost_path;
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
-                        console.log(res.data);
+                        this.user_id = res.data.results[0][0];
                         this.user_type = res.data.results[0][2];
+                        this.points_balance = res.data.results[0][11];
+                        if ( (this.points_balance < this.points_total) || (0 == this.points_total) ){
+                            this.sufficient_balance = false;
+                        }
+                        else {
+                            this.sufficient_balance = true;
+                        }
                     }
                     else {
                         console.log('Unsuccessful');
@@ -97,13 +114,17 @@
                 })
                 .catch((error) => {
                     console.log(error);
-                })
+                });
         },
 
         methods: {
 
-            submit_purchase() {                 
-                axios.post(this.path + '/submit-purchase', null, {params: {first_name: this.first_name, last_name: this.last_name, address: this.address, address_city: this.address_city, address_state: this.address_state, address_zip_code: this.address_zip_code, email: this.email, items: this.items, items_total: this.items_total, points_total: this.points_total }}) 
+            return_to_dashboard() {
+                this.$router.push({name:'driver-dashboard'})
+            },
+
+            submit_purchase() {
+                axios.post(this.path + '/submit-purchase', null, {params: {first_name: this.first_name, last_name: this.last_name, address: this.address, address_city: this.address_city, address_state: this.address_state, address_zip_code: this.address_zip_code, email: this.email, items: JSON.stringify(this.items), items_total: this.items_total, points_total: this.points_total, user_id: this.user_id }}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
@@ -115,8 +136,7 @@
                     .catch((error) => {
                         // esling-disable-next-line
                         console.log(error);
-                    })
-                    this.remove_points_purchase();
+                    });
             },
 
             remove_points_purchase() {
@@ -138,18 +158,8 @@
             get_points_balance(){ //show records
                 axios.get(this.path + '/userinfo', {params: {request: 'username'}})
                 .then(function(response){
-                        console.log(response);
                         this.points_balance = response.data.results[0][11];
                 });
-            },
-
-            insufficient_balance () {
-                if (this.get_points_balance() < this.points_total) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
             },
         },
         components: { NavBar }
@@ -212,8 +222,17 @@
     opacity: 1;
     }
 
-    #myBtn:disabled {
-    cursor: not-allowed;
-    opacity: 0.8;
+    .btn:disabled{
+    background-color: #acacaf;
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    }
+
+    .catalog-items ul {
+        margin-left: -2.5rem;
     }
 </style>

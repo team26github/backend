@@ -72,10 +72,8 @@
                         console.log(error);
                     })
             },
-            submit_application() { 
-                const path = 'http://localhost:5000/remove_points';
-                
-                axios.post(path, null, {params: {num_points: this.num_points, reason: this.reason, driver: this.driver_selected, sponsor: this.user_id}}) 
+            submit_application() {                 
+                axios.post(this.path + '/remove_points', null, {params: {num_points: this.num_points, reason: this.reason, driver: this.driver_selected, sponsor: this.user_id}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");

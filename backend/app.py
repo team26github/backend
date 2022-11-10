@@ -216,6 +216,28 @@ def get_sponsors():
             'results': results
         })
 
+@app.route('/purchase-info', methods=['GET'])
+def get_purchase_info():
+    user_id = request.args.get('user_id', '')
+    results = {}
+    cursor = db.cursor()
+
+    query = f'SELECT * FROM Purchases WHERE USER_ID = {"user_id"}'
+    cursor.execute(query)
+    results['purchases'] = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+
 @app.route('/info', methods=['GET'])
 def get_info():
     username = request.args.get('username', '')
@@ -276,22 +298,35 @@ def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
+    status = 'failure'
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args.get('keywords', '')
     headers = {
         'Authorization': f'Bearer {EBAY_TOKEN}',
     }
     params = {
-        'limit': 50,
+        'limit': 100,
         'offset': 0,
         'q': f'({keywords})',
     }
 
     results = requests.get(f'{sandbox_url}', headers=headers, params=params).json()
 
+    cursor = db.cursor()
+    query = 'SELECT ITEMS FROM Purchases'
+    cursor.execute(query)
+    purchased = cursor.fetchall()
+
+    try:
+        results['itemSummaries']
+        status = 'success'
+    except:
+        status = 'failure'
+
     return jsonify({
-        'status': 'success',
-        'results': results['itemSummaries']
+        'status': status,
+        'results': results['itemSummaries'],
+        'purchased': purchased
     })
 
 @app.route('/update-catalog-filters', methods=['POST'])
@@ -510,11 +545,18 @@ def submit_purchase():
     address_state = request.args.get('address_state', '')
     address_zip_code = request.args.get('address_zip_code', '')
     email = request.args.get('email', '')
-    items = request.args.get('items', '')
+    items_array = json.loads(request.args.get('items', ''))
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
+    user_id = request.args.get('user_id', '')
     
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
+    items = {}
+    index = 0
+    for item in items_array:
+        items[index] = item
+        index += 1
+    
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, USER_ID) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", {items_total}, {points_total}, "{items}", "{user_id}")'
     cursor.execute(query)
 
     db.commit()
@@ -525,7 +567,7 @@ def submit_purchase():
 @app.route('/add-items-to-cart', methods=['POST'])
 @cross_origin()
 def add_items_to_cart():
-    sponsor_id = request.args.get('user_id', '')
+    user_id = request.args.get('user_id', '')
     items = request.args.get('items', '')
     
     cursor = db.cursor()
