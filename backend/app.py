@@ -216,6 +216,28 @@ def get_sponsors():
             'results': results
         })
 
+@app.route('/purchase-info', methods=['GET'])
+def get_purchase_info():
+    user_id = request.args.get('user_id', '')
+    results = {}
+    cursor = db.cursor()
+
+    query = f'SELECT * FROM Purchases WHERE USER_ID = {"user_id"}'
+    cursor.execute(query)
+    results['purchases'] = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+
 @app.route('/info', methods=['GET'])
 def get_info():
     username = request.args.get('username', '')
@@ -526,6 +548,7 @@ def submit_purchase():
     items_array = json.loads(request.args.get('items', ''))
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
+    user_id = request.args.get('user_id', '')
     
     items = {}
     index = 0
@@ -533,7 +556,7 @@ def submit_purchase():
         items[index] = item
         index += 1
     
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", {items_total}, {points_total}, "{items}")'
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, USER_ID) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", {items_total}, {points_total}, "{items}", "{user_id}")'
     cursor.execute(query)
 
     db.commit()
@@ -544,7 +567,7 @@ def submit_purchase():
 @app.route('/add-items-to-cart', methods=['POST'])
 @cross_origin()
 def add_items_to_cart():
-    sponsor_id = request.args.get('user_id', '')
+    user_id = request.args.get('user_id', '')
     items = request.args.get('items', '')
     
     cursor = db.cursor()

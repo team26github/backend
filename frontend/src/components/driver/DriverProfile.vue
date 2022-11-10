@@ -32,6 +32,24 @@
                 <p><strong>UserType: </strong>{{ user_type }}</p>
             </div>
         </div>
+        <div class="row">
+            <div class="all-purchases">
+                <p><strong>View Past Purchases</strong></p>
+                <label class="purchases">Choose a Purchase:</label>
+                <select class="purchases" @change="get_purchase($event)">
+                    <option value="All" selected>All</option>
+                    <option v-for="purchase in purchase_info" :key="purchase">{{ purchase.points_total }}</option>
+                </select>
+                <button @click="show_purchases = !show_purchases;">{{ (show_purchases ? "Hide" : "View") }}</button>
+            </div>
+        </div>
+        <div class="purchases-container" v-if="show_purchases">
+            <div class="purchases-info" v-for="purchase in display_purchases()" :key="purchase">
+                <p><strong>Full Name:</strong> {{ purchase.first_name }}{{ purchase.last_name }}</p>
+                <p><strong>Items:</strong> {{ purchase.items }}</p>
+                <p><strong>Points Total:</strong> {{ purchase.points_total }}</p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -54,6 +72,9 @@
                 password_active: false,
                 edit_username_active: false,
                 edit_password_active: false,
+                purchase_info: [],
+                show_purchases: false,
+                selected_purchase:'All',
                 edit_email_active: false,
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
@@ -80,6 +101,7 @@
                 .catch((error) => {
                     console.log(error);
                 })
+            this.get_info();
         },
 
         methods: {
@@ -94,6 +116,39 @@
                     this.password_active = true;
                     this.button_text = "Hide Password";
                 }
+            },
+
+            get_purchase(event) {
+                this.selected_purchase = event.target.value;
+            },
+
+            display_purchases() {
+                if (this.selected_purchase === 'All') return this.purchase_info;
+                else {
+                    for (let p of this.purchase_info) {
+                        if (p.full_name === this.selected_purchase) return [p];
+                    }
+                }
+            },
+
+            get_info() {
+                axios.get(this.path + '/purchase-info', { params: { user_id: this.user_id } })
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        for (const info of res.data.results.purchases) {
+                            let purchase = {};
+
+                            purchase['first_name'] = info[1];
+                            purchase['last_name'] = info[2];
+                            purchase['points_total'] = info[9];
+                            purchase['items'] = info[10];
+
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
             },
 
             edit_username() {
