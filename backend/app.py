@@ -567,7 +567,7 @@ def submit_purchase():
 @app.route('/add-items-to-cart', methods=['POST'])
 @cross_origin()
 def add_items_to_cart():
-    sponsor_id = request.args.get('user_id', '')
+    user_id = request.args.get('user_id', '')
     items = request.args.get('items', '')
     
     cursor = db.cursor()
