@@ -48,7 +48,7 @@
                 email: '',
                 user_type: '',
                 production_path: "http://18.191.136.200",
-                localhost_path: "http://localhost:5000",
+                production_path: "http://localhost:5000",
                 path: null
             };
         },
