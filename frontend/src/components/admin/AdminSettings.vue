@@ -129,7 +129,7 @@
 
     mounted() {
         this.username = this.$route.params.username;
-        this.path = this.production_path;
+        this.path = this.localhost_path;
         this.get_info();
     },
 
