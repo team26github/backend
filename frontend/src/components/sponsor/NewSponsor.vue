@@ -74,20 +74,39 @@
 
         methods: {
 
-            create_sponsor() {                 
-                axios.post(this.path + '/new-sponsor', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.sponsor_username, password: this.password}}) 
+            create_sponsor() {
+                axios.get(this.path + '/new-user', {params: {username: this.sponsor_username, email: this.email}})
                     .then((res) => {
-                        if (res.data.status === "success") {
-                            console.log("success");
+                        if (res.data.status === 'success') {
+                            if (res.data.results.length === 0) {
+                                axios.post(this.path + '/new-driver', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.sponsor_username, password: this.password, sponsor: this.sponsor_selected}}) 
+                                    .then((res) => {
+                                        if (res.data.status === "success") {
+                                            console.log("success");
+                                        }
+                                        else {
+                                            window.alert("Cannot create sponsor.");
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        // esling-disable-next-line
+                                        console.log(error);
+                                    });
+                            }
+                            else if (res.data.results.length === 1) {
+                                window.alert(`${res.data.results[0]} is already taken`);
+                            }
+                            else if (res.data.results.length === 2) {
+                                window.alert(`${res.data.results[0]} and ${res.data.results[1]} are already taken`);
+                            }
                         }
                         else {
-                            window.alert("Cannot create sponsor.");
+                            console.log('Failure');
                         }
                     })
                     .catch((error) => {
-                        // esling-disable-next-line
                         console.log(error);
-                    })
+                    });
             },
         },
         components: { NavBar }
