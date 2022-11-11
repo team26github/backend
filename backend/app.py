@@ -612,6 +612,42 @@ def points_purchase():
         
     return jsonify({'status': status})
 
+@app.route('/new-user', methods=['GET'])
+def new_user():
+    cursor = db.cursor()
+    status = 'failure'
+    username = request.args.get('username', '')
+    email = request.args.get('email', '')
+    temp = {
+        'Username': '',
+        'Email': ''
+    }
+    results = []
+
+
+    query = f'SELECT Username FROM UserInfo WHERE Username = "{username}"'
+    cursor.execute(query)
+    temp['Username'] = cursor.fetchall()
+
+    query = f'SELECT Email FROM UserInfo WHERE Email = "{email}"'
+    cursor.execute(query)
+    temp['Email'] = cursor.fetchall()
+
+    if temp['Email'] != ():
+        results.append('Email')
+    
+    if temp['Username'] != ():
+        results.append('Username')
+    
+    status = 'success'
+
+    return jsonify({
+        'status': status,
+        'results': results
+    })
+
+
+
 if __name__ == '__main__':
     get_new_token()
     app.run(debug=True)

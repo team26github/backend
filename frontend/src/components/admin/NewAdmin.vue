@@ -25,7 +25,7 @@
                 <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
             </div>
 
-            <button type="submit" class="btn" @click="create_admin" >Create</button> 
+            <button type="button" class="btn" @click="create_admin" >Create</button> 
         </form>
     </div>
 
@@ -56,12 +56,11 @@
 
         mounted() {
             this.username = this.$route.params.username;
-            this.path = this.production_path;
+            this.path = this.localhost_path;
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
-                        console.log(res.data);
                         this.user_type = res.data.results[0][2];
                     }
                     else {
@@ -74,20 +73,39 @@
         },
 
         methods: {
-            create_admin() {                 
-                axios.post(this.path + '/new-admin', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.admin_username, password: this.password}}) 
+            create_admin() {         
+                axios.get(this.path + '/new-user', {params: {username: this.admin_username, email: this.email}})
                     .then((res) => {
-                        if (res.data.status === "success") {
-                            console.log("success");
+                        if (res.data.status === 'success') {
+                            if (res.data.results.length === 0) {
+                                axios.post(this.path + '/new-admin', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.admin_username, password: this.password}}) 
+                                    .then((res) => {
+                                        if (res.data.status === "success") {
+                                            console.log("success");
+                                        }
+                                        else {
+                                            window.alert("Cannot create admin.");
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        // esling-disable-next-line
+                                        console.log(error);
+                                    })
+                            }
+                            else if (res.data.results.length === 1) {
+                                window.alert(`${res.data.results[0]} is already taken`);
+                            }
+                            else if (res.data.results.length === 2) {
+                                window.alert(`${res.data.results[0]} and ${res.data.results[1]} are already taken`);
+                            }
                         }
                         else {
-                            window.alert("Cannot create admin.");
+                            console.log('Failure');
                         }
                     })
                     .catch((error) => {
-                        // esling-disable-next-line
                         console.log(error);
-                    })
+                    });
             },
         },
         components: { NavBar }
