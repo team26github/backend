@@ -97,11 +97,11 @@
                     else {
                         console.log('Unsuccessful');
                     }
+                    this.get_info();
                 })
                 .catch((error) => {
                     console.log(error);
                 })
-            this.get_info();
         },
 
         methods: {
