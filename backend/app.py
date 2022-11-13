@@ -216,28 +216,6 @@ def get_sponsors():
             'results': results
         })
 
-@app.route('/purchase-info', methods=['GET'])
-def get_purchase_info():
-    user_id = request.args.get('user_id', '')
-    results = {}
-    cursor = db.cursor()
-
-    query = f'SELECT * FROM Purchases WHERE USER_ID = {"user_id"}'
-    cursor.execute(query)
-    results['purchases'] = cursor.fetchall()
-
-    if len(results) > 0:
-        return jsonify({
-            'status': 'success',
-            'results': results
-        })
-    else:
-        return jsonify({
-            'status': 'failure',
-            'results': results
-        })
-
-
 @app.route('/info', methods=['GET'])
 def get_info():
     username = request.args.get('username', '')
@@ -255,6 +233,29 @@ def get_info():
     query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
     cursor.execute(query)
     results['admins'] = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+
+@app.route('/purchase-info', methods=['GET'])
+def get_purchase_info():
+    user_id = request.args.get('user_id', '')
+    results = {}
+    cursor = db.cursor()
+
+    query = f'SELECT * FROM Purchases WHERE USER_ID = "{user_id}"'
+    print(user_id)
+    cursor.execute(query)
+    results = cursor.fetchall()
 
     if len(results) > 0:
         return jsonify({

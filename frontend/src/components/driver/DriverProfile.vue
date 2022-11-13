@@ -33,21 +33,23 @@
             </div>
         </div>
         <div class="row">
-            <div class="all-purchases">
+            <div class="purchases-container">
                 <p><strong>View Past Purchases</strong></p>
-                <label class="purchases">Choose a Purchase:</label>
+                <label class="purchases">Choose a Purchase: </label>
                 <select class="purchases" @change="get_purchase($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="purchase in purchase_info" :key="purchase">{{ purchase.points_total }}</option>
+                    <option v-for="purchase in purchase_info" :key="purchase">{{ purchase }}</option>
                 </select>
-                <button @click="show_purchases = !show_purchases;">{{ (show_purchases ? "Hide" : "View") }}</button>
-            </div>
+                <button @click="show_purchases = !show_purchases">{{ (show_purchases ? "Hide" : "View") }}</button>
+            </div> 
         </div>
-        <div class="purchases-container" v-if="show_purchases">
-            <div class="purchases-info" v-for="purchase in display_purchases()" :key="purchase">
-                <p><strong>Full Name:</strong> {{ purchase.first_name }}{{ purchase.last_name }}</p>
-                <p><strong>Items:</strong> {{ purchase.items }}</p>
-                <p><strong>Points Total:</strong> {{ purchase.points_total }}</p>
+        <div class="info-row">
+            <div class="purchases" v-if="show_purchases">
+                <div class="purchases" v-for="purchase in display_purchases()" :key="purchase">
+                    <p><strong>Order ID:</strong> {{ purchase.order_id }}</p>
+                    <p><strong>Items:</strong> {{ purchase.items }}</p>
+                    <p><strong>Points Cost:</strong> {{ purchase.points_total }}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -93,15 +95,17 @@
                         this.user_id = res.data.results[0][0];
                         this.password = res.data.results[0][1];
                         this.email = res.data.results[0][3];
+
                     }
                     else {
                         console.log('Unsuccessful');
                     }
-                    this.get_info();
                 })
                 .catch((error) => {
                     console.log(error);
                 })
+
+            this.get_purchase_info();
         },
 
         methods: {
@@ -126,29 +130,31 @@
                 if (this.selected_purchase === 'All') return this.purchase_info;
                 else {
                     for (let p of this.purchase_info) {
-                        if (p.full_name === this.selected_purchase) return [p];
+                        if (p.order_id === this.selected_purchase) return [p];
                     }
                 }
             },
 
-            get_info() {
+            get_purchase_info() {
                 axios.get(this.path + '/purchase-info', { params: { user_id: this.user_id } })
-                .then((res) => {
-                    if (res.data.status === 'success') {
-                        for (const info of res.data.results.purchases) {
-                            let purchase = {};
+                    .then((res) => {
+                        if (res.data.status === 'success') {
+                            for (const info of res.data.results) {
+                                let purchase = {};
 
-                            purchase['first_name'] = info[1];
-                            purchase['last_name'] = info[2];
-                            purchase['points_total'] = info[9];
-                            purchase['items'] = info[10];
-
+                                purchase['first_name'] = info[1];
+                                purchase['last_name'] = info[2];
+                                purchase['email'] = info[7];
+                                purchase['items_total'] = info[8];
+                                purchase['point_total'] = info[9];
+                                purchase['items'] = info[10];
+                                this.purchase_info.push(purchase);
+                            }
                         }
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             },
 
             edit_username() {
@@ -278,7 +284,16 @@
         gap: 1rem;
     }
 
-    .user-id-container, .username-container, .password-container, .email-container, .user-type-container {
+    .info-row {
+        width: 100%;
+        height: 50vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .user-id-container, .username-container, .password-container, .email-container, .user-type-container{
         display: flex;
         width: 49%;
         border-style: solid;
