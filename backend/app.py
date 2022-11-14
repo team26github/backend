@@ -110,7 +110,6 @@ def edit():
         if request.args.get('request', '') == 'email':
             email = request.args.get('email', '')
             userid = request.args.get('userid', '')
-            print("UserID: "+userid+" Email:"+email)
             query = f'UPDATE UserInfo SET Email = "{email}" WHERE UserID = {userid}'
             cursor.execute(query)
             db.commit()
@@ -245,15 +244,12 @@ def get_info():
             'results': results
         })
 
-
 @app.route('/purchase-info', methods=['GET'])
 def get_purchase_info():
     user_id = request.args.get('user_id', '')
-    results = {}
     cursor = db.cursor()
 
     query = f'SELECT * FROM Purchases WHERE USER_ID = "{user_id}"'
-    print(user_id)
     cursor.execute(query)
     results = cursor.fetchall()
 
@@ -267,6 +263,28 @@ def get_purchase_info():
             'status': 'failure',
             'results': results
         })
+
+# @app.route('/purchase-info', methods=['GET'])
+# def get_purchase_info():
+#     user_id = request.args.get('user_id', '')
+#     results = {}
+#     cursor = db.cursor()
+
+#     query = f'SELECT * FROM Purchases WHERE USER_ID = "{user_id}"'
+#     print(user_id)
+#     cursor.execute(query)
+#     results = cursor.fetchall()
+
+#     if len(results) > 0:
+#         return jsonify({
+#             'status': 'success',
+#             'results': results
+#         })
+#     else:
+#         return jsonify({
+#             'status': 'failure',
+#             'results': results
+#         })
 
 
 @app.route('/apply', methods=['POST'])
@@ -473,10 +491,11 @@ def submit():
     reason = request.args.get('reason', '')
     driver = request.args.get('driver', '')
     sponsor_id = request.args.get('sponsor', '')
-    print(driver)
+
     query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
     cursor.execute(query)
     results = cursor.fetchall()
+
     driver_id=results[0][0]
     query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{driver_id}","{num_points}","{datetime.now()}","{reason}","{sponsor_id}")'
     cursor.execute(query)

@@ -34,21 +34,25 @@
         </div>
         <div class="row">
             <div class="purchases-container">
-                <p><strong>View Past Purchases</strong></p>
+                <p><strong>View Past Purchases</strong></p>&nbsp;
                 <label class="purchases">Choose a Purchase: </label>
-                <select class="purchases" @change="get_purchase($event)">
+
+                <select class="dropdown-menu" @change="get_purchase($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="purchase in purchase_info" :key="purchase">{{ purchase }}</option>
+                    <option v-for="purchase in purchase_info" :key="purchase">{{purchase.items}}</option>
                 </select>
+
                 <button @click="show_purchases = !show_purchases">{{ (show_purchases ? "Hide" : "View") }}</button>
             </div> 
         </div>
         <div class="info-row">
             <div class="purchases" v-if="show_purchases">
                 <div class="purchases" v-for="purchase in display_purchases()" :key="purchase">
-                    <p><strong>Order ID:</strong> {{ purchase.order_id }}</p>
+                    <p><strong>Order Email:</strong> {{ purchase.email }}</p>
+                    <br>
                     <p><strong>Items:</strong> {{ purchase.items }}</p>
-                    <p><strong>Points Cost:</strong> {{ purchase.points_total }}</p>
+                    <br>
+                    <p><strong>Points Cost:</strong> {{ purchase.point_total }}</p>
                 </div>
             </div>
         </div>
@@ -96,6 +100,8 @@
                         this.password = res.data.results[0][1];
                         this.email = res.data.results[0][3];
 
+                        this.get_purchase_info();
+
                     }
                     else {
                         console.log('Unsuccessful');
@@ -104,8 +110,6 @@
                 .catch((error) => {
                     console.log(error);
                 })
-
-            this.get_purchase_info();
         },
 
         methods: {
@@ -130,7 +134,7 @@
                 if (this.selected_purchase === 'All') return this.purchase_info;
                 else {
                     for (let p of this.purchase_info) {
-                        if (p.order_id === this.selected_purchase) return [p];
+                        if (p.items === this.selected_purchase) return [p];
                     }
                 }
             },
@@ -312,6 +316,8 @@
     }
 
     p {
+        display: inline-block;
+        width: auto;
         margin-left: 5px;
     }
 
@@ -319,7 +325,13 @@
         margin-left: 0;
     }
 
-    p {
-        margin-left: 5px;
+    .dropdown-menu>li>a {
+    word-wrap: break-word;
+    white-space: normal;
     }
+
+    .dropdown-menu{
+        max-width: 200px;
+    }
+
 </style>
