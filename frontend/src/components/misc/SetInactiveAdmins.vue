@@ -1,14 +1,14 @@
 <template>
     <div class="profile-container">
         <form style="max-width:800px;margin:auto">
-            <h1>Set Drivers Inactive</h1>
+            <h1>Set Users Inactive</h1>
 
-            <div>Select Driver:</div>
+            <div>Select User:</div>
 
-            <select name = "selected" required>
-                <option disabled value="">Please select one driver to make inactive:</option>
+            <select name = "selected" @change="onChange($event)" required>
+                <option disabled value="">Please select one user to make inactive:</option>
                 <option value="None">None</option>
-                <option v-for="driver in drivers" :key="driver">{{driver}}</option>
+                <option v-for="user in users" :key="user">{{user}}</option>
             </select>
 
             <br><br>
@@ -30,17 +30,18 @@
             return {
                 username: null,
                 user_id: null,
-                drivers: [],
+                users: [],
                 production_path: "http://18.191.136.200",
                 localhost_path: "http://localhost:5000",
-                path: null
+                path: null,
+                user_selected:''
             };
         },
 
         methods: {
             onChange(e)
             {
-                this.sponsor_selected=e.target.value
+                this.user_selected=e.target.value
             },
 
             go_to_admin_dashboard() {
@@ -50,16 +51,31 @@
                 })
             },
 
-            fetchDrivers() {
-                axios.get(this.path + '/get-drivers', { params: { user_id: this.user_id } })
+            fetchUsers() {
+                axios.get(this.path + '/get-users')
                     .then((res) => {
                         if (res.data.status === 'success') {
                             for (const name of res.data.results) {
-                                this.drivers.push(name[0]);
+                                this.users.push(name[0]);
                             }
                         }
                     })
                     .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            submit_inactivation() {                 
+                axios.post(this.path + '/deactivate-user-admin', null, {params: {username: this.user_selected}}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot add points.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
                         console.log(error);
                     })
             },
@@ -73,7 +89,7 @@
                 .then((res) => {
                     if (res.data.status === 'success') {
                         this.user_id = res.data.results[0][0];
-                        this.fetchDrivers();
+                        this.fetchUsers();
                     }
                     else {
                         console.log('Unsuccessful');

@@ -4,7 +4,12 @@
 
         <div>Select Sponsor: {{ selected }}</div>
 
-        <select name = "selected" @change="onChange($event)" v-model="selected" required>
+        <!-- <select name = "selected" @change="onChange($event)" v-model="selected" required>
+            <option disabled value="">Please select one sponsor you would like to apply to</option>
+            <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
+        </select> -->
+
+        <select name = "selected" v-model="selected" required>
             <option disabled value="">Please select one sponsor you would like to apply to</option>
             <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
         </select>
@@ -60,7 +65,7 @@
         },
 
         mounted() {
-            this.path = this.localhost_path;
+            this.path = this.production_path;
         },
 
         methods: {
@@ -69,8 +74,10 @@
                 this.sponsor_selected=e.target.value
             },
 
-            fetchSponsors:function() {
-                axios.get(this.path + '/get-sponsors', {params: {user_id: this.user_id}})
+            fetchSponsors() {
+                let path = 'http://localhost:5000/get-sponsors';
+
+                axios.get(path, {params: {user_id: this.user_id}})
                     .then((res) => {
                         if (res.data.status === 'success') {
                             console.log(res.data);
@@ -101,6 +108,7 @@
                     })
             },
         },
+        
         created:function(){
             this.fetchSponsors();
         },

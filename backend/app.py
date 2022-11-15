@@ -50,9 +50,9 @@ def login():
         sql1 = f'SELECT UserID from UserInfo where Username ="{username}"'
         mycursor1.execute(sql1)
         result = mycursor1.fetchall()
-        sql2 = "INSERT INTO Login (UserID, UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime) VALUES (%s, %s, %s, %s, %s)"
+        sql2 = "INSERT INTO Login (UserID, UsernameAttempted, PasswordAttempted, LoginSuccessful, LoginTime, MostRecentLogin) VALUES (%s, %s, %s, %s, %s, %s)"
         val2 = [
-            ({result},{username}, {password}, f'{status}', datetime.now())
+            ({result},{username}, {password}, f'{status}', datetime.now(),"Yes")
         ]
         mycursor2.executemany(sql2, val2)
         db.commit()
@@ -198,13 +198,12 @@ def get_drivers():
             'results': results
         })
 
-@app.route('/get-sponsors', methods=['GET'])
-def get_sponsors():
+@app.route('/get-users', methods=['GET'])
+def get_users():
     cursor = db.cursor()
-    query = f'SELECT Username FROM UserInfo WHERE UserType = "Sponsor"'
+    query = f'SELECT Fullname FROM UserInfo WHERE Active<>"No"'
     cursor.execute(query)
     results = cursor.fetchall()
-
     if len(results) > 0:
         return jsonify({
             'status': 'success',
@@ -215,28 +214,6 @@ def get_sponsors():
             'status': 'failure',
             'results': results
         })
-
-@app.route('/purchase-info', methods=['GET'])
-def get_purchase_info():
-    user_id = request.args.get('user_id', '')
-    results = {}
-    cursor = db.cursor()
-
-    query = f'SELECT * FROM Purchases WHERE USER_ID = {"user_id"}'
-    cursor.execute(query)
-    results['purchases'] = cursor.fetchall()
-
-    if len(results) > 0:
-        return jsonify({
-            'status': 'success',
-            'results': results
-        })
-    else:
-        return jsonify({
-            'status': 'failure',
-            'results': results
-        })
-
 
 @app.route('/info', methods=['GET'])
 def get_info():
@@ -298,35 +275,22 @@ def get_catalog_items():
     if EXPIRES < datetime.now():
         get_new_token()
     
-    status = 'failure'
     sandbox_url = 'https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?'
     keywords = request.args.get('keywords', '')
     headers = {
         'Authorization': f'Bearer {EBAY_TOKEN}',
     }
     params = {
-        'limit': 100,
+        'limit': 50,
         'offset': 0,
         'q': f'({keywords})',
     }
 
     results = requests.get(f'{sandbox_url}', headers=headers, params=params).json()
 
-    cursor = db.cursor()
-    query = 'SELECT ITEMS FROM Purchases'
-    cursor.execute(query)
-    purchased = cursor.fetchall()
-
-    try:
-        results['itemSummaries']
-        status = 'success'
-    except:
-        status = 'failure'
-
     return jsonify({
-        'status': status,
-        'results': results['itemSummaries'],
-        'purchased': purchased
+        'status': 'success',
+        'results': results['itemSummaries']
     })
 
 @app.route('/update-catalog-filters', methods=['POST'])
@@ -472,7 +436,6 @@ def submit():
     reason = request.args.get('reason', '')
     driver = request.args.get('driver', '')
     sponsor_id = request.args.get('sponsor', '')
-    print(driver)
     query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
     cursor.execute(query)
     results = cursor.fetchall()
@@ -545,18 +508,11 @@ def submit_purchase():
     address_state = request.args.get('address_state', '')
     address_zip_code = request.args.get('address_zip_code', '')
     email = request.args.get('email', '')
-    items_array = json.loads(request.args.get('items', ''))
+    items = request.args.get('items', '')
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
-    user_id = request.args.get('user_id', '')
     
-    items = {}
-    index = 0
-    for item in items_array:
-        items[index] = item
-        index += 1
-    
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, USER_ID) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", {items_total}, {points_total}, "{items}", "{user_id}")'
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
     cursor.execute(query)
 
     db.commit()
@@ -567,7 +523,7 @@ def submit_purchase():
 @app.route('/add-items-to-cart', methods=['POST'])
 @cross_origin()
 def add_items_to_cart():
-    user_id = request.args.get('user_id', '')
+    sponsor_id = request.args.get('user_id', '')
     items = request.args.get('items', '')
     
     cursor = db.cursor()
@@ -605,6 +561,44 @@ def points_purchase():
     query = f'UPDATE UserInfo SET Points = "{new_points}" WHERE UserID = "{user_id}"'
 
     query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{user_id}","{num_points}","{datetime.now()}","{reason}","0")'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/deactivate-user', methods=['POST'])
+@cross_origin()
+def deactivate():
+    cursor = db.cursor()
+    status = 'failure'
+
+    username = request.args.get('username', '')
+    query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(username).split()[0]}" AND LAST_NAME="{str(username).split()[1]}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    driver_id=results[0][0]
+    query = f'UPDATE DriverApplications SET Active = "No" WHERE DRIVER_ID="{driver_id}"'
+    cursor.execute(query)
+
+    db.commit()
+    status = 'success'
+        
+    return jsonify({'status': status})
+
+@app.route('/deactivate-user-admin', methods=['POST'])
+@cross_origin()
+def deactivateadmin():
+    cursor = db.cursor()
+    status = 'failure'
+
+    username = request.args.get('username', '')
+    query = f'SELECT UserID FROM UserInfo WHERE Fullname="{username}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    user_id=results[0][0]
+    query = f'UPDATE UserInfo SET Active = "No" WHERE UserID="{user_id}"'
     cursor.execute(query)
 
     db.commit()

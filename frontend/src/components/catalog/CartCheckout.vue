@@ -93,7 +93,7 @@
             this.items = JSON.parse(this.$route.params.cart);
             this.points_total = this.$route.params.cost;
             this.items_total = this.items.length;
-            this.path = this.localhost_path;
+            this.path = this.production_path;
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
