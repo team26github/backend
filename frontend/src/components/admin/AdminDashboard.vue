@@ -14,7 +14,7 @@
         </div>
         <div class="row">
             <div class="set-inactive-admin-button">
-                <button @click="go_to_set_inactive_admins">Set Drivers Inactive</button>
+                <button @click="go_to_set_inactive_admins">Set Users Inactive</button>
             </div>
         </div>
     </div>

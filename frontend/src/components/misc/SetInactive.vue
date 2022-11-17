@@ -64,6 +64,21 @@
                         console.log(error);
                     })
             },
+            submit_inactivation() {                 
+                axios.post(this.path + '/deactivate-user', null, {params: {username: this.driver_selected}}) 
+                    .then((res) => {
+                        if (res.data.status === "success") {
+                            console.log("success");
+                        }
+                        else {
+                            window.alert("Cannot add points.");
+                        }
+                    })
+                    .catch((error) => {
+                        // esling-disable-next-line
+                        console.log(error);
+                    })
+            },
         },
 
         mounted() {
