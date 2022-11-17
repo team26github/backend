@@ -288,9 +288,21 @@ def get_catalog_items():
 
     results = requests.get(f'{sandbox_url}', headers=headers, params=params).json()
 
+    cursor = db.cursor()
+    query = 'SELECT ITEMS FROM Purchases'
+    cursor.execute(query)
+    purchased = cursor.fetchall()
+
+    try:
+        results['itemSummaries']
+        status = 'success'
+    except:
+        status = 'failure'
+
     return jsonify({
-        'status': 'success',
-        'results': results['itemSummaries']
+        'status': status,
+        'results': results['itemSummaries'],
+        'purchased': purchased
     })
 
 @app.route('/update-catalog-filters', methods=['POST'])

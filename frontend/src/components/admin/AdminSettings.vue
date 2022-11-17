@@ -40,6 +40,30 @@
                 <button @click="go_to_new_admin">Add New Admin</button>
             </div>
         </div>
+        <!--
+        <div class="row">
+            <div class="sponsor-point-spending">
+                <p><strong>View Points Spent by Sponsors</strong></p>
+                <label class="sponsor-points">Choose a Sponsor:</label>
+                <select class="sponsor-points" @change="get_driver($event)">
+                    <option value="All" selected>All</option>
+                    <option v-for="sponsor in sponsor_info" :key="sponsor">{{ sponsor.full_name }}</option>
+                </select>
+                <button @click="show_sponsor_points = !show_sponsor_points">{{ (show_sponsor_points ? "Hide" : "View") }}</button>
+            </div> 
+        </div>
+        -->
+        <div class="reports-container">
+                <div class="admin-reports">
+                    <p><strong>View Admin Reports: </strong></p>
+                    <a href="https://app.powerbi.com/reportEmbed?reportId=f793ef90-40fc-44b6-8a7e-62879d982d19&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Power BI</a> 
+                        </div>
+                </div>
+                <div class="admin-audit-log">
+                    <p><strong>View Audit Log: </strong></p>
+                    <a href="https://app.powerbi.com/reportEmbed?reportId=065f774f-7112-4118-85fb-bc9abe7ee704&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Audit Log in PowerBI</a> 
+                </div>
+            </div>
         <div class="info-row">
             <div class="driver-container" v-if="show_drivers">
                 <div class="driver-info" v-for="driver in display_drivers()" :key="driver">
@@ -80,17 +104,15 @@
                     <button v-else @click="update_info(admin, new_info)" class="update-button">Update</button>
                 </div>
             </div>
-            <div class="row">
-            <div class="admin-reports">
-                <p><strong>View Admin Reports: </strong></p>
-                <a href="https://app.powerbi.com/reportEmbed?reportId=f793ef90-40fc-44b6-8a7e-62879d982d19&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Power BI</a> 
-                    </div>
+            <!--Not quite finished here, sponsor information still needed from DB
+            <div class="sponsor-point-container" v-if="show_sponsor_points">
+                <div class="sponsor-point-info" v-for="sponsor in display_sponsor_points()" :key="sponsor">
+                    <p><strong>Sponsor:</strong> {{ sponsor.full_name }}</p>
+                    <p><strong>Total Points Spent:</strong> {{ sponsor.total_points_spent }}</p>
+                </div>
             </div>
-            <div class="admin-audit-log">
-                <p><strong>View Audit Log: </strong></p>
-                <a href="https://app.powerbi.com/reportEmbed?reportId=065f774f-7112-4118-85fb-bc9abe7ee704&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Audit Log in PowerBI</a> 
-                    </div>
-            </div>
+            -->
+        </div>
     </div>
 </template>
 
@@ -384,5 +406,22 @@
         margin-left: 5%;
         margin-bottom: 1.5rem;
         width: 60px;
+    }
+
+    .reports-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+    }
+    .admin-reports-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .admin-reports {
+        display: flex;
+        flex-direction: column;
     }
 </style>
