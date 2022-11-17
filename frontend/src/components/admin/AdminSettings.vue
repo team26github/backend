@@ -86,7 +86,11 @@
                 <a href="https://app.powerbi.com/reportEmbed?reportId=f793ef90-40fc-44b6-8a7e-62879d982d19&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Power BI</a> 
                     </div>
             </div>
-        </div>
+            <div class="admin-audit-log">
+                <p><strong>View Audit Log: </strong></p>
+                <a href="https://app.powerbi.com/reportEmbed?reportId=065f774f-7112-4118-85fb-bc9abe7ee704&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Audit Log in PowerBI</a> 
+                    </div>
+            </div>
     </div>
 </template>
 
