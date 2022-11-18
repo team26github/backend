@@ -10,6 +10,8 @@
         <button type="submit" id="login-button" @click.prevent="get_login" :disabled="disabled" class="btn">Login</button>
       </form>
       <p>{{ status }}</p>
+      <a href="/forgotpassword">Forgot Password?</a>
+      <br>
       <button @click="driver_application" class="btn">Apply to be a Driver Here!</button>
 
       

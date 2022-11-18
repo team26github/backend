@@ -53,6 +53,8 @@
                     <p><strong>Items:</strong> {{ purchase.items }}</p>
                     <br>
                     <p><strong>Points Cost:</strong> {{ purchase.point_total }}</p>
+                    <br>
+                    <p><strong>Order Status:</strong> Pending Delivery</p>
                 </div>
             </div>
         </div>
