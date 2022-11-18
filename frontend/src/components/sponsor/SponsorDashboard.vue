@@ -4,22 +4,22 @@
         <br><br>
         <div class="row">
             <div class="add-point-container">
-                <button @click="go_to_add_points"> Add Points to Driver</button>
+                <button @click="go_to_add_points"><span>Add Points to Driver</span></button>
             </div>
         </div>
         <div class="row">
             <div class="remove-points-button">
-                <button @click="go_to_remove_points">Deduct Points from Driver</button>
+                <button @click="go_to_remove_points"><span>Deduct Points from Driver</span></button>
             </div>
         </div>
         <div class="row">
             <div class="pending-applications-button">
-                <button @click="go_to_pending_applications">Pending Applications</button>
+                <button @click="go_to_pending_applications"><span>Pending Applications</span></button>
             </div>
         </div>
         <div class="row">
             <div class="set-inactive-button">
-                <button @click="go_to_set_inactive">Set Drivers Inactive</button>
+                <button @click="go_to_set_inactive"><span>Set Drivers Inactive</span></button>
             </div>
         </div>
     </div>
@@ -101,7 +101,44 @@
     button {
         margin-right: 5px;
         margin-left: 5px;
+        display: block;
+        width: 200px;
+        height: 40px;
+        font-size: 13px;
+        text-decoration: none;
+        color: black;
+        border: 2px solid black;
+        letter-spacing: 1px;
+        text-align: center;
+        position: relative;
+        transition: all 0.35s;
     }
+
+    button span {
+        position: relative;
+        z-index: 2;
+    }
+
+    button::after {
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: darkorange;
+        transition: all 0.35s;
+    }
+
+    button:hover {
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover::after {
+        width: 100%;
+    }
+
     .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
         display: flex;
         width: 49%;
