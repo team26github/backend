@@ -12,8 +12,8 @@
                     <option value="All" selected>All</option>
                     <option v-for="driver in driver_info" :key="driver">{{ driver.full_name }}</option>
                 </select>
-                <button @click="show_drivers = !show_drivers">{{ (show_drivers ? "Hide" : "View") }}</button>
-                <button @click="go_to_new_driver">Add New Driver</button>
+                <button @click="show_drivers = !show_drivers"><span>{{ (show_drivers ? "Hide" : "View") }}</span></button>
+                <button @click="go_to_new_driver"><span>Add New Driver</span></button>
             </div> 
         </div>
         <div class="row">
@@ -24,8 +24,8 @@
                     <option value="All" selected>All</option>
                     <option v-for="sponsor in sponsor_info" :key="sponsor">{{ sponsor.full_name }}</option>
                 </select>
-                <button @click="show_sponsors = !show_sponsors">{{ (show_sponsors ? "Hide" : "View") }}</button>
-                <button @click="go_to_new_sponsor">Add New Sponsor</button>
+                <button @click="show_sponsors = !show_sponsors"><span>{{ (show_sponsors ? "Hide" : "View") }}</span></button>
+                <button @click="go_to_new_sponsor"><span>Add New Sponsor</span></button>
             </div>
         </div>
         <div class="row">
@@ -36,8 +36,8 @@
                     <option value="All" selected>All</option>
                     <option v-for="admin in admin_info" :key="admin">{{ admin.full_name }}</option>
                 </select>
-                <button @click="show_admins = !show_admins;">{{ (show_admins ? "Hide" : "View") }}</button>
-                <button @click="go_to_new_admin">Add New Admin</button>
+                <button @click="show_admins = !show_admins;"><span>{{ (show_admins ? "Hide" : "View") }}</span></button>
+                <button @click="go_to_new_admin"><span>Add New Admin</span></button>
             </div>
         </div>
         <!--
@@ -353,7 +353,44 @@
     }
     
     button {
+        margin-right: 5px;
         margin-left: 5px;
+        display: block;
+        width: 200px;
+        height: 30px;
+        font-size: 13px;
+        text-decoration: none;
+        color: black;
+        border: 2px solid black;
+        letter-spacing: 1px;
+        text-align: center;
+        position: relative;
+        transition: all 0.35s;
+    }
+
+    button span {
+        position: relative;
+        z-index: 2;
+    }
+
+    button::after {
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: lightskyblue;
+        transition: all 0.35s;
+    }
+
+    button:hover {
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover::after {
+        width: 100%;
     }
 
     .driver-profiles-permissions, .sponsor-profiles-permissions, .admin-profiles-permissions {

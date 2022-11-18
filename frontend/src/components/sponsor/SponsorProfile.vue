@@ -272,7 +272,6 @@
     button {
         margin-right: 5px;
         margin-left: auto;
-        margin-left: 5px;
         display: block;
         width: 150px;
         height: 30px;
