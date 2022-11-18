@@ -37,6 +37,9 @@
         </div>
 
         <button type="submit" class="btn" @click="submit_application" >Apply</button> 
+        
+        <br><br>
+        <div style="text-align:center"><a href="/login">Return to Login</a></div>
     </form>
 
 </template>
