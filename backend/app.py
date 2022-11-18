@@ -15,7 +15,7 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 def get_new_token():
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic R3JhbnRHb24tVGVhbTI2LVNCWC1hZDI2MDVjYjQtNWNlMjdhNjY6U0JYLWQyNjA1Y2I0NWNiMi1iMWYzLTRjMjItOGU4NS0zMjA5'
+        'Authorization': 'Basic R3JhbnRHb24tVHJ1Y2tlckktU0JYLTQ3ZGMwZmE3Zi01ZmFjZTdmMDpTQlgtN2RjMGZhN2Y5YmFkLTQ0MDYtNDY1NS05YzUxLTkyOWQ='
     }
 
     body = {

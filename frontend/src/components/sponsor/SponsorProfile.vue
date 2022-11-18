@@ -8,7 +8,7 @@
             <div class="username-container">
                 <div class="username">
                     <p><strong>Username: </strong>{{ username }}</p>
-                    <button @click="edit_username">Edit Username</button>
+                    <button @click="edit_username"><span>Edit Username</span></button>
                 </div>
             </div>
         </div>
@@ -16,8 +16,14 @@
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
-                    <button @click="edit_password">Edit Password</button>
-                    <button class="show-password" @click="show_password">{{ button_text }}</button>
+                    <button @click="edit_password"><span>Edit Password</span></button>
+                    <button class="show-password" @click="show_password"><span>{{ button_text }}</span></button>
+                </div>
+            </div>
+            <div class="drivers-container">
+                <div class="drivers">
+                    <p><strong>Drivers: </strong>{{ selected }} </p>
+                    <button @click="fetchDrivers"><span>View Drivers</span></button>
                 </div>
             </div>
         </div>
@@ -25,7 +31,7 @@
             <div class="email-container">
                 <div class="email">
                     <p><strong>Email: </strong>{{ email }}</p>
-                    <button @click="edit_email">Edit Email</button>
+                    <button @click="edit_email"><span>Edit Email</span></button>
                 </div>
             </div>
             <div class="user-type-container">
@@ -33,12 +39,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="drivers-container">
-                <div class="drivers">
-                    <p><strong>Drivers: </strong>{{ selected }}
-                    <button @click="fetchDrivers">View Drivers</button></p>
-                </div>
-            </div>
+            
         </div>
         <div class="row">
             <option v-for="driver in drivers" :key="driver">{{driver}}</option>
@@ -243,7 +244,7 @@
         background-color: #73bfb8;
     }
 
-    .password, .username, .email {
+    .password, .username, .email, .drivers {
         width: 100%;
         display: flex;
         flex-direction: row;
@@ -259,18 +260,55 @@
         gap: 1rem;
     }
 
-    .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
+    .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-container {
         display: flex;
         width: 49%;
         border-style: solid;
         border-color: black;
-        justify-content: center;
+        justify-content: start;
         align-items: center;
     }
 
     button {
         margin-right: 5px;
         margin-left: auto;
+        margin-left: 5px;
+        display: block;
+        width: 150px;
+        height: 30px;
+        font-size: 13px;
+        text-decoration: none;
+        color: black;
+        border: 2px solid black;
+        letter-spacing: 1px;
+        text-align: center;
+        position: relative;
+        transition: all 0.35s;
+    }
+
+    button span {
+        position: relative;
+        z-index: 2;
+    }
+
+    button::after {
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: darkorange;
+        transition: all 0.35s;
+    }
+
+    button:hover {
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover::after {
+        width: 100%;
     }
 
     .password-container .password .show-password .show-drivers{
