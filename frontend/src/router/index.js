@@ -24,6 +24,8 @@ import AddPointsAdmin from '../components/points/AddPointsAdmin.vue';
 import RemovePointsAdmin from '../components/points/RemovePointsAdmin.vue';
 import Cart from '../components/catalog/Cart.vue';
 import CartCheckout from '../components/catalog/CartCheckout.vue';
+import ForgotPassword from '../components/misc/ForgotPassword.vue';
+
 
 const routes = [
     {
@@ -154,6 +156,11 @@ const routes = [
         path: '/driver/:username/checkout/:cart*/:cost',
         name: 'cart-checkout',
         component: CartCheckout
+    },
+    {
+        path: '/forgotpassword',
+        name: 'forgot-password',
+        component: ForgotPassword
     },
 ];
 
