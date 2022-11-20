@@ -96,6 +96,14 @@ def reset_passwd():
         cursor.execute(query2)
         db.commit()
 
+        query3 = "INSERT INTO PasswordUpdateLog (UpdateTime, NewPassword, UserID) VALUES (%s, %s, %s)"
+        val = [
+            (datetime.now(), {new_passwd}, {user_id})
+        ]
+        cursor2 = db.cursor()
+        cursor2.executemany(query3, val)
+        db.commit()
+
         return jsonify({
             'status': 'success',
             'results': results
@@ -167,6 +175,14 @@ def edit():
             cursor.execute(query)
             db.commit()
             status = 'success'
+
+            query3 = "INSERT INTO PasswordUpdateLog (UpdateTime, NewPassword, UserID) VALUES (%s, %s, %s)"
+            val = [
+                (datetime.now(), {password}, {userid})
+            ]
+            cursor2 = db.cursor()
+            cursor2.executemany(query3, val)
+            db.commit()
             
         elif request.args.get('request', '') == 'max_points':
             max_points = request.args.get('max_points', '')
@@ -409,6 +425,7 @@ def new_driver():
     cursor.execute(query)
     results = cursor.fetchall()
     sponsor_id=results[0][0]
+    print(sponsor_id)
     query = f'INSERT INTO UserInfo (passwd, UserType, Email, Username, PointsLimit, ExpirationPeriod, SponsorID, DollarPointValue, Fullname) VALUES("{passwd}","Driver", "{email}","{username}",100000, 12, "{sponsor_id}", 3.25, "{first_name} {last_name}")'
     cursor.execute(query)
 
