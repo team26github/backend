@@ -76,6 +76,38 @@ def login():
             'results': results
         })
 
+@app.route('/reset-passwd', methods=['GET'])
+def reset_passwd():
+    full_name = request.args.get('full_name', '')
+    username = request.args.get('username', '')
+    new_passwd = request.args.get('new_passwd', '')
+
+    cursor = db.cursor()
+    query = f'SELECT * FROM UserInfo where (FullName = "{full_name}" AND Username = "{username}");'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    
+    if len(results) > 0:
+        user_id = results[0][0]
+        cursor = db.cursor()
+        query2 = f'''UPDATE UserInfo
+                    SET Passwd = "{new_passwd}"
+                    WHERE UserID = {user_id}'''
+        cursor.execute(query2)
+        db.commit()
+
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        print("nothing")
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+
 @app.route('/edit', methods=['GET', 'POST'])
 @cross_origin()
 def edit():
