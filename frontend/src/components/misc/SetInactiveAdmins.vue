@@ -82,7 +82,7 @@
         },
 
         mounted() {
-            this.path = this.production_path;
+            this.path = this.localhost_path;
             this.username = this.$route.params.username;
 
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
