@@ -230,6 +230,27 @@ def get_drivers():
     user_id = request.args.get('user_id', '')
     cursor = db.cursor()
     
+    query = f'SELECT FullName FROM UserInfo WHERE SponsorID = {user_id}'
+
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+@app.route('/get-driver-apps', methods=['GET'])
+def get_driver_applications():
+    user_id = request.args.get('user_id', '')
+    cursor = db.cursor()
+    
     query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM DriverApplications WHERE SPONSOR_ID = {user_id} AND APP_STATUS = "Pending"'
 
     cursor.execute(query)
@@ -550,14 +571,25 @@ def submit():
     reason = request.args.get('reason', '')
     driver = request.args.get('driver', '')
     sponsor_id = request.args.get('sponsor', '')
-    query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
+    
+    query = f'SELECT UserID FROM UserInfo WHERE FullName = "{driver}"'
     cursor.execute(query)
     results = cursor.fetchall()
     driver_id=results[0][0]
+    
     query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{driver_id}","{num_points}","{datetime.now()}","{reason}","{sponsor_id}")'
     cursor.execute(query)
-
     db.commit()
+    
+    query = f'SELECT Points FROM UserInfo WHERE UserID = {driver_id}'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    current_points = results[0][0]
+
+    query = f'UPDATE UserInfo SET Points = {current_points + int(num_points)} WHERE UserID = {driver_id}'
+    cursor.execute(query)
+    db.commit()
+
     status = 'success'
         
     return jsonify({'status': status})
