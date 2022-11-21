@@ -42,7 +42,7 @@
     },
 
     mounted() {
-      this.path = this.localhost_path;
+      this.path = this.production_path;
     },
 
     methods: {
