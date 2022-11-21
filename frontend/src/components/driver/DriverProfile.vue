@@ -8,7 +8,7 @@
             <div class="username-container">
                 <div class="username">
                     <p><strong>Username: </strong>{{ username }}</p>
-                    <button @click="edit_username">Edit Username</button>
+                    <!-- <button @click="edit_username"><span>Edit Username</span></button> -->
                 </div>
             </div>
         </div>
@@ -16,8 +16,8 @@
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
-                    <button @click="edit_password">Edit Password</button>
-                    <button class="show-password" @click="show_password">{{ button_text }}</button>
+                    <button @click="edit_password"><span>Edit Password</span></button>
+                    <button class="show-password" @click="show_password"><span>{{ button_text }}</span></button>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             <div class="email-container">
                 <div class="email">
                     <p><strong>Email: </strong>{{ email }}</p>
-                    <button @click="edit_email">Edit Email</button>
+                    <button @click="edit_email"><span>Edit Email</span></button>
                 </div>
             </div>
             <div class="user-type-container">
@@ -42,7 +42,7 @@
                     <option v-for="purchase in purchase_info" :key="purchase">{{purchase.items}}</option>
                 </select>
 
-                <button @click="show_purchases = !show_purchases">{{ (show_purchases ? "Hide" : "View") }}</button>
+                <button @click="show_purchases = !show_purchases" class="btn"><span>{{ (show_purchases ? "Hide" : "View") }}</span></button>
             </div> 
         </div>
         <div class="info-row">
@@ -53,6 +53,8 @@
                     <p><strong>Items:</strong> {{ purchase.items }}</p>
                     <br>
                     <p><strong>Points Cost:</strong> {{ purchase.point_total }}</p>
+                    <br>
+                    <p><strong>Order Status:</strong> Pending Delivery</p>
                 </div>
             </div>
         </div>
@@ -161,35 +163,35 @@
                     })
             },
 
-            edit_username() {
-                let new_username = window.prompt("Enter new username");
-                axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
-                    .then((res) => {
-                        if (res.data.status === 'success') {       
-                            axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: this.user_id}})
-                                .then((res) => {
-                                    if (res.data.status === "success") {
-                                        this.username = new_username;
-                                        console.log("success");
-                                    }
-                                    else {
-                                        window.alert("Username change unsuccessful");
-                                    }
-                                })
-                                .catch((error) => {
-                                    // esling-disable-next-line
-                                    console.log(error);
-                                })
-                        }
-                        else {
-                            window.alert("That username is unavailable.");
-                        }
-                    })
-                    .catch((error) => {
-                        // esling-disable-next-line
-                        console.log(error);
-                    })
-            },
+            // edit_username() {
+            //     let new_username = window.prompt("Enter new username");
+            //     axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
+            //         .then((res) => {
+            //             if (res.data.status === 'success') {       
+            //                 axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: this.user_id}})
+            //                     .then((res) => {
+            //                         if (res.data.status === "success") {
+            //                             this.username = new_username;
+            //                             console.log("success");
+            //                         }
+            //                         else {
+            //                             window.alert("Username change unsuccessful");
+            //                         }
+            //                     })
+            //                     .catch((error) => {
+            //                         // esling-disable-next-line
+            //                         console.log(error);
+            //                     })
+            //             }
+            //             else {
+            //                 window.alert("That username is unavailable.");
+            //             }
+            //         })
+            //         .catch((error) => {
+            //             // esling-disable-next-line
+            //             console.log(error);
+            //         })
+            // },
 
             edit_password() {
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
@@ -309,6 +311,48 @@
     button {
         margin-right: 5px;
         margin-left: auto;
+        display: block;
+        width: 150px;
+        height: 30px;
+        font-size: 13px;
+        text-decoration: none;
+        color: black;
+        border: 2px solid black;
+        letter-spacing: 1px;
+        text-align: center;
+        position: relative;
+        transition: all 0.35s;
+    }
+
+    button span {
+        position: relative;
+        z-index: 2;
+    }
+
+    button::after {
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: darkred;
+        transition: all 0.35s;
+    }
+
+    button:hover {
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover::after {
+        width: 100%;
+    }
+
+    .purchases-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 
     .password-container .password .show-password {

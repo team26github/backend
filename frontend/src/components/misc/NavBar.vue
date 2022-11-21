@@ -70,6 +70,7 @@
         color: white;
         text-decoration: none;
         font-size: 17px;
+        transition: 0.2s ease-in;
     }
     .nav b {
         float: left;
@@ -77,15 +78,24 @@
         color: white;
         text-decoration: none;
         font-size: 20px;
+        transition: 0.2s ease-in;
     }
     
     .nav a:hover {
         background-color: #8c72e0;
         cursor: pointer;
+        box-shadow: 0 0 5px #8c72e0,
+                    0 0 25px #8c72e0,
+                    0 0 50px #8c72e0,
+                    0 0 200px #8c72e0;
     }
     .nav b:hover {
         background-color: #8c72e0;
         cursor: pointer;
+        box-shadow: 0 0 5px #8c72e0,
+                    0 0 25px #8c72e0,
+                    0 0 50px #8c72e0,
+                    0 0 200px #8c72e0;
     }
     
     @media screen and (max-width: 500px) {

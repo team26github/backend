@@ -4,33 +4,33 @@
         <h1>&nbsp;Sponsor Settings<br></h1>
         <div class="row">
             <div class="max_points">
-                        <p><strong>Maximum Value of Driver Points: </strong>{{ max_points }}
-                        <button @click="edit_max_points">Edit Maximum Points</button></p>
+                        <p><strong>Maximum Value of Driver Points: </strong>{{ max_points }}</p>
+                        <button @click="edit_max_points"><span>Edit Maximum Points</span></button>
             </div>
         </div>  
         <div class="row">
             <div class="expiration_period">
-                    <p><strong>Expiration Period of Driver Points: </strong>{{ expiration_period }} <strong> months </strong>
-                    <button @click="edit_expiration">Edit Expiration Period</button></p>
+                    <p><strong>Expiration Period of Driver Points: </strong>{{ expiration_period }} <strong> months </strong></p>
+                    <button @click="edit_expiration"><span>Edit Expiration Period</span></button>
             </div>
         </div> 
         <div class="row">
             <div class="catalog-item-points">
                 <p><strong>Dollar to Point Conversion: </strong>$1 = {{ dollar_to_point_value }} point(s)</p>
-                <button @click="edit_point_conversion">Edit Point Conversion</button>
+                <button @click="edit_point_conversion"><span>Edit Point Conversion</span></button>
             </div>
         </div>
         <div class="row">
             <div class="catalog-items">
                 <p><strong>Catalog Filters:</strong></p>
                 <p v-for="filter in catalog_filters" :key="filter">&nbsp;{{ filter }}</p>
-                <button @click="edit_catalog">Edit Catalog Filters</button>
+                <button @click="edit_catalog"><span>Edit Catalog Filters</span></button>
             </div>
         </div>
         <div class="row">
             <div class="add-sponsor">
-                <p><strong>Add New Sponsor:</strong>
-                <button @click="go_to_new_sponsor">Add New Sponsor</button></p>
+                <p><strong>Add New Sponsor:</strong></p>
+                <button @click="go_to_new_sponsor"><span>Add New Sponsor</span></button>
             </div>
         </div>
         <div class="row">
@@ -194,6 +194,43 @@
     button {
         margin-right: 5px;
         margin-left: 5px;
+        margin-left: 5px;
+        display: block;
+        width: 200px;
+        height: 30px;
+        font-size: 13px;
+        text-decoration: none;
+        color: black;
+        border: 2px solid black;
+        letter-spacing: 1px;
+        text-align: center;
+        position: relative;
+        transition: all 0.35s;
+    }
+
+    button span {
+        position: relative;
+        z-index: 2;
+    }
+
+    button::after {
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: darkorange;
+        transition: all 0.35s;
+    }
+
+    button:hover {
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover::after {
+        width: 100%;
     }
     .user-id-container, .username-container, .password-container, .email-container, .user-type-container, .drivers-list-container {
         display: flex;
@@ -207,6 +244,12 @@
         width: 100%;
     }
     .catalog-item-points, .catalog-items {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .expiration_period, .max_points, .add-sponsor {
         display: flex;
         flex-direction: row;
         align-items: center;

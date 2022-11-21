@@ -76,6 +76,46 @@ def login():
             'results': results
         })
 
+@app.route('/reset-passwd', methods=['GET'])
+def reset_passwd():
+    full_name = request.args.get('full_name', '')
+    username = request.args.get('username', '')
+    new_passwd = request.args.get('new_passwd', '')
+
+    cursor = db.cursor()
+    query = f'SELECT * FROM UserInfo where (FullName = "{full_name}" AND Username = "{username}");'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    
+    if len(results) > 0:
+        user_id = results[0][0]
+        cursor = db.cursor()
+        query2 = f'''UPDATE UserInfo
+                    SET Passwd = "{new_passwd}"
+                    WHERE UserID = {user_id}'''
+        cursor.execute(query2)
+        db.commit()
+
+        query3 = "INSERT INTO PasswordUpdateLog (UpdateTime, NewPassword, UserID) VALUES (%s, %s, %s)"
+        val = [
+            (datetime.now(), {new_passwd}, {user_id})
+        ]
+        cursor2 = db.cursor()
+        cursor2.executemany(query3, val)
+        db.commit()
+
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        # print("nothing")
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+
 @app.route('/edit', methods=['GET', 'POST'])
 @cross_origin()
 def edit():
@@ -110,7 +150,7 @@ def edit():
         if request.args.get('request', '') == 'email':
             email = request.args.get('email', '')
             userid = request.args.get('userid', '')
-            print("UserID: "+userid+" Email:"+email)
+            # print("UserID: "+userid+" Email:"+email)
             query = f'UPDATE UserInfo SET Email = "{email}" WHERE UserID = {userid}'
             cursor.execute(query)
             db.commit()
@@ -135,6 +175,14 @@ def edit():
             cursor.execute(query)
             db.commit()
             status = 'success'
+
+            query3 = "INSERT INTO PasswordUpdateLog (UpdateTime, NewPassword, UserID) VALUES (%s, %s, %s)"
+            val = [
+                (datetime.now(), {password}, {userid})
+            ]
+            cursor2 = db.cursor()
+            cursor2.executemany(query3, val)
+            db.commit()
             
         elif request.args.get('request', '') == 'max_points':
             max_points = request.args.get('max_points', '')
@@ -197,6 +245,25 @@ def get_drivers():
             'status': 'failure',
             'results': results
         })
+
+@app.route('/get-sponsors', methods=['GET'])
+def get_sponsors():
+    cursor = db.cursor()
+    query = f'SELECT Username FROM UserInfo WHERE UserType = "Sponsor"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
 
 @app.route('/get-users', methods=['GET'])
 def get_users():
@@ -358,6 +425,7 @@ def new_driver():
     cursor.execute(query)
     results = cursor.fetchall()
     sponsor_id=results[0][0]
+    print(sponsor_id)
     query = f'INSERT INTO UserInfo (passwd, UserType, Email, Username, PointsLimit, ExpirationPeriod, SponsorID, DollarPointValue, Fullname) VALUES("{passwd}","Driver", "{email}","{username}",100000, 12, "{sponsor_id}", 3.25, "{first_name} {last_name}")'
     cursor.execute(query)
 
@@ -366,6 +434,40 @@ def new_driver():
         
     return jsonify({'status': status})
 
+@app.route('/new-user', methods=['GET'])
+def new_user():
+    cursor = db.cursor()
+    status = 'failure'
+    username = request.args.get('username', '')
+    email = request.args.get('email', '')
+    temp = {
+        'Username': '',
+        'Email': ''
+    }
+    results = []
+
+    query = f'SELECT Username FROM UserInfo WHERE Username = "{username}"'
+    cursor.execute(query)
+    temp['Username'] = cursor.fetchall()
+
+    query = f'SELECT Email FROM UserInfo WHERE Email = "{email}"'
+    cursor.execute(query)
+    temp['Email'] = cursor.fetchall()
+
+    if temp['Email'] != ():
+        results.append('Email')
+    
+    if temp['Username'] != ():
+        results.append('Username')
+    
+    status = 'success'
+
+    return jsonify({
+        'status': status,
+        'results': results
+    })
+
+    
 @app.route('/new-sponsor', methods=['POST'])
 @cross_origin()
 def new_sponser():
@@ -507,6 +609,25 @@ def submit_deduction():
         
     return jsonify({'status': status})
 
+
+@app.route('/purchase-info', methods=['GET'])
+def get_purchase_info():
+    user_id = request.args.get('user_id', '')
+    cursor = db.cursor()
+    query = f'SELECT * FROM Purchases WHERE USER_ID = "{user_id}"'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
 @app.route('/submit-purchase', methods=['POST'])
 @cross_origin()
 def submit_purchase():
@@ -523,8 +644,8 @@ def submit_purchase():
     items = request.args.get('items', '')
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
-    
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}")'
+        
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, TIMESTAMP) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}", "{datetime.now()}")'
     cursor.execute(query)
 
     db.commit()
@@ -535,7 +656,7 @@ def submit_purchase():
 @app.route('/add-items-to-cart', methods=['POST'])
 @cross_origin()
 def add_items_to_cart():
-    sponsor_id = request.args.get('user_id', '')
+    user_id = request.args.get('user_id', '')
     items = request.args.get('items', '')
     
     cursor = db.cursor()
