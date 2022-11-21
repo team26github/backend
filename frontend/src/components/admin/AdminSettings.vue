@@ -54,16 +54,15 @@
         </div>
         -->
         <div class="reports-container">
-                <div class="admin-reports">
-                    <p><strong>View Admin Reports: </strong></p>
-                    <a href="https://app.powerbi.com/reportEmbed?reportId=f793ef90-40fc-44b6-8a7e-62879d982d19&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Power BI</a> 
-                        </div>
-                </div>
-                <div class="admin-audit-log">
-                    <p><strong>View Audit Log: </strong></p>
-                    <a href="https://app.powerbi.com/reportEmbed?reportId=065f774f-7112-4118-85fb-bc9abe7ee704&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Audit Log in PowerBI</a> 
-                </div>
+            <div class="admin-reports">
+                <p><strong>View Admin Reports: </strong></p>
+                <a href="https://app.powerbi.com/reportEmbed?reportId=f793ef90-40fc-44b6-8a7e-62879d982d19&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Power BI</a> 
             </div>
+            <div class="admin-audit-log">
+                <p><strong>View Audit Log: </strong></p>
+                <a href="https://app.powerbi.com/reportEmbed?reportId=065f774f-7112-4118-85fb-bc9abe7ee704&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Audit Log in PowerBI</a> 
+            </div>
+        </div>
         <div class="info-row">
             <div class="driver-container" v-if="show_drivers">
                 <div class="driver-info" v-for="driver in display_drivers()" :key="driver">
