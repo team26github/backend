@@ -1,7 +1,7 @@
 <template>
     <div class="profile-container" v-if="!show_drivers" :key="show_drivers">
         <NavBar :usertype="user_type" :username="username"></NavBar>
-        <h1>&nbsp;Sponsor Settings<br></h1>
+        <h1 class="row">Sponsor Settings<br></h1>
         <div class="row">
             <div class="max_points">
                         <p><strong>Maximum Value of Driver Points: </strong>{{ max_points }}</p>
@@ -52,70 +52,72 @@
         </div>
     </div>
 
-    <NavBar :usertype="user_type" :username="username" v-if="show_drivers"></NavBar>
-    <div class="profile-container2" v-if="show_drivers" :key="show_drivers">
-        <div class="settings-container">
-            <h1>&nbsp;Sponsor Settings<br></h1>
-            <div class="row2">
-                <div class="max_points">
-                            <p><strong>Maximum Value of Driver Points: </strong>{{ max_points }}</p>
-                            <button @click="edit_max_points"><span>Edit Maximum Points</span></button>
-                </div>
-            </div>  
-            <div class="row2">
-                <div class="expiration_period">
+    <div class="profile-container" v-if="show_drivers" :key="show_drivers">
+        <NavBar :usertype="user_type" :username="username" v-if="show_drivers"></NavBar>
+        <div class="row2">
+            <div class="settings-container">
+                <h1 class="row2">Sponsor Settings<br></h1>
+                <div class="row2">
+                    <div class="max_points">
+                        <p><strong>Maximum Value of Driver Points: </strong>{{ max_points }}</p>
+                        <button @click="edit_max_points"><span>Edit Maximum Points</span></button>
+                    </div>
+                </div>  
+                <div class="row2">
+                    <div class="expiration_period">
                         <p><strong>Expiration Period of Driver Points: </strong>{{ expiration_period }} <strong> months </strong></p>
                         <button @click="edit_expiration"><span>Edit Expiration Period</span></button>
+                    </div>
+                </div> 
+                <div class="row2">
+                    <div class="catalog-item-points">
+                        <p><strong>Dollar to Point Conversion: </strong>$1 = {{ dollar_to_point_value }} point(s)</p>
+                        <button @click="edit_point_conversion"><span>Edit Point Conversion</span></button>
+                    </div>
                 </div>
-            </div> 
-            <div class="row2">
-                <div class="catalog-item-points">
-                    <p><strong>Dollar to Point Conversion: </strong>$1 = {{ dollar_to_point_value }} point(s)</p>
-                    <button @click="edit_point_conversion"><span>Edit Point Conversion</span></button>
+                <div class="row2">
+                    <div class="catalog-items">
+                        <p><strong>Catalog Filters:</strong></p>
+                        <p v-for="filter in catalog_filters" :key="filter">&nbsp;{{ filter }}</p>
+                        <button @click="edit_catalog"><span>Edit Catalog Filters</span></button>
+                    </div>
+                </div>
+                <div class="row2">
+                    <div class="add-sponsor">
+                        <p><strong>Add New Sponsor:</strong></p>
+                        <button @click="go_to_new_sponsor"><span>Add New Sponsor</span></button>
+                    </div>
+                </div>
+                <div class="row2">
+                    <div class="driver-profiles">
+                        <p><strong>View Driver Profiles</strong></p>
+                        <label class="drivers">Choose a Driver</label>
+                        <select class="drivers" @change="get_driver($event)">
+                            <option value="All" selected>All</option>
+                            <option v-for="driver in driver_info" :key="driver">{{ driver.full_name }}</option>
+                        </select>
+                        <button @click="show_drivers = !show_drivers"><span>{{ (show_drivers ? "Hide" : "View") }}</span></button>
+                    </div>
+                </div>
+                <div class="row2">
+                    <div class="sponsor-reports">
+                        <p><strong>View Point Change Reports: </strong></p>
+                        <a href="https://app.powerbi.com/reportEmbed?reportId=f793ef90-40fc-44b6-8a7e-62879d982d19&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Power BI</a> 
+                    </div>
                 </div>
             </div>
-            <div class="row2">
-                <div class="catalog-items">
-                    <p><strong>Catalog Filters:</strong></p>
-                    <p v-for="filter in catalog_filters" :key="filter">&nbsp;{{ filter }}</p>
-                    <button @click="edit_catalog"><span>Edit Catalog Filters</span></button>
+            <div class="driver-container" v-if="show_drivers">
+                <div class="driver-info" v-for="driver in display_drivers()" :key="driver">
+                    <p><strong>Full Name:</strong> {{ driver.full_name }}<input type="text" placeholder="New Name" v-model="new_driver['FullName']" v-if="update_driver[driver.full_name]"/></p>
+                    <p><strong>Username:</strong> {{ driver.username }}<input type="text" placeholder="New Username" v-model="new_driver['Username']" v-if="update_driver[driver.full_name]"/></p>
+                    <p><strong>Email:</strong> {{ driver.email }}<input type="text" placeholder="New Email" v-model="new_driver['Email']" v-if="update_driver[driver.full_name]"/></p>
+                    <p><strong>Points Limit:</strong> {{ driver.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_driver['PointsLimit']" v-if="update_driver[driver.full_name]"/></p>
+                    <p><strong>Expiration Period:</strong> {{ driver.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_driver['ExpirationPeriod']" v-if="update_driver[driver.full_name]"/></p>
+                    <p><strong>Sponsor ID(s):</strong> {{ driver.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_driver['SponsorID']" v-if="update_driver[driver.full_name]"/></p>
+                    <p><strong>Point Conversion:</strong> {{ driver.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_driver['DollarPointValue']" v-if="update_driver[driver.full_name]"/></p>
+                    <button v-if="!update_driver[driver.full_name]" @click="update_driver[driver.full_name] = true" class="update-button"><span>Update</span></button>
+                    <button v-else @click="update_info(driver, new_driver)" class="update-button"><span>Update</span></button>
                 </div>
-            </div>
-            <div class="row2">
-                <div class="add-sponsor">
-                    <p><strong>Add New Sponsor:</strong></p>
-                    <button @click="go_to_new_sponsor"><span>Add New Sponsor</span></button>
-                </div>
-            </div>
-            <div class="row2">
-                <div class="driver-profiles">
-                    <p><strong>View Driver Profiles</strong></p>
-                    <label class="drivers">Choose a Driver</label>
-                    <select class="drivers" @change="get_driver($event)">
-                        <option value="All" selected>All</option>
-                        <option v-for="driver in driver_info" :key="driver">{{ driver.full_name }}</option>
-                    </select>
-                    <button @click="show_drivers = !show_drivers"><span>{{ (show_drivers ? "Hide" : "View") }}</span></button>
-                </div>
-            </div>
-            <div class="row2">
-                <div class="sponsor-reports">
-                    <p><strong>View Point Change Reports: </strong></p>
-                    <a href="https://app.powerbi.com/reportEmbed?reportId=f793ef90-40fc-44b6-8a7e-62879d982d19&autoAuth=true&ctid=0c9bf8f6-ccad-4b87-818d-49026938aa97" target="_blank"> Power BI</a> 
-                </div>
-            </div>
-        </div>
-        <div class="driver-container" v-if="show_drivers">
-            <div class="driver-info" v-for="driver in display_drivers()" :key="driver">
-                <p><strong>Full Name:</strong> {{ driver.full_name }}<input type="text" placeholder="New Name" v-model="new_driver['FullName']" v-if="update_driver[driver.full_name]"/></p>
-                <p><strong>Username:</strong> {{ driver.username }}<input type="text" placeholder="New Username" v-model="new_driver['Username']" v-if="update_driver[driver.full_name]"/></p>
-                <p><strong>Email:</strong> {{ driver.email }}<input type="text" placeholder="New Email" v-model="new_driver['Email']" v-if="update_driver[driver.full_name]"/></p>
-                <p><strong>Points Limit:</strong> {{ driver.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_driver['PointsLimit']" v-if="update_driver[driver.full_name]"/></p>
-                <p><strong>Expiration Period:</strong> {{ driver.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_driver['ExpirationPeriod']" v-if="update_driver[driver.full_name]"/></p>
-                <p><strong>Sponsor ID(s):</strong> {{ driver.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_driver['SponsorID']" v-if="update_driver[driver.full_name]"/></p>
-                <p><strong>Point Conversion:</strong> {{ driver.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_driver['DollarPointValue']" v-if="update_driver[driver.full_name]"/></p>
-                <button v-if="!update_driver[driver.full_name]" @click="update_driver[driver.full_name] = true" class="update-button"><span>Update</span></button>
-                <button v-else @click="update_info(driver, new_driver)" class="update-button"><span>Update</span></button>
             </div>
         </div>
     </div>
@@ -381,7 +383,7 @@
 
     .row2 {
         width: 100%;
-        height: 45px;
+        height: auto;
         display: flex;
         flex-direction: row;
         justify-content: flex-start;

@@ -325,6 +325,10 @@ def get_info():
     cursor.execute(query)
     results['driver_fee'] = cursor.fetchall()
 
+    query = f'SELECT UpdateTime, UserID FROM PasswordUpdateLog'
+    cursor.execute(query)
+    results['password_updates'] = cursor.fetchall()
+
     if len(results) > 0:
         return jsonify({
             'status': 'success',
