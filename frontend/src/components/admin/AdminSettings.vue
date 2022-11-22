@@ -57,11 +57,22 @@
             <div class="driver-fees-container">
                 <p><strong>View Driver Fees</strong></p>
                 <label class="driver-fees">Choose a Driver:</label>
-                <select class="driver-fees" @change="get_driver($event)">
+                <select class="driver-fees" @change="get_driver_fee($event)">
                     <option value="All" selected>All</option>
-                    <option v-for="driver in driver_info" :key="driver">{{ driver.full_name }}</option>
+                    <option v-for="driver in driver_fee_info" :key="driver">{{ driver.full_name }}</option>
                 </select>
                 <button @click="show_driver_fees = !show_driver_fees"><span>{{ (show_driver_fees ? "Hide" : "View") }}</span></button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sponsor-fees-container">
+                <p><strong>View Sponsor Fees</strong></p>
+                <label class="sponsor-fees">Choose a Sponsor:</label>
+                <select class="sponsor-fees" @change="get_sponsor_fee($event)">
+                    <option value="All" selected>All</option>
+                    <option v-for="sponsor in sponsor_info" :key="sponsor">{{ sponsor.full_name }}</option>
+                </select>
+                <button @click="show_sponsor_fees = !show_sponsor_fees"><span>{{ (show_sponsor_fees ? "Hide" : "View") }}</span></button>
             </div>
         </div>
         <div class="reports-container">
@@ -79,11 +90,18 @@
                 <div class="driver-info" v-for="driver in display_drivers()" :key="driver">
                     <p><strong>Full Name:</strong> {{ driver.full_name }}<input type="text" placeholder="New Name" v-model="new_info['FullName']" v-if="update_driver[driver.full_name]"/></p>
                     <p><strong>Username:</strong> {{ driver.username }}<input type="text" placeholder="New Username" v-model="new_info['Username']" v-if="update_driver[driver.full_name]"/></p>
+                    <p><strong>User ID:</strong> {{ driver.user_id }}</p>
                     <p><strong>Email:</strong> {{ driver.email }}<input type="text" placeholder="New Email" v-model="new_info['Email']" v-if="update_driver[driver.full_name]"/></p>
                     <p><strong>Points Limit:</strong> {{ driver.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_info['PointsLimit']" v-if="update_driver[driver.full_name]"/></p>
                     <p><strong>Expiration Period:</strong> {{ driver.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_info['ExpirationPeriod']" v-if="update_driver[driver.full_name]"/></p>
                     <p><strong>Sponsor ID(s):</strong> {{ driver.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_info['SponsorID']" v-if="update_driver[driver.full_name]"/></p>
                     <p><strong>Point Conversion:</strong> {{ driver.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_info['DollarPointValue']" v-if="update_driver[driver.full_name]"/></p>
+                    <p v-if="driver.password_updates.length === 0"><strong>Password Change Dates:</strong> No Past Changes</p>
+                    <p v-else><strong>Password Change Dates:</strong>
+                        <ul>
+                            <li v-for="change in driver.password_updates" :key="change">{{ change }}</li>
+                        </ul>
+                    </p>
                     <button v-if="!update_driver[driver.full_name]" @click="update_driver[driver.full_name] = true" class="update-button">Update</button>
                     <button v-else @click="update_info(driver, new_info)" class="update-button">Update</button>
                 </div>
@@ -92,11 +110,24 @@
                 <div class="sponsor-info" v-for="sponsor in display_sponsors()" :key="sponsor">
                     <p><strong>Full Name:</strong> {{ sponsor.full_name }}<input type="text" placeholder="New Name" v-model="new_info['FullName']" v-if="update_sponsor[sponsor.full_name]"/></p>
                     <p><strong>Username:</strong> {{ sponsor.username }}<input type="text" placeholder="New Username" v-model="new_info['Username']" v-if="update_sponsor[sponsor.full_name]"/></p>
+                    <p><strong>User ID:</strong> {{ sponsor.user_id }}</p>
                     <p><strong>Email:</strong> {{ sponsor.email }}<input type="text" placeholder="New Email" v-model="new_info['Email']" v-if="update_sponsor[sponsor.full_name]"/></p>
                     <p><strong>Points Limit:</strong> {{ sponsor.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_info['PointsLimit']" v-if="update_sponsor[sponsor.full_name]"/></p>
                     <p><strong>Expiration Period:</strong> {{ sponsor.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_info['ExpirationPeriod']" v-if="update_sponsor[sponsor.full_name]"/></p>
                     <p><strong>Sponsor ID(s):</strong> {{ sponsor.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_info['SponsorID']" v-if="update_sponsor[sponsor.full_name]"/></p>
+                    <p v-if="sponsor.drivers.length === 0"><strong>Drivers:</strong> No Drivers</p>
+                    <p v-else><strong>Drivers:</strong>
+                        <ul>
+                            <li v-for="driver in sponsor.drivers" :key="driver">{{ driver.full_name }}</li>
+                        </ul>
+                    </p>
                     <p><strong>Point Conversion:</strong> {{ sponsor.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_info['DollarPointValue']" v-if="update_sponsor[sponsor.full_name]"/></p>
+                    <p v-if="sponsor.password_updates.length === 0"><strong>Password Change Dates:</strong> No Past Changes</p>
+                    <p v-else><strong>Password Change Dates:</strong>
+                        <ul>
+                            <li v-for="change in sponsor.password_updates" :key="change">{{ change }}</li>
+                        </ul>
+                    </p>
                     <button v-if="!update_sponsor[sponsor.full_name]" @click="update_sponsor[sponsor.full_name] = true" class="update-button">Update</button>
                     <button v-else @click="update_info(sponsor, new_info)" class="update-button">Update</button>
                 </div>
@@ -105,11 +136,18 @@
                 <div class="admin-info" v-for="admin in display_admins()" :key="admin">
                     <p><strong>Full Name:</strong> {{ admin.full_name }}<input type="text" placeholder="New Name" v-model="new_info['FullName']" v-if="update_admin[admin.full_name]"/></p>
                     <p><strong>Username:</strong> {{ admin.username }}<input type="text" placeholder="New Username" v-model="new_info['Username']" v-if="update_admin[admin.full_name]"/></p>
+                    <p><strong>User ID:</strong> {{ admin.user_id }}</p>
                     <p><strong>Email:</strong> {{ admin.email }}<input type="text" placeholder="New Email" v-model="new_info['Email']" v-if="update_admin[admin.full_name]"/></p>
                     <p><strong>Points Limit:</strong> {{ admin.points_limit }} points<input type="text" placeholder="New Points Limit" v-model="new_info['PointsLimit']" v-if="update_admin[admin.full_name]"/></p>
                     <p><strong>Expiration Period:</strong> {{ admin.expiration_period }} months<input type="text" placeholder="New Expiration Period" v-model="new_info['ExpirationPeriod']" v-if="update_admin[admin.full_name]"/></p>
                     <p><strong>Sponsor ID(s):</strong> {{ admin.sponsor_id }}<input type="text" placeholder="New Sponsor ID" v-model="new_info['SponsorID']" v-if="update_admin[admin.full_name]"/></p>
                     <p><strong>Point Conversion:</strong> {{ admin.dollar_point_value }} points = $1<input type="text" placeholder="New Conversion Rate" v-model="new_info['DollarPointValue']" v-if="update_admin[admin.full_name]"/></p>
+                    <p v-if="admin.password_updates.length === 0"><strong>Password Change Dates:</strong> No Past Changes</p>
+                    <p v-else><strong>Password Change Dates:</strong>
+                        <ul>
+                            <li v-for="change in admin.password_updates" :key="change">{{ change }}</li>
+                        </ul>
+                    </p>
                     <button v-if="!update_admin[admin.full_name]" @click="update_admin[admin.full_name] = true" class="update-button">Update</button>
                     <button v-else @click="update_info(admin, new_info)" class="update-button">Update</button>
                 </div>
@@ -125,8 +163,16 @@
             <div class="driver-fees-info-container" v-if="show_driver_fees">
                 <div class="driver-fees-info" v-for="driver in display_driver_fees()" :key="driver">
                     <p><strong>Full Name:</strong> {{ driver.full_name }}</p>
+                    <p><strong>User ID:</strong> {{ driver.user_id }}</p>
                     <p><strong>Date Range:</strong> {{ start_date }} to {{ end_date }}</p>
                     <p><strong>Fee Generated:</strong> {{ driver.fee_generated }} Points </p>
+                </div>
+            </div>
+            <div class="sponsor-fees-info-container" v-if="show_sponsor_fees">
+                <div class="sponsor-fees-info" v-for="sponsor in display_sponsor_fees()" :key="sponsor">
+                    <p><strong>Full Name:</strong> {{ sponsor.full_name }}</p>
+                    <p><strong>User ID:</strong> {{ sponsor.user_id }}</p>
+                    <p><strong>Total Points Spent:</strong> {{ sponsor.fee_generated }} Points</p>
                 </div>
             </div>
         </div>
@@ -147,6 +193,7 @@
             sponsor_info: [],
             admin_info: [],
             driver_fee_info: [],
+            sponsor_fee_info: [],
             new_info: {
                 'FullName': null,
                 'Username': null,
@@ -160,12 +207,14 @@
             show_sponsors: false,
             show_admins: false,
             show_driver_fees: false,
+            show_sponsor_fees: false,
             start_date: "September 1st",
             end_date: "Today",
             selected_driver: 'All',
             selected_sponsor: 'All',
             selected_admin: 'All',
             selected_driver_fee: 'All',
+            selected_sponsor_fee: 'All',
             update_driver: {},
             update_sponsor: {},
             update_admin: {},
@@ -194,12 +243,21 @@
             this.selected_admin = event.target.value;
         },
 
+        get_driver_fee(event) {
+            this.selected_driver_fee = event.target.value;
+        },
+
+        get_sponsor_fee(event) {
+            this.selected_sponsor_fee = event.target.value;
+        },
+
         display_drivers() {
             if (this.selected_driver === 'All') return this.driver_info;
             else {
                 for (let d of this.driver_info) {
                     if (d.full_name === this.selected_driver) return [d];
                 }
+                return [];
             }
         },
 
@@ -209,6 +267,7 @@
                 for (let s of this.sponsor_info) {
                     if (s.full_name === this.selected_sponsor) return [s];
                 }
+                return [];
             }
         },
 
@@ -218,6 +277,7 @@
                 for (let a of this.admin_info) {
                     if (a.full_name === this.selected_admin) return [a];
                 }
+                return [];
             }
         },
 
@@ -225,9 +285,20 @@
             if (this.selected_driver_fee === 'All') return this.driver_fee_info;
             else {
                 for (let d of this.driver_fee_info) {
-                    if (d.full_name === this.selected_driver_fee) return [d]
+                    if (d.full_name === this.selected_driver_fee) return [d];
                 }
-                return []
+                return [];
+            }
+        },
+
+        display_sponsor_fees() {
+            console.log(this.selected_sponsor_fee);
+            if (this.selected_sponsor_fee === 'All') return this.sponsor_fee_info;
+            else {
+                for (let s of this.sponsor_fee_info) {
+                    if (s.full_name === this.selected_sponsor_fee) return [s];
+                }
+                return [];
             }
         },
 
@@ -256,6 +327,8 @@
             axios.get(this.path + '/info', { params: { username: this.username } })
                 .then((res) => {
                     if (res.data.status === 'success') {
+
+                        this.driver_info = [];
                         for (const info of res.data.results.drivers) {
                             let driver = {};
 
@@ -269,10 +342,17 @@
                             driver['dollar_point_value'] = info[8];
                             driver['full_name'] = info[9];
 
+                            let pw_update = [];
+                            for (const update of res.data.results.password_updates) {
+                                if (parseInt(update[1]) === driver['user_id']) pw_update.push(update[0])
+                            }
+                            driver['password_updates'] = pw_update;
+
                             this.update_driver[driver.full_name] = false;
                             this.driver_info.push(driver);
                         }
 
+                        this.sponsor_info = [];
                         for (const info of res.data.results.sponsors) {
                             let sponsor = {};
 
@@ -286,10 +366,23 @@
                             sponsor['dollar_point_value'] = info[8];
                             sponsor['full_name'] = info[9];
 
+                            let pw_update = [];
+                            for (const update of res.data.results.password_updates) {
+                                if (parseInt(update[1]) === sponsor['user_id']) pw_update.push(update[0])
+                            }
+                            sponsor['password_updates'] = pw_update;
+
+                            let drivers = [];
+                            for (const d of this.driver_info) {
+                                if (d.sponsor_id === sponsor.user_id) drivers.push({'full_name': d.full_name, 'user_id': d.user_id});
+                            }
+                            sponsor['drivers'] = drivers;
+
                             this.update_sponsor[sponsor.full_name] = false;
                             this.sponsor_info.push(sponsor);
                         }
 
+                        this.admin_info = [];
                         for (const info of res.data.results.admins) {
                             let admin = {};
 
@@ -303,24 +396,81 @@
                             admin['dollar_point_value'] = info[8];
                             admin['full_name'] = info[9];
 
+                            let pw_update = [];
+                            for (const update of res.data.results.password_updates) {
+                                if (parseInt(update[1]) === admin['user_id']) pw_update.push(update[0])
+                            }
+                            admin['password_updates'] = pw_update;
+
                             this.update_admin[admin.full_name] = false;
                             this.admin_info.push(admin);
                         }
 
+                        this.driver_fee_info = [];
                         for (const info of res.data.results.driver_fee) {
                             let driver_fee = {};
+                            let index = -1;
 
-                            if (info[0] in this.driver_fee_info) {
-                                let i = this.driver_fee_info.indexOf(info[0]);
-                                this.driver_fee_info[i]['fee_generated'] += parseFloat(info[1]);
+                            for (let i = 0; i < this.driver_fee_info.length; i++) {
+                                if (info[2] === this.driver_fee_info[i]['user_id']) { 
+                                    index = i;
+                                    break;
+                                }
+                            }
+
+                            if (index !== -1) {
+                                this.driver_fee_info[index]['fee_generated'] += parseFloat(info[1]);
                             }
                             else {
-                                driver_fee['full_name'] = info[0];
-                                driver_fee['fee_generated'] = parseFloat(info[1]);
-                                driver_fee['user_id'] = info[2];
+                                let full_name = info[0];
 
-                                this.driver_fee_info.push(driver_fee);
+                                for (let i = 0; i < this.driver_info.length; i++) {
+                                    if (this.driver_info[i].user_id === info[2]) {
+                                        full_name = this.driver_info[i].full_name;
+                                        driver_fee['full_name'] = full_name;
+                                        driver_fee['fee_generated'] = parseFloat(info[1]);
+                                        driver_fee['user_id'] = info[2];
+
+                                        this.driver_fee_info.push(driver_fee);
+                                    }
+                                }
                             }
+                        }
+
+                        let driver_ids = [];
+                        for (const driver of this.driver_fee_info) driver_ids.push(driver.user_id);
+                        for (const driver of this.driver_info) {
+                            let in_array = false;
+
+                            for (let i = 0; i < driver_ids.length; i++) {
+                                if (driver.user_id === driver_ids[i]) {
+                                    in_array = true;
+                                    break;
+                                }
+                            }
+
+                            if (!in_array) {
+                                this.driver_fee_info.push({'full_name': driver.full_name, 'fee_generated': 0, 'user_id': driver.user_id});
+                            }
+                        }
+
+                        this.sponsor_fee_info = [];
+                        for (const sponsor of this.sponsor_info) {
+                            let sponsor_fee = {
+                                'full_name': sponsor.full_name,
+                                'fee_generated': 0.0,
+                                'user_id': sponsor.user_id
+                            };
+
+                            for (const driver of sponsor.drivers) {
+                                for (let i = 0; i < this.driver_fee_info.length; i++) {
+                                    if(driver.user_id === this.driver_fee_info[i].user_id || sponsor.user_id === this.driver_fee_info[i].user_id) {
+                                        sponsor_fee.fee_generated += this.driver_fee_info[i].fee_generated;
+                                    }
+                                }
+                            }
+
+                            this.sponsor_fee_info.push(sponsor_fee);
                         }
                     }
                 })
@@ -442,17 +592,28 @@
         width: 100%;
     }
 
-    .driver-profiles-permissions, .sponsor-profiles-permissions, .admin-profiles-permissions, .driver-fees-container {
+    .driver-profiles-permissions, 
+    .sponsor-profiles-permissions, 
+    .admin-profiles-permissions, 
+    .driver-fees-container, 
+    .sponsor-fees-container {
         display: flex;
         flex-direction: row;
         align-items: center;
     }
 
-    .drivers, .sponsors, .admins, .driver-fees {
+    .drivers, 
+    .sponsors, .admins, 
+    .driver-fees, 
+    .sponsor-fees {
         margin-left: 5px;
     }
 
-    .driver-container, .sponsor-container, .admin-container, .driver-fees-info-container {
+    .driver-container, 
+    .sponsor-container, 
+    .admin-container, 
+    .driver-fees-info-container,
+    .sponsor-fees-info-container {
         display: flex;
         flex-direction: column;
         width: 30%;
@@ -463,7 +624,11 @@
         align-items: center;
     }
 
-    .driver-info, .sponsor-info, .admin-info, .driver-fees-info {
+    .driver-info, 
+    .sponsor-info, 
+    .admin-info, 
+    .driver-fees-info,
+    .sponsor-fees-info {
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -473,12 +638,18 @@
         border-color: black;
     }
 
-    .driver-info p, .sponsor-info p, .admin-info p, .driver-fees-info p {
+    .driver-info p, 
+    .sponsor-info p, 
+    .admin-info p, 
+    .driver-fees-info p,
+    .sponsor-fees-info p {
         margin-left: 5%;
-        width: 100%;
+        width: auto;
     }
 
-    .driver-info p input, .sponsor-info p input, .admin-info p input {
+    .driver-info p input, 
+    .sponsor-info p input, 
+    .admin-info p input {
         display: flex;
         margin-right: 5%;
         margin-top: 1%;
@@ -490,7 +661,6 @@
         justify-content: center;
         margin-left: 5%;
         margin-bottom: 1.5rem;
-        width: 60px;
     }
 
     .reports-container {
