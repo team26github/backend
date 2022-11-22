@@ -321,6 +321,10 @@ def get_info():
     cursor.execute(query)
     results['admins'] = cursor.fetchall()
 
+    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME), POINTS_TOTAL, USER_ID FROM Purchases'
+    cursor.execute(query)
+    results['driver_fee'] = cursor.fetchall()
+
     if len(results) > 0:
         return jsonify({
             'status': 'success',
@@ -673,11 +677,18 @@ def submit_purchase():
     address_state = request.args.get('address_state', '')
     address_zip_code = request.args.get('address_zip_code', '')
     email = request.args.get('email', '')
-    items = request.args.get('items', '')
+    items_array = json.loads(request.args.get('items', ''))
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
-        
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, TIMESTAMP) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}", "{datetime.now()}")'
+    user_id = request.args.get('user_id', '')
+
+    items = {}
+    index = 0
+    for item in items_array:
+        items[index] = item
+        index += 1
+
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, USER_ID, TIMESTAMP) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}", {user_id}, "{datetime.now()}")'
     cursor.execute(query)
 
     db.commit()
