@@ -230,6 +230,27 @@ def get_drivers():
     user_id = request.args.get('user_id', '')
     cursor = db.cursor()
     
+    query = f'SELECT FullName FROM UserInfo WHERE SponsorID = {user_id}'
+
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    if len(results) > 0:
+        return jsonify({
+            'status': 'success',
+            'results': results
+        })
+    else:
+        return jsonify({
+            'status': 'failure',
+            'results': results
+        })
+
+@app.route('/get-driver-apps', methods=['GET'])
+def get_driver_applications():
+    user_id = request.args.get('user_id', '')
+    cursor = db.cursor()
+    
     query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME) FROM DriverApplications WHERE SPONSOR_ID = {user_id} AND APP_STATUS = "Pending"'
 
     cursor.execute(query)
@@ -299,6 +320,10 @@ def get_info():
     query = f'SELECT * FROM UserInfo WHERE UserType = "Admin" and Username != "{username}"'
     cursor.execute(query)
     results['admins'] = cursor.fetchall()
+
+    query = f'SELECT CONCAT(FIRST_NAME, " ", LAST_NAME), POINTS_TOTAL, USER_ID FROM Purchases'
+    cursor.execute(query)
+    results['driver_fee'] = cursor.fetchall()
 
     if len(results) > 0:
         return jsonify({
@@ -550,14 +575,25 @@ def submit():
     reason = request.args.get('reason', '')
     driver = request.args.get('driver', '')
     sponsor_id = request.args.get('sponsor', '')
-    query = f'SELECT DRIVER_ID FROM DriverApplications WHERE FIRST_NAME="{str(driver).split()[0]}" AND LAST_NAME="{str(driver).split()[1]}"'
+    
+    query = f'SELECT UserID FROM UserInfo WHERE FullName = "{driver}"'
     cursor.execute(query)
     results = cursor.fetchall()
     driver_id=results[0][0]
+    
     query = f'INSERT INTO PointsChange (DriverID, PointChange, DateTimeStamp, ChangeReason, PointChangerID) VALUES("{driver_id}","{num_points}","{datetime.now()}","{reason}","{sponsor_id}")'
     cursor.execute(query)
-
     db.commit()
+    
+    query = f'SELECT Points FROM UserInfo WHERE UserID = {driver_id}'
+    cursor.execute(query)
+    results = cursor.fetchall()
+    current_points = results[0][0]
+
+    query = f'UPDATE UserInfo SET Points = {current_points + int(num_points)} WHERE UserID = {driver_id}'
+    cursor.execute(query)
+    db.commit()
+
     status = 'success'
         
     return jsonify({'status': status})
@@ -641,11 +677,18 @@ def submit_purchase():
     address_state = request.args.get('address_state', '')
     address_zip_code = request.args.get('address_zip_code', '')
     email = request.args.get('email', '')
-    items = request.args.get('items', '')
+    items_array = json.loads(request.args.get('items', ''))
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
-        
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, TIMESTAMP) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}", "{datetime.now()}")'
+    user_id = request.args.get('user_id', '')
+
+    items = {}
+    index = 0
+    for item in items_array:
+        items[index] = item
+        index += 1
+
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, USER_ID, TIMESTAMP) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}", {user_id}, "{datetime.now()}")'
     cursor.execute(query)
 
     db.commit()
