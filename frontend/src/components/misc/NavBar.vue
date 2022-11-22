@@ -61,7 +61,6 @@
         width: 100%;
         height: 45px;
         background-color: #555;
-        overflow: auto;
     }
     
     .nav a {
