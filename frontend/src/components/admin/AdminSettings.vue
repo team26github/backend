@@ -53,6 +53,17 @@
             </div> 
         </div>
         -->
+        <div class="row">
+            <div class="driver-fees-container">
+                <p><strong>View Driver Fees</strong></p>
+                <label class="driver-fees">Choose a Driver:</label>
+                <select class="driver-fees" @change="get_driver($event)">
+                    <option value="All" selected>All</option>
+                    <option v-for="driver in driver_info" :key="driver">{{ driver.full_name }}</option>
+                </select>
+                <button @click="show_driver_fees = !show_driver_fees"><span>{{ (show_driver_fees ? "Hide" : "View") }}</span></button>
+            </div>
+        </div>
         <div class="reports-container">
             <div class="admin-reports">
                 <p><strong>View Admin Reports: </strong></p>
@@ -111,6 +122,13 @@
                 </div>
             </div>
             -->
+            <div class="driver-fees-info-container" v-if="show_driver_fees">
+                <div class="driver-fees-info" v-for="driver in display_driver_fees()" :key="driver">
+                    <p><strong>Full Name:</strong> {{ driver.full_name }}</p>
+                    <p><strong>Date Range:</strong> {{ start_date }} to {{ end_date }}</p>
+                    <p><strong>Fee Generated:</strong> {{ driver.fee_generated }} Points </p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -128,6 +146,7 @@
             driver_info: [],
             sponsor_info: [],
             admin_info: [],
+            driver_fee_info: [],
             new_info: {
                 'FullName': null,
                 'Username': null,
@@ -140,9 +159,13 @@
             show_drivers: false,
             show_sponsors: false,
             show_admins: false,
+            show_driver_fees: false,
+            start_date: "September 1st",
+            end_date: "Today",
             selected_driver: 'All',
             selected_sponsor: 'All',
             selected_admin: 'All',
+            selected_driver_fee: 'All',
             update_driver: {},
             update_sponsor: {},
             update_admin: {},
@@ -195,6 +218,16 @@
                 for (let a of this.admin_info) {
                     if (a.full_name === this.selected_admin) return [a];
                 }
+            }
+        },
+
+        display_driver_fees() {
+            if (this.selected_driver_fee === 'All') return this.driver_fee_info;
+            else {
+                for (let d of this.driver_fee_info) {
+                    if (d.full_name === this.selected_driver_fee) return [d]
+                }
+                return []
             }
         },
 
@@ -272,6 +305,22 @@
 
                             this.update_admin[admin.full_name] = false;
                             this.admin_info.push(admin);
+                        }
+
+                        for (const info of res.data.results.driver_fee) {
+                            let driver_fee = {};
+
+                            if (info[0] in this.driver_fee_info) {
+                                let i = this.driver_fee_info.indexOf(info[0]);
+                                this.driver_fee_info[i]['fee_generated'] += parseFloat(info[1]);
+                            }
+                            else {
+                                driver_fee['full_name'] = info[0];
+                                driver_fee['fee_generated'] = parseFloat(info[1]);
+                                driver_fee['user_id'] = info[2];
+
+                                this.driver_fee_info.push(driver_fee);
+                            }
                         }
                     }
                 })
@@ -393,28 +442,28 @@
         width: 100%;
     }
 
-    .driver-profiles-permissions, .sponsor-profiles-permissions, .admin-profiles-permissions {
+    .driver-profiles-permissions, .sponsor-profiles-permissions, .admin-profiles-permissions, .driver-fees-container {
         display: flex;
         flex-direction: row;
         align-items: center;
     }
 
-    .drivers, .sponsors, .admins {
+    .drivers, .sponsors, .admins, .driver-fees {
         margin-left: 5px;
     }
 
-    .driver-container, .sponsor-container, .admin-container {
+    .driver-container, .sponsor-container, .admin-container, .driver-fees-info-container {
         display: flex;
         flex-direction: column;
         width: 30%;
-        height: 100%;
+        height: 80%;
         overflow-y: auto;
         border-style: solid;
         border-color: black;
         align-items: center;
     }
 
-    .driver-info, .sponsor-info, .admin-info {
+    .driver-info, .sponsor-info, .admin-info, .driver-fees-info {
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -424,7 +473,7 @@
         border-color: black;
     }
 
-    .driver-info p, .sponsor-info p, .admin-info p {
+    .driver-info p, .sponsor-info p, .admin-info p, .driver-fees-info p {
         margin-left: 5%;
         width: 100%;
     }

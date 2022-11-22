@@ -14,14 +14,10 @@
             </div>
 
             <div class="input-container">
-                <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
+                <input class="input-field" type="text" placeholder="New Password" name="new_passwd" v-model="new_passwd" required><br><br>
             </div>
 
-            <div class="input-container">
-                <input class="input-field" type="text" placeholder="New Password" name="new_password" v-model="new_password" required><br><br>
-            </div>
-
-            <button type="submit" class="btn" @click="reset" >Reset</button> 
+            <button type="submit" class="btn" @click="reset()" >Reset</button> 
             <br><br>
             <div style="text-align:center"><a href="/login">Return to Login</a></div>
         </form>
@@ -49,46 +45,37 @@
         },
 
         mounted() {
-            this.path = this.production_path;
+            this.path = this.localhost_path;
         },
 
         methods: {
-        
-            edit_password() {
-                window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
-                let new_password = window.prompt("Enter new password");
-                
-                var minMaxLength = /^[\s\S]{8,20}$/,
-                    upper = /[A-Z]/,
-                    lower  = /[a-z]/,
-                    number = /[0-9]/,
-                    special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
-                axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: this.user_id}})
-                    .then((res) => {
-                        window.print("Password must contain: at least one lower and upper case letter, at least one number, and at least one special character")
-                        if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
-                            res.data.status = "success";
-                        }
-                        else {
-                            res.data.status = "false";
-                        }
 
-                        if (res.data.status === "success") {
-                            this.password = new_password;
-                            window.alert("Password change successful");
-                        }
-                        if (res.data.status === "failure") {
-                            window.alert("New password must be at least 8 characters and no more than 20. Contain at least one upper and lower case letter, at least one number, and at least one special character.");
-                        }
-                        
+            reset() {
+                let path = 'http://localhost:5000/reset-passwd';
+
+                axios.get(path, { params: { full_name: this.full_name, username: this.username, new_passwd: this.new_passwd } })
+                    .then((res) => {
+                    if (res.data.status === "failure") {
+                        this.status = "Incorrect Credentials";
+                        window.alert("Password reset unsuccessful");
+                    }
+                    else {
+                        this.status = "Success";
+                        this.user_id = res.data.results[0][0];
+                        this.username = res.data.results[0][4];
+                        this.user_type = res.data.results[0][2];
+                        this.$router.push({
+                            name: `${this.user_type.toLowerCase()}-dashboard`,
+                            params: { username: this.username }
+                        });
+                    }
                     })
-                    .catch((error) => {
+                        .catch((error) => {
                         // esling-disable-next-line
                         console.log(error);
-                    })
-            },
-        },
-
+                    });
+            }, 
+        }
     }
 </script>
 

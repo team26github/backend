@@ -11,7 +11,7 @@
 
         <select name = "selected" v-model="selected" required>
             <option disabled value="">Please select one sponsor you would like to apply to</option>
-            <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor}}</option>
+            <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor[0]}}</option>
         </select>
 
         <br><br>
@@ -68,7 +68,7 @@
         },
 
         mounted() {
-            this.path = this.production_path;
+            this.path = this.localhost_path;
         },
 
         methods: {
