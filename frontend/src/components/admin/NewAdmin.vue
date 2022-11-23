@@ -54,6 +54,8 @@
             };
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
             this.username = this.$route.params.username;
             this.path = this.localhost_path;

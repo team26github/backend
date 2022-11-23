@@ -1,17 +1,24 @@
 <template>
+
+    <!-- Container to hold admin dashboard -->
     <div class="profile-container">
         <nav-bar :usertype="user_type" :username="username"></nav-bar>
         <br><br>
+        <!-- Button for Adding Points to a Driver -->
         <div class="row">
             <div class="add-point-container">
                 <button @click="go_to_add_points_admin"><span>Add Points to Driver</span></button>
             </div>
         </div>
+
+        <!-- Button for Removing Points from a Driver -->
         <div class="row">
             <div class="remove-points-button">
                     <button @click="go_to_remove_points_admin"><span>Deduct Points from Driver</span></button>
             </div>
         </div>
+
+        <!-- Button for Setting Users Inactive -->
         <div class="row">
             <div class="set-inactive-admin-button">
                 <button @click="go_to_set_inactive_admins"><span>Set Users Inactive</span></button>
@@ -24,8 +31,11 @@
     import NavBar from '../misc/NavBar.vue';
 
     export default {
+
+        // Component name
         name: 'admin-dashboard',
 
+        // Component specific variables and data
         data() {
             return {
                 dashboard_name: `${this.username}'s Dashboard`,
@@ -36,19 +46,26 @@
             }
         },
 
+        // Component specific methods
         methods: {
+            
+            // Function that routes admin user to add points screen
             go_to_add_points_admin() {
                 this.$router.push({
                     name: 'add-points-admin',
                     params: { username: this.username }
                 });
             },
+
+            // Function that routes admin user to remove points screen
             go_to_remove_points_admin() {
                 this.$router.push({
                     name: 'remove-points-admin',
                     params: { username: this.username }
                 });
             },
+
+            // Function that routes admin user to set inactive screen
             go_to_set_inactive_admins() {
                 this.$router.push({
                     name: 'set-inactive-admins',
@@ -57,10 +74,14 @@
             },
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+            // Gets username of user from route url
             this.username = this.$route.params.username;
         },
 
+        // Components used from external files
         components: {
             "nav-bar": NavBar
         }
