@@ -72,7 +72,7 @@
             },
 
             fetchDrivers() {
-                axios.get(this.path + '/get-drivers', { params: { user_id: this.user_id } })
+                axios.get(this.path + '/get-driver-apps', { params: { user_id: this.user_id } })
                     .then((res) => {
                         if (res.data.status === 'success') {
                             for (const name of res.data.results) {

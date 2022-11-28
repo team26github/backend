@@ -7,12 +7,14 @@
         <input type="text" id="username" name="username" v-model="username" required><br><br>
         <label for="password">Password: &emsp;</label>
         <input type="password" id="password" name="password" v-model="password" required><br><br>
-        <button type="submit" id="login-button" @click.prevent="get_login" :disabled="disabled">Login</button>
+        <button type="submit" id="login-button" @click.prevent="get_login" :disabled="disabled" class="btn">Login</button>
       </form>
       <p>{{ status }}</p>
-      <a href="/driverapplication">
-        <input type="button" value="Apply to be a Driver Here!" />
-      </a>
+      <a href="/forgotpassword">Forgot Password?</a>
+      <br>
+      <button @click="driver_application" class="btn">Apply to be a Driver Here!</button>
+
+      
     </div>
   </div>
 </template>
@@ -100,6 +102,12 @@
                 // esling-disable-next-line
                 console.log(error);
             });
+        },
+
+        driver_application() {
+          this.$router.push({
+            name: 'driver-application'
+          })
         }
     }
 }
@@ -129,5 +137,24 @@
 
   #login-button {
     width: 100%;
+  }
+
+  button {
+    position: relative;
+    border: solid;
+    transition: 0.4s ease-in;
+    z-index: 1;
+  }
+
+  button::before,
+  button::after {
+    position: absolute;
+    content: "";
+    z-index: -1;
+  }
+
+  .btn:hover {
+    box-shadow: inset -10.5em 0 0 0 #8c72e0,
+                inset 10.5em 0 0 0 #8c72e0;
   }
 </style>

@@ -3,7 +3,7 @@
         <nav-bar :usertype="user_type" :username="username"></nav-bar>
         <div class="row">
             <div class="points">
-                <p><strong>Points: </strong>{{ default_points }}</p>
+                <p><strong>Points: </strong>{{ num_points }}</p>
             </div>
         </div>
     </div>
@@ -11,6 +11,7 @@
 
 <script>
     import NavBar from '@/components/misc/NavBar.vue';
+    import axios from 'axios';
     export default {
         name: 'driver-dashboard',
 
@@ -20,12 +21,30 @@
                 username: null,
                 user_type: 'driver',
                 active: false,
-                default_points: 0
+                num_points: null,
+                production_path: "http://18.191.136.200",
+                localhost_path: "http://localhost:5000",
+                path: null
             }
         },
 
         mounted() {
             this.username = this.$route.params.username;
+            this.path = this.localhost_path;
+
+            axios.get(this.path + '/userinfo', {params: {username: this.username}})
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        console.log(res.data);
+                        this.num_points = res.data.results[0][11];
+                    }
+                    else {
+                        console.log('Unsuccessful');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
         },
 
         components: {
