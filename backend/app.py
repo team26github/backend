@@ -685,6 +685,7 @@ def submit_purchase():
     items_total = request.args.get('items_total', '')
     points_total = request.args.get('points_total', '')
     user_id = request.args.get('user_id', '')
+    sponsor_id = request.args.get('sponsor_id', '')
 
     items = {}
     index = 0
@@ -692,7 +693,7 @@ def submit_purchase():
         items[index] = item
         index += 1
 
-    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, USER_ID, TIMESTAMP) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}", {user_id}, "{datetime.now()}")'
+    query = f'INSERT INTO Purchases (FIRST_NAME, LAST_NAME, ADDRESS, CITY, STATE, ZIP_CODE, EMAIL, ITEMS_TOTAL, POINTS_TOTAL, ITEMS, USER_ID, TIMESTAMP, SPONSOR_ID) VALUES("{first_name}", "{last_name}", "{address}", "{address_city}", "{address_state}", "{address_zip_code}", "{email}", "{items_total}", "{points_total}", "{items}", {user_id}, "{datetime.now()}", {sponsor_id})'
     cursor.execute(query)
 
     db.commit()

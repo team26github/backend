@@ -83,6 +83,7 @@
                 status: null,
                 first_name: '',
                 user_id: null,
+                sponsor_id: null,
                 last_name:'',
                 username: '',
                 address: '',
@@ -124,6 +125,7 @@
                     if (res.data.status === 'success') {
                         this.user_id = res.data.results[0][0];
                         this.user_type = res.data.results[0][2];
+                        this.sponsor_id = res.data.results[0][7];
                         this.points_balance = res.data.results[0][11];
 
                         // Determining if the user has enough points to purchase their items
@@ -153,7 +155,7 @@
             submit_purchase() {
 
                 // Axios API call to python backend to add purchase information to the database
-                axios.post(this.path + '/submit-purchase', null, {params: {first_name: this.first_name, last_name: this.last_name, address: this.address, address_city: this.address_city, address_state: this.address_state, address_zip_code: this.address_zip_code, email: this.email, items: JSON.stringify(this.items), items_total: this.items_total, points_total: this.points_total, user_id: this.user_id }}) 
+                axios.post(this.path + '/submit-purchase', null, {params: {first_name: this.first_name, last_name: this.last_name, address: this.address, address_city: this.address_city, address_state: this.address_state, address_zip_code: this.address_zip_code, email: this.email, items: JSON.stringify(this.items), items_total: this.items_total, points_total: this.points_total, user_id: this.user_id, sponsor_id: this.sponsor_id }}) 
                     .then((res) => {
                         if (res.data.status === "success") {
                             console.log("success");
