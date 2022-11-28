@@ -19,8 +19,10 @@
             </div>
         </div>
 
-        <!-- Row for holding admin Password and update/show buttons-->
+        <!-- Row for holding admin Password and update/show password buttons -->
         <div class="row">
+
+            <!-- Container for displaying admin password -->
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
@@ -32,12 +34,16 @@
 
         <!-- Row for holding admin Email, admin Usertype (Admin), and update button -->
         <div class="row">
+
+            <!-- Container for displaying admin Email -->
             <div class="email-container">
                 <div class="email">
                     <p><strong>Email: </strong>{{ email }}</p>
                     <button @click="edit_email"><span>Edit Email</span></button>
                 </div>
             </div>
+
+            <!-- Container for displaying admin Usertype (Admin) -->
             <div class="user-type-container">
                 <p><strong>UserType: </strong>{{ user_type }}</p>
             </div>
@@ -118,6 +124,7 @@
                 }
             },
 
+            // Method to change admin username
             edit_username() {
 
                 // Getting new username from user
@@ -154,6 +161,7 @@
                     })
             },
 
+            // Method to change admin password
             edit_password() {
 
                 // Getting new password from user and checking to make sure it meets password requirements
@@ -197,6 +205,7 @@
                     })
             },
 
+            // Method to change admin email
             edit_email() {
 
                 // Getting new email from user

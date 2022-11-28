@@ -12,9 +12,13 @@
 <script>
     import NavBar from '@/components/misc/NavBar.vue';
     import axios from 'axios';
+
     export default {
+
+        // Component name
         name: 'driver-dashboard',
 
+        // Component specific variables and data
         data() {
             return {
                 dashboard_name: `${this.username}'s Dashboard`,
@@ -28,14 +32,19 @@
             }
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+
+            // Getting username for user from URL and setting path for axios API calls
+            // to either localhost or production
             this.username = this.$route.params.username;
             this.path = this.localhost_path;
 
+            // Axios API call to python backend to get current user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
-                        console.log(res.data);
                         this.num_points = res.data.results[0][11];
                     }
                     else {
@@ -47,6 +56,7 @@
                 })
         },
 
+        // Components used from external files
         components: {
             "nav-bar": NavBar
         },

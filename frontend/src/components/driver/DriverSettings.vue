@@ -8,20 +8,27 @@
     import NavBar from '../misc/NavBar.vue';
 
     export default {
-    name: "driver-settings",
-    data() {
-        return {
-            user_type: "driver",
-            username: null
-        };
-    },
 
-    mounted() {
-        this.username = this.$route.params.username;
-    },
+        // Component name
+        name: "driver-settings",
 
-    components: { NavBar }
-}
+        // Component specific variables and data
+        data() {
+            return {
+                user_type: "driver",
+                username: null
+            };
+        },
+
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
+        mounted() {
+            this.username = this.$route.params.username;
+        },
+
+        // Components used from external files
+        components: { NavBar }
+    }
 </script>
 
 <style scoped>

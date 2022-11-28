@@ -6,6 +6,7 @@
 
             <div>Select Sponsor: {{ selected }}</div>
 
+            <!-- Sponsor selection dropdown menu -->
             <select name = "selected" @change="onChange($event)" v-model="selected" required>
                 <option disabled value="">Please select one sponsor you would like to apply to</option>
                 <option v-for="sponsor in sponsors" :key="sponsor">{{sponsor[0]}}</option>
@@ -13,26 +14,32 @@
 
             <br><br>
 
+            <!-- First Name Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="First Name" name="first_name" v-model="first_name" required><br><br>
             </div>
 
+            <!-- Last Name Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Last Name" name="last_name" v-model="last_name" required><br><br>
             </div>
 
+            <!-- Username Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Username" name="username" v-model="driver_username" required><br><br>
             </div>
 
+            <!-- Email Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
             </div>
             
+            <!-- Password Input Container -->
             <div class="input-container">
                 <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
             </div>
 
+            <!-- Submit button to create a new driver -->
             <button type="submit" class="btn" @click="create_driver" >Create</button> 
         </form>
     </div>
@@ -45,8 +52,11 @@
 
 
     export default {
+
+        // Component name
         name: "new-driver",
 
+        // Component specific variables and data
         data() {
             return {
                 status: null,
@@ -65,14 +75,19 @@
             };
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+
+            // Getting username from route URL and setting Axios API path to either
+            // localhost or production
             this.username = this.$route.params.username;
             this.path = this.localhost_path;
 
+            // Axios API call to python backend to get current user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
-                        console.log(res.data);
                         this.user_type = res.data.results[0][2];
                         this.fetchSponsors();
                     }
@@ -85,17 +100,22 @@
                 })
         },
 
+        // Component specific methods
         methods: {
+
+            // Method to get specific sponsor from dropdown menu
             onChange(e)
             {
                 this.sponsor_selected=e.target.value
             },
 
+            // Method to get all available sponsors from database
             fetchSponsors() {
+
+                // Axios API call to python backend to get available sponsors from database
                 axios.get(this.path + '/get-sponsors', {params: {user_id: this.user_id}})
                     .then((res) => {
                         if (res.data.status === 'success') {
-                            console.log(res.data);
                             this.sponsors = res.data.results;
                         }
                         else {
@@ -107,11 +127,16 @@
                     })
             },
 
+            // Method to add a new driver to the database
             create_driver() {                 
+
+                // Axios API call to python backend to check for duplicate users
                 axios.get(this.path + '/new-user', {params: {username: this.driver_username, email: this.email}})
                     .then((res) => {
                         if (res.data.status === 'success') {
                             if (res.data.results.length === 0) {
+
+                                // Axios API call to python backend to add new driver to database
                                 axios.post(this.path + '/new-driver', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.driver_username, password: this.password, sponsor: this.sponsor_selected}}) 
                                     .then((res) => {
                                         if (res.data.status === "success") {
@@ -143,6 +168,7 @@
             }
         },
 
+        // Components used from external files
         components: { NavBar }
     }
 

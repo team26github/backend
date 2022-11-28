@@ -1,10 +1,16 @@
 <template>
     <div class="profile-container">
         <NavBar :usertype="user_type" :username="username"></NavBar>
+        
+        <!-- Row for holding driver User ID, driver Username, and update username button -->
         <div class="row">
+
+            <!-- Container for displaying driver User ID -->
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
             </div>
+
+            <!-- Container for displaying driver Username -->
             <div class="username-container">
                 <div class="username">
                     <p><strong>Username: </strong>{{ username }}</p>
@@ -12,7 +18,11 @@
                 </div>
             </div>
         </div>
+
+        <!-- Row for holding driver Password and update/show password buttons -->
         <div class="row">
+
+            <!-- Container for displaying driver password -->
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
@@ -21,22 +31,33 @@
                 </div>
             </div>
         </div>
+
+        <!-- Row for holding driver Email, driver Usertype (Driver), and update button -->
         <div class="row">
+
+            <!-- Container for displaying driver Email -->
             <div class="email-container">
                 <div class="email">
                     <p><strong>Email: </strong>{{ email }}</p>
                     <button @click="edit_email"><span>Edit Email</span></button>
                 </div>
             </div>
+
+            <!-- Container for displaying driver Usertype (Driver) -->
             <div class="user-type-container">
                 <p><strong>UserType: </strong>{{ user_type }}</p>
             </div>
         </div>
+
+        <!-- Row for holding driver past purchases -->
         <div class="row">
+
+            <!-- Container for displaying driver past purchase names -->
             <div class="purchases-container">
                 <p><strong>View Past Purchases</strong></p>&nbsp;
                 <label class="purchases">Choose a Purchase: </label>
 
+                <!-- Dropdown menu for showing driver past purchases -->
                 <select class="dropdown-menu" @change="get_purchase($event)">
                     <option value="All" selected>All</option>
                     <option v-for="purchase in purchase_info" :key="purchase">{{purchase.items}}</option>
@@ -45,7 +66,11 @@
                 <button @click="show_purchases = !show_purchases" class="btn"><span>{{ (show_purchases ? "Hide" : "View") }}</span></button>
             </div> 
         </div>
+
+        <!-- Row for holding driver past purchase information -->
         <div class="info-row">
+
+            <!-- Container for displaying driver past purchase information if "view" button is clicked -->
             <div class="purchases" v-if="show_purchases">
                 <div class="purchases" v-for="purchase in display_purchases()" :key="purchase">
                     <p><strong>Order Email:</strong> {{ purchase.email }}</p>
@@ -66,8 +91,11 @@
     import NavBar from '../misc/NavBar.vue';
 
     export default {
+
+        // Component name
         name: 'driver-profile',
 
+        // Component specific variables and data
         data() {
             return {
                 user_id: null,
@@ -90,14 +118,19 @@
             };
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+
+            // Getting username for user from URL and setting path for axios API calls
+            // to either localhost or production
             this.username = this.$route.params.username;
             this.path = this.localhost_path;
 
+            // Axios API call to python backend to get current user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
-                        console.log(res.data);
                         this.user_id = res.data.results[0][0];
                         this.password = res.data.results[0][1];
                         this.email = res.data.results[0][3];
@@ -114,7 +147,11 @@
                 })
         },
 
+        // Component specific methods
         methods: {
+
+            // Method to show user password depending on whether "password_active" flag
+            // is true or false
             show_password() {
                 if (this.password_active) {
                     this.password_text = "***********************";
@@ -128,10 +165,13 @@
                 }
             },
 
+            // Method to get specific purchase information from dropdown menu
             get_purchase(event) {
                 this.selected_purchase = event.target.value;
             },
 
+            // Method to display specific past purchase if one is selected or all past purchases
+            // if a specific past purchase is not selected
             display_purchases() {
                 if (this.selected_purchase === 'All') return this.purchase_info;
                 else {
@@ -141,7 +181,11 @@
                 }
             },
 
+            // Method to get past purchase information
             get_purchase_info() {
+
+                // Axios API call to python backend to get all driver past purchases and information
+                // from database
                 axios.get(this.path + '/purchase-info', { params: { user_id: this.user_id } })
                     .then((res) => {
                         if (res.data.status === 'success') {
@@ -193,7 +237,10 @@
             //         })
             // },
 
+            // Method to change driver password
             edit_password() {
+
+                // Getting new password from user and checking to make sure it meets password requirements
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
                 
@@ -202,9 +249,13 @@
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+                
+                // Axios API call to python backend to change password
                 axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: this.user_id}})
                     .then((res) => {
                         window.print("Password must contain: at least one lower and upper case letter, at least one number, and at least one special character")
+                        
+                        // Checking password to make sure it meets all requirements
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
                         }
@@ -212,6 +263,7 @@
                             res.data.status = "false";
                         }
 
+                        // Checking to see if new password is different from old password
                         if(new_password === this.password){
                             window.alert("New password must be different than old password")
                             res.data.status = "failure"
@@ -231,11 +283,18 @@
                     })
             },
 
+            // Method to change driver email
             edit_email() {
+
+                // Getting new email from user
                 let new_email = window.prompt("Enter new email");
+
+                // Axios API call to python backend to check for duplicate email
                 axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
+
+                        // Axios API call to python backend to change user email
                         axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: this.user_id}})
                         .then((res) => {
                             if (res.data.status === "success") {
@@ -258,6 +317,7 @@
             }
         },
 
+        // Components used from external files
         components: { NavBar }
     }
 </script>
