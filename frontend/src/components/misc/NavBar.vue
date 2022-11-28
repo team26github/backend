@@ -1,4 +1,6 @@
 <template>
+
+    <!-- Container to hold nav bar and links to different pages -->
     <div class = "nav">
         <b @click="home"><img v-bind:src=image width="65" height="40" /></b> 
         <a @click="catalog">Catalog</a>
@@ -12,19 +14,28 @@
     import image from "@/components/logo.png"
 
     export default {
+
+        // Component specific variables and data
         data: function () {
             return {
-            image: image
+                image: image
             }
         },
+
+        // Component name and props
         name:'NavBar',
         props: ['usertype', 'username'],
+
+        // Component specific methods
         methods: {
+
+            // Method to logout user upon logout button click
             logout() {
                 localStorage.clear();
                 this.$router.push({name:'login'})
             },
 
+            // Method to route user to dashboard upon logo click
             home() {
                 this.$router.push({
                     name: `${this.usertype.toLowerCase()}-dashboard`,
@@ -32,6 +43,7 @@
                 });
             },
 
+            // Method to route user to catalog upon catalog button click
             catalog() {
                 this.$router.push({
                     name: 'catalog',
@@ -39,6 +51,7 @@
                 });
             },
 
+            // Method to route user to their profile information upon profile button click
             profile() {
                 this.$router.push({
                     name: `${this.usertype.toLowerCase()}-profile`,
@@ -46,6 +59,7 @@
                 });
             },
 
+            // Method to route user to their settings page upon settings button click
             settings() {
                 this.$router.push({
                     name: `${this.usertype.toLowerCase()}-settings`,

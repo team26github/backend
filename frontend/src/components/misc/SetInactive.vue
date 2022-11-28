@@ -5,6 +5,7 @@
 
             <div>Select Driver:</div>
 
+            <!-- Dropdown menu for driver selection -->
             <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select one driver to make inactive:</option>
                 <option value="None">None</option>
@@ -24,8 +25,11 @@
 <script>
     import axios from 'axios';
     export default {
+
+        // Component name
         name: "set-inactive",
 
+        // Component specific variables and data
         data() {
             return {
                 username: null,
@@ -38,12 +42,16 @@
             };
         },
 
+        // Component specific methods
         methods: {
+
+            // Method to change driver selection based on dropdown menu selection
             onChange(e)
             {
                 this.driver_selected=e.target.value
             },
 
+            // Method to route user back to dashboard
             go_to_sponsor_dashboard() {
                 this.$router.push({
                     name: 'sponsor-dashboard',
@@ -51,7 +59,10 @@
                 })
             },
 
+            // Method to fetch all active drivers
             fetchDrivers() {
+
+                // Axios API call to python backend to get all active drivers
                 axios.get(this.path + '/get-drivers', { params: { user_id: this.user_id } })
                     .then((res) => {
                         if (res.data.status === 'success') {
@@ -64,7 +75,11 @@
                         console.log(error);
                     })
             },
+
+            // Method to change selected driver to inactive in database
             submit_inactivation() {                 
+
+                // Axios API call to python backend to deactive selected driver
                 axios.post(this.path + '/deactivate-user', null, {params: {username: this.driver_selected}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
@@ -81,10 +96,16 @@
             },
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+
+            // Getting username from route URL and setting Axios API path to either
+            // localhost or production
             this.path = this.localhost_path;
             this.username = this.$route.params.username;
 
+            // Axios API call to python backend to get current user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {

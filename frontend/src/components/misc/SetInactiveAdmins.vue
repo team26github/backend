@@ -5,6 +5,7 @@
 
             <div>Select User:</div>
 
+            <!-- Dropdown menu for user selection -->
             <select name = "selected" @change="onChange($event)" required>
                 <option disabled value="">Please select one user to make inactive:</option>
                 <option value="None">None</option>
@@ -24,8 +25,11 @@
 <script>
     import axios from 'axios';
     export default {
+
+        // Component name
         name: "set-inactive-admins",
 
+        // Component specific variables and data
         data() {
             return {
                 username: null,
@@ -38,12 +42,16 @@
             };
         },
 
+        // Component specific methods
         methods: {
+
+            // Method to select a user based on dropdown menu selection
             onChange(e)
             {
                 this.user_selected=e.target.value
             },
 
+            // Method to route user back to dashboard
             go_to_admin_dashboard() {
                 this.$router.push({
                     name: 'admin-dashboard',
@@ -51,7 +59,10 @@
                 })
             },
 
+            // Method to get all active users
             fetchUsers() {
+
+                // Axios API call to python backend to get all active users from database
                 axios.get(this.path + '/get-users')
                     .then((res) => {
                         if (res.data.status === 'success') {
@@ -64,7 +75,11 @@
                         console.log(error);
                     })
             },
-            submit_inactivation() {                 
+
+            // Method to change selected user to inactive in database
+            submit_inactivation() { 
+                
+                // Axios API call to python backend to set selected user to inactive in database
                 axios.post(this.path + '/deactivate-user-admin', null, {params: {username: this.user_selected}}) 
                     .then((res) => {
                         if (res.data.status === "success") {
@@ -81,10 +96,16 @@
             },
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+
+            // Getting username from route URL and setting Axios API path to either
+            // localhost or production
             this.path = this.localhost_path;
             this.username = this.$route.params.username;
 
+            // Axios API call to python backend to get current user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
