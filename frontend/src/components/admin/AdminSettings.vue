@@ -437,7 +437,7 @@
         // Gets display information from the database
         get_info() {
 
-            // Axios API call to python database to get driver/sponsor/admin information
+            // Axios API call to python backend to get driver/sponsor/admin information
             axios.get(this.path + '/info', { params: { username: this.username } })
                 .then((res) => {
                     if (res.data.status === 'success') {
@@ -667,6 +667,7 @@
         }
     },
 
+    // Components used from external files
     components: { NavBar }
 }
 </script>

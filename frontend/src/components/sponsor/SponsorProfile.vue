@@ -1,10 +1,16 @@
 <template>
     <div class="profile-container">
         <NavBar :usertype="user_type" :username="username"></NavBar>
+
+        <!-- Row for holding sponsor User ID, sponsor Username, and update Username button -->
         <div class="row">
+
+            <!-- Container for displaying sponsor User ID -->
             <div class="user-id-container">
                 <p><strong>UserID: </strong>{{ user_id }}</p>
             </div>
+
+            <!-- Container for displaying sponsor Username -->
             <div class="username-container">
                 <div class="username">
                     <p><strong>Username: </strong>{{ username }}</p>
@@ -12,7 +18,11 @@
                 </div>
             </div>
         </div>
+
+        <!-- Row for holding sponsor Password, display drivers associated with the sponsor button, and update/show password buttons -->
         <div class="row">
+
+            <!-- Container for displaying sponsor password -->
             <div class="password-container">
                 <div class="password">
                     <p><strong>Password: </strong>{{ password_text }}</p>
@@ -20,6 +30,8 @@
                     <button class="show-password" @click="show_password"><span>{{ button_text }}</span></button>
                 </div>
             </div>
+
+            <!-- Container for button to display drivers associated with the sponsor -->
             <div class="drivers-container">
                 <div class="drivers">
                     <p><strong>Drivers: </strong>{{ selected }} </p>
@@ -27,6 +39,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Row for holding sponsor Email, sponsor Usertype (Sponsor), and update email button -->
         <div class="row">
             <div class="email-container">
                 <div class="email">
@@ -41,6 +55,8 @@
         <div class="row">
             
         </div>
+
+        <!-- Display container for drivers associated with a sponsor -->
         <div class="row">
             <option v-for="driver in drivers" :key="driver">{{driver}}</option>
         </div>
@@ -52,8 +68,11 @@
     import NavBar from '../misc/NavBar.vue';
 
     export default {
+
+        // Component name
         name: 'sponsor-profile',
 
+        // Component specific variables and data
         data() {
             return {
                 user_id: null,
@@ -75,10 +94,16 @@
             };
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+
+            // Getting username from route URL and setting Axios API path to either
+            // localhost or production
             this.username = this.$route.params.username;
             this.path = this.localhost_path;
 
+            // Axios API call to python backend to get current user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
@@ -105,7 +130,11 @@
                 });
             },
 
+            // Method to get drivers associated with the sponsor from the database
             fetchDrivers() {
+
+                // Axios API call to python backend to get driver associated with the 
+                // sponsor from the databse
                 axios.get(this.path + '/get-drivers', {params: {user_id: this.user_id}})
                     .then((res) => {
                         if (res.data.status === 'success') {
@@ -122,6 +151,8 @@
                     })
             },
             
+            // Method to show user password upon "view" button click
+            // OR method to hide user password upon "hide" button click
             show_password() {
                 if (this.password_active) {
                     this.password_text = "***********************";
@@ -135,11 +166,18 @@
                 }
             },
 
+            // Method to change sponsor username
             edit_username() {
+
+                // Getting new username from sponsor
                 let new_username = window.prompt("Enter new username");
+
+                // Axios API call to python backend to check for duplicate users
                 axios.get(this.path + '/edit', {params: {request: 'username', username: new_username}})
                     .then((res) => {
                         if (res.data.status === 'success') {       
+
+                            // Axios API call to python backend to update username
                             axios.post(this.path + '/edit', null, {params: {request: 'username', username: new_username, userid: 3}})
                                 .then((res) => {
                                     if (res.data.status === "success") {
@@ -165,7 +203,10 @@
                     })
             },
 
+            // Method to change sponsor password
             edit_password() {
+
+                // Getting new password from sponsor and checking to make sure it meets password requirements
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
                 var minMaxLength = /^[\s\S]{8,20}$/,
@@ -173,8 +214,12 @@
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+
+                // Axios API call to python backend to change password
                 axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: 3}})
                     .then((res) => {
+
+                        // Checking to make sure new password meets all requirements
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
                         }
@@ -182,6 +227,7 @@
                             res.data.status = "failure";
                         }
 
+                        // Checking to see if new password is different from old password
                         if(new_password === this.password){
                             window.alert("New password must be different than old password")
                             res.data.status = "failure"
@@ -201,11 +247,18 @@
                     })
             },
 
+            // Method to change sponsor email
             edit_email() {
+
+                // Getting new email from sponsor
                 let new_email = window.prompt("Enter new email");
+
+                // Axios API call to python backend to check for duplicate email
                 axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
+
+                        // Axios API call to python backend to change sponsor email
                         axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: 3}})
                         .then((res) => {
                             if (res.data.status === "success") {
@@ -228,6 +281,7 @@
             },
         },
 
+        // Components used from external files
         components: { NavBar }
     }
 </script>

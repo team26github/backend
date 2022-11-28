@@ -1,29 +1,37 @@
 <template>
     <div class="settings-container">
         <NavBar :usertype="user_type" :username="username"></NavBar>
+
+        <!-- Form to fill out for a new sponsor -->
         <form style="max-width:800px;margin:auto">
             <h1>New Sponsor</h1>
 
+            <!-- First Name Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="First Name" name="first_name" v-model="first_name" required><br><br>
             </div>
 
+            <!-- Last Name Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Last Name" name="last_name" v-model="last_name" required><br><br>
             </div>
 
+            <!-- Username Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Username" name="username" v-model="sponsor_username" required><br><br>
             </div>
 
+            <!-- Email Input Container -->
             <div class="input-container">
                 <input class="input-field" type="text" placeholder="Email" name="email" v-model="email" required><br><br>
             </div>
             
+            <!-- Password Input Container -->
             <div class="input-container">
                 <input class="input-field" type="password" placeholder="Password" name="password" v-model="password" required><br><br>
             </div>
 
+            <!-- Submit button to create a new sponsor -->
             <button type="submit" class="btn" @click="create_sponsor" >Create</button> 
         </form>
     </div>
@@ -35,8 +43,11 @@
     import NavBar from '../misc/NavBar.vue';
 
     export default {
+
+        // Component name
         name: "new-sponsor",
 
+        // Component specific variables and data
         data() {
             return {
                 status: null,
@@ -53,10 +64,16 @@
             };
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
+
+            // Getting username from route URL and setting Axios API path to either
+            // localhost or production
             this.username = this.$route.params.username;
             this.path = this.localhost_path;
 
+            // Axios API call to python backend to get current user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
                 .then((res) => {
                     if (res.data.status === 'success') {
@@ -72,13 +89,19 @@
                 })
         },
 
+        // Component specific methods
         methods: {
 
+            // Method to create a new sponsor upon submission button click
             create_sponsor() {
+
+                // Axios API call to python backend to check for duplicate users
                 axios.get(this.path + '/new-user', {params: {username: this.sponsor_username, email: this.email}})
                     .then((res) => {
                         if (res.data.status === 'success') {
                             if (res.data.results.length === 0) {
+
+                                // Axios API call to python backend to add new sponsor to database
                                 axios.post(this.path + '/new-driver', null, {params: {email: this.email, first_name: this.first_name, last_name: this.last_name, username: this.sponsor_username, password: this.password, sponsor: this.sponsor_selected}}) 
                                     .then((res) => {
                                         if (res.data.status === "success") {
@@ -109,6 +132,8 @@
                     });
             },
         },
+
+        // Components used from external files
         components: { NavBar }
     }
 

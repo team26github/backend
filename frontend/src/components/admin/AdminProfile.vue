@@ -160,7 +160,10 @@
                     })
             },
 
+            // Method to change admin password
             edit_password() {
+
+                // Getting new password from user and checking to make sure it meets password requirements
                 window.alert("Password must contain at least one upper and lower case letter, at least one number, and at least one special character.")
                 let new_password = window.prompt("Enter new password");
                 var minMaxLength = /^[\s\S]{8,20}$/,
@@ -168,8 +171,12 @@
                     lower  = /[a-z]/,
                     number = /[0-9]/,
                     special = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+                
+                // Axios API call to python backend to change password
                 axios.post(this.path + '/edit', null, {params: {request: 'password', password: new_password, userid: this.user_id}})
                     .then((res) => {
+
+                        // Checking password to make sure it meets all requirements
                         if (minMaxLength.test(new_password) && upper.test(new_password) && lower.test(new_password) && number.test(new_password) && special.test(new_password)) {
                             res.data.status = "success";
                         }
@@ -177,6 +184,7 @@
                             res.data.status = "false";
                         }
 
+                        // Checking to see if new password is different from old password
                         if(new_password === this.password){
                             window.alert("New password must be different than old password")
                             res.data.status = "failure"
@@ -196,11 +204,18 @@
                     })
             },
 
+            // Method to change admin email
             edit_email() {
+
+                // Getting new email from user
                 let new_email = window.prompt("Enter new email");
+
+                // Axios API call to python backend to check for duplicate email
                 axios.get(this.path + '/edit', {params: {request: 'email', email: new_email}})
                 .then((res) => {
                     if (res.data.status === "success") {
+
+                        // Axios API call to python backend to change user email
                         axios.post(this.path + '/edit', null, {params: {request: 'email', email: new_email, userid: this.user_id}})
                         .then((res) => {
                             if (res.data.status === "success") {
@@ -223,6 +238,7 @@
             }
         },
 
+        // Components used from external files
         components: { NavBar }
     }
 </script>

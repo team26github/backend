@@ -2,21 +2,29 @@
     <div class="profile-container">
         <nav-bar :usertype="user_type" :username="username"></nav-bar>
         <br><br>
+
+        <!-- Button to route user to add points to a driver as a sponsor page -->
         <div class="row">
             <div class="add-point-container">
                 <button @click="go_to_add_points"><span>Add Points to Driver</span></button>
             </div>
         </div>
+
+        <!-- Button to route user to remove points from a driver as a sponsor page -->
         <div class="row">
             <div class="remove-points-button">
                 <button @click="go_to_remove_points"><span>Deduct Points from Driver</span></button>
             </div>
         </div>
+
+        <!-- Button to route user to pending applications acceptance/rejection page -->
         <div class="row">
             <div class="pending-applications-button">
                 <button @click="go_to_pending_applications"><span>Pending Applications</span></button>
             </div>
         </div>
+
+        <!-- Button to route user to set a driver inactive as a sponsor page -->
         <div class="row">
             <div class="set-inactive-button">
                 <button @click="go_to_set_inactive"><span>Set Drivers Inactive</span></button>
@@ -27,9 +35,13 @@
 
 <script>
     import NavBar from '../misc/NavBar.vue';
+
     export default {
+
+        // Component name
         name: 'SponsorDashboard',
 
+        // Component specific variables and data
         data() {
             return {
                 dashboard_name: `${this.username}'s Dashboard`,
@@ -39,25 +51,34 @@
             }
         },
 
+        // Component specific methods
         methods: {
+
+            // Method to route sponsor to pending applications acceptance/rejection page
             go_to_pending_applications() {
                 this.$router.push({
                     name: 'pending-applications',
                     params: { username: this.username }
                 });
             },
+
+            // Method to route sponsor to set driver inactive page
             go_to_set_inactive() {
                 this.$router.push({
                     name: 'set-inactive',
                     params: { username: this.username }
                 });
             },
+
+            // Method to route sponsor to add points to a driver page
             go_to_add_points() {
                 this.$router.push({
                     name: 'add-points',
                     params: { username: this.username }
                 });
             },
+
+            // Method to route sponsor to remove points from a driver page
             go_to_remove_points() {
                 this.$router.push({
                     name: 'remove-points',
@@ -66,10 +87,13 @@
             }
         },
 
+        // Mounted function is used for doing operations right after the component
+        // Is mounted and right before the component is shown to the user
         mounted() {
             this.username = this.$route.params.username;
         },
 
+        // Components used from external files
         components: {
             "nav-bar": NavBar
         }
