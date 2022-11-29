@@ -83,7 +83,7 @@
         mounted() {
 
             // Sets path for axios API calls to either localhost or production
-            this.path = this.localhost_path;
+            this.path = this.production_path;
         },
 
         // Component specific methods

@@ -88,7 +88,7 @@
             this.username = this.$route.params.username;
 
             // Sets path for axios API calls to either localhost or production
-            this.path = this.localhost_path;
+            this.path = this.production_path;
 
             // Axios API call to python backend to get user information
             axios.get(this.path + '/userinfo', {params: {username: this.username}})
