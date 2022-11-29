@@ -1,4 +1,0 @@
-MFA: DUO / Microsoft Authenticator
-     https://digitalcommons.usf.edu/cgi/viewcontent.cgi?article=8963&context=etd
-Interesting MFA we could use:
-     https://blog.saaspass.com/multi-factor-authentication-mfa-with-python-eb52a910efea

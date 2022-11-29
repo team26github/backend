@@ -1,1 +1,0 @@
-AWS: EC2-AcademyCloudFoundations.pdf & RDS-AcademyCloudFoundations.pdf in Canvas

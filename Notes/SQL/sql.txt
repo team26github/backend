@@ -1,2 +1,0 @@
-SQL: https://aws.amazon.com/getting-started/hands-on/create-mysql-db/
-Example files in directory.

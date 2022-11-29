@@ -1,5 +1,0 @@
-DB Triggers: https://docs.oracle.com/cd/A57673_01/DOC/server/doc/SCN73/ch15.htm
-
-Microsoft SQL Trigger Documentation: https://docs.microsoft.com/en-us/sql/t-sql/statements/create-trigger-transact-sql?view=sql-server-ver16
-
-A good video explaining triggers: https://www.youtube.com/watch?v=gy6LY0Xy2zU

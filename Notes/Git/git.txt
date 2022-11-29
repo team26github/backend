@@ -1,9 +1,0 @@
-Interactive Git tutorial: https://learngitbranching.js.org/
-
-Guide on Git: http://rogerdudler.github.io/git-guide/
-
-List of Git Commands: https://confluence.atlassian.com/bitbucketserver/basic-git-commands-776639767.html
-
-Git Cheatsheet (Commands List Pt 2): https://training.github.com/downloads/github-git-cheat-sheet.pdf
-
-https://docs.github.com/en/get-started/quickstart/hello-world

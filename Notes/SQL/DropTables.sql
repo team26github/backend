@@ -1,9 +1,0 @@
-DROP TABLE Price;
-DROP TABLE Topping;
-DROP TABLE Discount;
-DROP TABLE Pizza;
-DROP TABLE Orders;
-DROP TABLE Customer;
-DROP TABLE PizzaTopping;
-DROP TABLE PizzaDiscount;
-DROP TABLE OrderDiscount;

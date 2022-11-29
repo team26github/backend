@@ -1,3 +1,0 @@
-CSS: https://www.w3schools.com/html/html_css.asp
-HTML: https://www.w3schools.com/html/
-Javascript: https://tms-dev-blog.com/python-backend-with-javascript-frontend-how-to/

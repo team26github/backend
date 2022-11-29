@@ -1,1 +1,0 @@
-Azure: https://docs.microsoft.com/en-us/azure/devops/repos/git/share-your-code-in-git-vs?view=azure-devops&tabs=visual-studio-2019

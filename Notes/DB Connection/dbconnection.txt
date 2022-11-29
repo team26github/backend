@@ -1,5 +1,0 @@
-Python to Vue: https://blog.reverielabs.com/python-vue-components/
-Python Backend & Database: https://realpython.com/python-mysql/
-Python: https://realpython.com/tutorials/databases/
-MySQL to Javascript: https://hevodata.com/learn/javascript-mysql/
-MySQL to Python: https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
