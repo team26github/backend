@@ -1,21 +1,21 @@
-from urllib.parse import urlencode
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
 import pymysql
 import requests
 import json
+import config
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-db = pymysql.connect(host='team26-db.cpin0o6jvads.us-east-2.rds.amazonaws.com', user='admin', password='p83YoUoffEo0xChEq9kG', database='Team26Database')
+db = pymysql.connect(host=config.database['host'], user=config.database['user'], password=config.database['password'], database=config.database['database'])
 
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 def get_new_token():
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic R3JhbnRHb24tVHJ1Y2tlckktU0JYLTQ3ZGMwZmE3Zi01ZmFjZTdmMDpTQlgtN2RjMGZhN2Y5YmFkLTQ0MDYtNDY1NS05YzUxLTkyOWQ='
+        'Authorization': config.ebay['authorization']
     }
 
     body = {
@@ -789,4 +789,4 @@ def deactivateadmin():
 
 if __name__ == '__main__':
     get_new_token()
-    app.run(debug=True)
+    app.run(debug=False)
